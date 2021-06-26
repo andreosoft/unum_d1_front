@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    fluid
-    style="background-color: rgb(224, 224, 224); height: 100%;"
-  >
+  <v-container fluid class='patient-container'>
     <div
       v-show="$vuetify.breakpoint.smAndDown"
       class="mb-3"
@@ -30,7 +27,6 @@
             >
               <v-img
                 v-if="selectedPatient && selectedPatient.photo"
-                style="background-color: red;"
               ></v-img>
               <v-icon v-else color="white">mdi-account</v-icon>
             </v-avatar>
@@ -53,7 +49,7 @@
           <v-btn
             :ripple="false"
             class="mx-n3 expand-actions"
-            style="border-radius: 0 !important;"
+            tile
             @click="patientLinksList = !patientLinksList"
           >
             <v-icon class="mx-auto expand-icon">{{
@@ -100,7 +96,6 @@
             >
               <v-img
                 v-if="selectedPatient && selectedPatient.photo"
-                style="background-color: red;"
               ></v-img>
               <v-icon v-else color="white">mdi-account</v-icon>
             </v-avatar>
@@ -262,21 +257,21 @@
                       <template v-slot:default>
                         <tbody>
                           <tr>
-                            <td style="width: 20%;">Запись №</td>
+                            <td class="table-title">Запись №</td>
                             <td>{{ event.id }}</td>
                           </tr>
                           <tr>
-                            <td style="width: 20%;">Диагноз</td>
+                            <td class="table-title">Диагноз</td>
                             <td>{{ JSON.parse(event.data).diagnos }}</td>
                           </tr>
                           <tr>
-                            <td style="width: 20%;">Описание</td>
+                            <td class="table-title">Описание</td>
                             <td>
                               {{ JSON.parse(event.data).description }}
                             </td>
                           </tr>
                           <tr>
-                            <td style="width: 20%;">Рекомендации</td>
+                            <td class="table-title">Рекомендации</td>
                             <td>
                               {{ JSON.parse(event.data).recomendations }}
                             </td>
@@ -652,6 +647,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.patient-container {
+  background-color: rgb(224, 224, 224);
+  height: 100%;
+}
 .records__list {
   display: grid;
   grid-gap: 20px;
@@ -663,6 +662,9 @@ export default {
   justify-content: space-between;
 }
 
+.table-title {
+  width: 20%;
+}
 .user-actions__item {
   &:not(:last-child) {
     margin-right: 10px;

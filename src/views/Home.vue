@@ -30,33 +30,33 @@
                     <template v-slot:default>
                       <tbody>
                         <tr>
-                          <td style="width: 20%;">Запись №</td>
+                          <td class='table-title'>Запись №</td>
                           <td>{{ event.id }}</td>
                         </tr>
                         <tr>
-                          <td style="width: 20%;">Название</td>
+                          <td class='table-title'>Название</td>
                           <td>{{ event.name }}</td>
                         </tr>
                         <tr>
-                          <td style="width: 20%;">Пациент</td>
+                          <td class='table-title'>Пациент</td>
                           <td>
                             {{ event.patient }}
                           </td>
                         </tr>
                         <tr>
-                          <td style="width: 20%;">Дата</td>
+                          <td class='table-title'>Дата</td>
                           <td>
                             {{ event.start | getDate }}
                           </td>
                         </tr>
                         <tr>
-                          <td style="width: 20%;">Начало</td>
+                          <td class='table-title'>Начало</td>
                           <td>
                             {{ event.start | getTime }}
                           </td>
                         </tr>
                         <tr>
-                          <td style="width: 20%;">Конец</td>
+                          <td class='table-title'>Конец</td>
                           <td>
                             {{ event.end | getTime }}
                           </td>
@@ -110,5 +110,8 @@ export default {
 <style lang="scss" scoped>
 .records__item {
   cursor: pointer;
+}
+.table-title {
+  width: 20%;
 }
 </style>

@@ -1,12 +1,12 @@
 <template>
-  <v-container fluid style="height: 100%;" class="pb-0">
-    <v-row style="height: 100%;" class="mb-0">
+  <v-container fluid class="pb-0">
+    <v-row class="mb-0">
       <v-col
         v-if="$vuetify.breakpoint.mdAndUp"
         cols="3"
         class="d-flex align-items-center flex-column"
       >
-        <div style="width: fit-content;">
+        <div class='doctor-info'>
           <v-avatar size="200" class="mx-auto">
             <v-img
               :src="
@@ -78,7 +78,7 @@
       v-model="drawer"
       app
     >
-      <div style="width: fit-content;" class="mx-auto pt-3">
+      <div class="mx-auto pt-3 doctor-info">
         <v-avatar size="200" class="mx-auto">
           <v-img
             :src="
@@ -136,7 +136,16 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.container {
+  height: 100%;
+}
+.row {
+  height: 100%;
+}
+.doctor-info {
+  width: fit-content;
+}
 .doctor-info__text {
   font-weight: 800;
 }

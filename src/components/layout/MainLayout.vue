@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%;">
+  <div class='main-layout'>
     <v-app-bar :color="'lighten-2'" id="app-bar" fixed app flat height="60">
       <v-icon class="mr-2" @click="drawer = !drawer">mdi-menu</v-icon>
       <v-toolbar-title>{{ getTitle }}</v-toolbar-title>
@@ -158,4 +158,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.main-layout {
+  height: 100%;
+}
+</style>

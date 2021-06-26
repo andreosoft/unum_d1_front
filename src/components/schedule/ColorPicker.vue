@@ -9,7 +9,6 @@
       <template v-slot:activator="{ on, attrs }">
         <slot>
           <div v-bind="attrs" v-on="on">
-            <!-- <a-view-base-color :value="color" /> -->
             <div
               style="height: 16px; width: 100px"
               :style="{ backgroundColor: color }"
