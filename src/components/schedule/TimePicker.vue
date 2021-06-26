@@ -1,0 +1,69 @@
+<template>
+  <div class="d-inline-block pl-5">
+    <v-icon>mdi-clock</v-icon>
+    <div class="d-inline-block">
+      <v-dialog
+        ref="dialog"
+        v-model="showPicker"
+        persistent
+        width="290px"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <slot>
+            <div v-bind="attrs" v-on="on">
+              <span>{{ timeProps }}</span>
+            </div>
+          </slot>
+        </template>
+        <v-time-picker
+          v-if="showPicker"
+          v-model="time"
+          full-width
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            color="blue darken-1"
+            @click="showPicker = false"
+          >
+            отменить
+          </v-btn>
+          <v-btn
+            text
+            color="blue darken-1"
+            @click="onChange"
+          >
+            ок
+          </v-btn>
+        </v-time-picker>
+      </v-dialog>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  props: {
+    timeProps: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
+    return {
+      showPicker: false,
+      time: new Date().toISOString().substr(11, 5)
+    }
+  },
+  methods: {
+    onChange() {
+      this.$refs.dialog.save(this.time)
+      this.showPicker = false
+
+      this.$emit('change', this.time)
+    }
+  }
+};
+</script>
+
+<style></style>
