@@ -24,7 +24,7 @@
         <v-card-title class="pa-0 pt-3">
           НОВЫЙ ПАЦИЕНТ
         </v-card-title>
-        <form @submit="createNewPatientHandler">
+        <form @submit.prevent="createNewPatientHandler">
           <v-text-field
             label="Имя"
             outlined

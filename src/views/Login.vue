@@ -2,7 +2,7 @@
   <div class="login-wrap">
     <div class='pa-2'>
       <v-card max-width="500" class="mb-4 pa-4">
-        <form @submit="loginHandler">
+        <form @submit.prevent="loginHandler">
           <h2 class="form__title">Войти</h2>
           <v-text-field
             v-model="$v.email.$model"

@@ -359,7 +359,7 @@
             </v-toolbar-items>
           </v-toolbar>
 
-          <form @submit="addAnamnesisHandler" class="pa-5">
+          <form @submit.prevent="addAnamnesisHandler" class="pa-5">
             <div class="mb-4">
               <p class="ma-0">Жалобы</p>
               <v-textarea
@@ -415,7 +415,7 @@
             </v-toolbar-items>
           </v-toolbar>
 
-          <form @submit="addClinicalRecordHandler" class="pa-5">
+          <form @submit.prevent="addClinicalRecordHandler" class="pa-5">
             <div class="mb-4">
               <p class="ma-0">Диагноз</p>
               <v-textarea
