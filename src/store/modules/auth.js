@@ -72,19 +72,24 @@ const mutations = {
 };
 
 const actions = {
-  signUp({ dispatch }, data) {
-    return axios.post(api.doctorSignUp, data).then(async (res) => {
-      await dispatch("login", {
-        login: data.user.login,
-        password: data.user.password,
-      });
-      dispatch("fetchUserProfile");
+  async signUp({ commit, dispatch }, data) {
+    await dispatch("confirmLogin", data.user.login).then((status) => {
+      if (!status) {
+        return axios.post(api.doctorSignUp, data).then(async (res) => {
+          await dispatch("login", {
+            login: data.user.login,
+            password: data.user.password,
+          });
+          dispatch("fetchUserProfile");
+        });
+      }
+      commit("SET_AUTH_STATUS", false);
+      return alert("уже есть пользователь с таким Email");
     });
   },
   login({ commit, dispatch }, { login, password }) {
     return axios.post(api.doctorLogin, { login, password }).then((res) => {
       if (res.data.status === "error") {
-        alert("профиль не найден");
         return;
       }
 
@@ -106,7 +111,6 @@ const actions = {
       .get(api.confirmLogin, { params: { login } })
       .then(async (res) => {
         if (!res.data.data) {
-          alert("профиль не найден");
           return res.data.data;
         }
         dispatch("fetchUserProfile");
