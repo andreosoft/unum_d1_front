@@ -1,78 +1,19 @@
 <template>
   <div>
     <div v-if="patients.length">
-      <h2 class="mx-3">Мои пациенты</h2>
+      <h2 class="mx-3">{{ getDoctorTranslation("My patients") }}</h2>
       <PatientsCardList :patients="patients.slice(0, 4)" />
     </div>
     <div v-else>
-      <h2 class="mx-3">Пока не пациентов</h2>
+      <h2 class="mx-3">{{ getDoctorTranslation("No patients yet") }}</h2>
     </div>
     <v-divider></v-divider>
     <div v-if="events.length">
-      <h2 class="mx-3">Мои записи</h2>
-      <v-container class="pa-0 pb-3">
-        <v-row no-gutters>
-          <v-col
-            v-for="event in events"
-            :key="event.id"
-            cols="12"
-            md="6"
-            lg="4"
-            class="pa-3 records__item"
-            @click="
-              $router.push({ name: 'Patient', params: { id: event.patient_id } })
-            "
-          >
-            <v-hover>
-              <template v-slot="{ hover }">
-                <v-card :elevation="hover ? 1 : 0" outlined>
-                  <v-simple-table>
-                    <template v-slot:default>
-                      <tbody>
-                        <tr>
-                          <td class='table-title'>Запись №</td>
-                          <td>{{ event.id }}</td>
-                        </tr>
-                        <tr>
-                          <td class='table-title'>Название</td>
-                          <td>{{ event.name }}</td>
-                        </tr>
-                        <tr>
-                          <td class='table-title'>Пациент</td>
-                          <td>
-                            {{ event.patient }}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class='table-title'>Дата</td>
-                          <td>
-                            {{ event.start | getDate }}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class='table-title'>Начало</td>
-                          <td>
-                            {{ event.start | getTime }}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td class='table-title'>Конец</td>
-                          <td>
-                            {{ event.end | getTime }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
-                </v-card>
-              </template>
-            </v-hover>
-          </v-col>
-        </v-row>
-      </v-container>
+      <h2 class="mx-3">{{ getDoctorTranslation("My events") }}</h2>
+      <Events :events="events" />
     </div>
     <div v-else>
-      <h2 class="mx-3">Пока нет записей</h2>
+      <h2 class="mx-3">{{ getDoctorTranslation("No events yet") }}</h2>
     </div>
   </div>
 </template>
@@ -81,15 +22,17 @@
 import { createNamespacedHelpers } from "vuex";
 const { mapState } = createNamespacedHelpers("patients");
 import PatientsCardList from "./../components/patient/PatientCardList.vue";
+import Events from "./../components/Events.vue";
 import dayjs from "dayjs";
 
-dayjs.locale("ru");
 const { mapState: State_events } = createNamespacedHelpers("events");
+const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 export default {
   name: "Home",
 
   components: {
     PatientsCardList,
+    Events,
   },
   filters: {
     getDate(value) {
@@ -104,14 +47,7 @@ export default {
   computed: {
     ...mapState(["patients"]),
     ...State_events(["events"]),
+    ...Getters_lang(["getDoctorTranslation"]),
   },
 };
 </script>
-<style lang="scss" scoped>
-.records__item {
-  cursor: pointer;
-}
-.table-title {
-  width: 20%;
-}
-</style>

@@ -5,11 +5,11 @@ const state = {
   common: {},
 };
 const getters = {
-  getDoctorTranslations(state) {
-    return state.doctor
+  getDoctorTranslation: (state) => (key) => {
+    return state.doctor[key] ? state.doctor[key] : `_${key}`
   },
-  getCommonTranslations(state) {
-    return state.common
+  getCommonTranslation: (state) => (key) => {
+    return state.common[key] ? state.common[key] : `_${key}`
   },
 }
 const mutations = {
@@ -22,7 +22,6 @@ const actions = {
     if (lang === '') lang = 'ru'
     return axios.get(api.getLangItems + `/${lang}/${type}`).then((res) => {
       commit("SET_CURRENT_LANG_ITEMS", { data: res.data.data, type });
-      // console.log(res.data.data)
     });
   },
 };

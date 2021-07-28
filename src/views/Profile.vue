@@ -1,6 +1,6 @@
 <template>
   <div class="pa-3">
-    <h1>Мой профиль</h1>
+    <h1>{{ getCommonTranslation("My profile") }}</h1>
     <v-container class="pa-0">
       <v-row>
         <v-col cols="12" sm="8" md="6">
@@ -11,7 +11,7 @@
               outlined
               dense
               class="mb-6"
-              :label="common.Name"
+              :label="getCommonTranslation('Name')"
               readonly
             ></v-text-field>
 
@@ -20,7 +20,9 @@
               class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
             >
               <template v-slot:default>
-                <v-label :value="true" :absolute="true">Дата рождения</v-label>
+                <v-label :value="true" :absolute="true">
+                  {{ getCommonTranslation("Date of birth") }}
+                </v-label>
                 <div class="d-inline-block">
                   <v-dialog
                     ref="dialog"
@@ -48,7 +50,7 @@
                         color="blue darken-1"
                         @click="showBirthdayPicker = false"
                       >
-                        отменить
+                        {{ getCommonTranslation("Cancel") }}
                       </v-btn>
                       <v-btn
                         text
@@ -63,21 +65,24 @@
               </template>
             </v-input>
 
-            <v-text-field
+            <v-autocomplete
+              ref="country"
               v-model="getSetCountry"
-              hide-details
-              outlined
+              :items="countries"
+              :label="getCommonTranslation('Country')"
+              placeholder="Select..."
               dense
+              outlined
+              hide-details
               class="mb-2"
-              :label="common.Country"
-            ></v-text-field>
+            ></v-autocomplete>
             <v-text-field
               v-model="getSetEmail"
               hide-details
               outlined
               dense
               class="mb-2"
-              :label="common.Email"
+              :label="getCommonTranslation('Email')"
             ></v-text-field>
             <v-text-field
               v-model="getSetInternship"
@@ -85,7 +90,7 @@
               outlined
               dense
               class="mb-2"
-              :label="doctor.Internship"
+              :label="getDoctorTranslation('Internship')"
             ></v-text-field>
             <v-text-field
               v-model="getSetMedicalSpecialty"
@@ -93,7 +98,7 @@
               outlined
               dense
               class="mb-2"
-              :label="doctor['Medical specialty']"
+              :label="getDoctorTranslation('Medical specialty')"
             ></v-text-field>
             <v-text-field
               v-model="getSetMedicalUniversity"
@@ -101,7 +106,7 @@
               outlined
               dense
               class="mb-2"
-              :label="doctor['Medical University']"
+              :label="getDoctorTranslation('Medical University')"
             ></v-text-field>
             <v-text-field
               v-model="getSetPhone"
@@ -109,7 +114,7 @@
               outlined
               dense
               class="mb-2"
-              :label="common.Phone"
+              :label="getCommonTranslation('Phone')"
             ></v-text-field>
             <v-file-input
               hide-details
@@ -117,8 +122,9 @@
               dense
               class="mb-2"
               accept="image/*"
-              :label="common['Your photo']"
+              :label="getCommonTranslation('Your photo')"
               @change="onPhotoChange"
+              placeholder="asdasdas"
             ></v-file-input>
             <v-text-field
               v-model="getSetResidency"
@@ -126,7 +132,7 @@
               outlined
               dense
               class="mb-2"
-              :label="doctor.Residency"
+              :label="getDoctorTranslation('Residency')"
             ></v-text-field>
             <v-text-field
               v-model="getSetYearsOfEducation"
@@ -134,19 +140,83 @@
               outlined
               dense
               class="mb-2"
-              :label="common['Years of education']"
+              :label="getCommonTranslation('Years of education')"
             ></v-text-field>
           </div>
           <v-select
-            v-model="languages"
+            v-model="getSetLanguages"
             persistent-hint
-            hint="На каких языках можете принимать пациента"
+            :hint="getCommonTranslation('Service languages')"
             :items="languagesList"
             multiple
             dense
             outlined
-            @change="onLangChange"
           ></v-select>
+          <div>
+            <p class="mb-2">{{ getDoctorTranslation("Fellow student") }}</p>
+            <div>
+              <v-text-field
+                v-model="getSetFellowStudentName_1"
+                outlined
+                dense
+                hide-details
+                :label="getCommonTranslation('Name')"
+                class="mb-2"
+              ></v-text-field>
+              <v-text-field
+                v-model="getSetFellowStudentSurname_1"
+                outlined
+                dense
+                hide-details
+                :label="getCommonTranslation('Surname')"
+                class="mb-2"
+              ></v-text-field>
+              <v-text-field
+                v-model="getSetFellowStudentSocialLink_1"
+                outlined
+                dense
+                hide-details
+                :label="getCommonTranslation('Social link')"
+              ></v-text-field>
+            </div>
+            <v-divider class="my-2"></v-divider>
+            <div>
+              <v-text-field
+                v-model="getSetFellowStudentName_2"
+                outlined
+                dense
+                hide-details
+                :label="getCommonTranslation('Name')"
+                class="mb-2"
+              ></v-text-field>
+              <v-text-field
+                v-model="getSetFellowStudentSurname_2"
+                outlined
+                dense
+                hide-details
+                :label="getCommonTranslation('Surname')"
+                class="mb-2"
+              ></v-text-field>
+              <v-text-field
+                v-model="getSetFellowStudentSocialLink_2"
+                outlined
+                dense
+                hide-details
+                :label="getCommonTranslation('Social link')"
+              ></v-text-field>
+            </div>
+          </div>
+          <v-divider class="my-2"></v-divider>
+          <v-textarea
+            v-model="getSetQualification"
+            auto-grow
+            :rows="1"
+            hide-details
+            dense
+            no-resize
+            outlined
+            :label="getDoctorTranslation('Qualification')"
+          ></v-textarea>
         </v-col>
       </v-row>
     </v-container>
@@ -157,26 +227,90 @@
 import { createNamespacedHelpers } from "vuex";
 import dayjs from "dayjs";
 const { mapState, mapMutations, mapActions } = createNamespacedHelpers("auth");
-const { mapState: State_lang } = createNamespacedHelpers("lang");
+const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 export default {
   data() {
     return {
-      languagesList: [
-        "Английский",
-        "Французский",
-        "Немецкий",
-        "Испанский",
-        "Русский",
-      ],
       file: "",
-      languages: ["Английский", "Французский"],
+      languages: [],
       showBirthdayPicker: false,
       currentDate: dayjs().format("YYYY-MM-DD"),
+      img: "",
+      countries: [
+        "Австралия",
+        "Азербайджан",
+        "Албания",
+        "Армения",
+        "Афганистан",
+        "Белоруссия",
+        "Болгария",
+        "Бразилия",
+        "Великобритания",
+        "Венгрия",
+        "Германия",
+        "Греция",
+        "Грузия",
+        "Дания",
+        "Египет",
+        "Индия",
+        "Ирак",
+        "Ирландия",
+        "Исландия",
+        "Испания",
+        "Италия",
+        "Казахстан",
+        "Китай",
+        "Кыргызстан",
+        "Латвия",
+        "Литва",
+        "Малайзия",
+        "Мексика",
+        "Молдавия",
+        "Непал",
+        "Нидерланды",
+        "Норвегия",
+        "ОАЭ",
+        "Пакистан",
+        "Польша",
+        "Португалия",
+        "Россия",
+        "Румыния",
+        "Сербия",
+        "Сингапур",
+        "Сирия",
+        "Словакия",
+        "Словения",
+        "США",
+        "Таджикистан",
+        "Турция",
+        "Узбекистан",
+        "Украина",
+        "Филиппины",
+        "Финляндия",
+        "Франция",
+        "Хорватия",
+        "Черногория",
+        "Чехия",
+        "Швейцария",
+        "Швеция",
+        "Эстония",
+        "Япония",
+      ],
+      country: "",
     };
   },
   computed: {
-    ...mapState(["doctorProfile"]),
-    ...State_lang(["common", "doctor"]),
+    ...mapState(["doctorProfile", "userProfile"]),
+    ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
+    languagesList() {
+      let english = this.getCommonTranslation("English"),
+        french = this.getCommonTranslation("French"),
+        german = this.getCommonTranslation("German"),
+        spanish = this.getCommonTranslation("Spanish"),
+        russian = this.getCommonTranslation("Russian");
+
+      return [english, french, german, spanish, russian];
+    },
     getSetName: {
       get() {
         return this.doctorProfile && this.doctorProfile.name;
@@ -267,12 +401,103 @@ export default {
     },
     getSetLanguages: {
       get() {
-        return this.languages;
+        return (
+          this.doctorProfile &&
+          this.doctorProfile.info &&
+          this.doctorProfile.info.serviceLanguages
+        );
+      },
+      set(val) {
+        this.SET_SERVICE_LANGUAGES(val);
+      },
+    },
+    getSetQualification: {
+      get() {
+        return (
+          this.doctorProfile &&
+          this.doctorProfile.info &&
+          this.doctorProfile.info.qualification
+        );
+      },
+      set(val) {
+        this.SET_QUALIFICATION(val);
+      },
+    },
+    getSetFellowStudentName_1: {
+      get() {
+        return (
+          this.doctorProfile &&
+          this.doctorProfile.info &&
+          this.doctorProfile.info.fellowStudent1.name
+        );
+      },
+      set(value) {
+        this.SET_FELLOW_STUDENT_NAME({ id: 1, value });
+      },
+    },
+    getSetFellowStudentSurname_1: {
+      get() {
+        return (
+          this.doctorProfile &&
+          this.doctorProfile.info &&
+          this.doctorProfile.info.fellowStudent1.surname
+        );
+      },
+      set(value) {
+        this.SET_FELLOW_STUDENT_SURNAME({ id: 1, value });
+      },
+    },
+    getSetFellowStudentSocialLink_1: {
+      get() {
+        return (
+          this.doctorProfile &&
+          this.doctorProfile.info &&
+          this.doctorProfile.info.fellowStudent1.socialLink
+        );
+      },
+      set(value) {
+        this.SET_FELLOW_STUDENT_SOCIAL_LINK({ id: 1, value });
+      },
+    },
+    getSetFellowStudentName_2: {
+      get() {
+        return (
+          this.doctorProfile &&
+          this.doctorProfile.info &&
+          this.doctorProfile.info.fellowStudent2.name
+        );
+      },
+      set(value) {
+        this.SET_FELLOW_STUDENT_NAME({ id: 2, value });
+      },
+    },
+    getSetFellowStudentSurname_2: {
+      get() {
+        return (
+          this.doctorProfile &&
+          this.doctorProfile.info &&
+          this.doctorProfile.info.fellowStudent2.surname
+        );
+      },
+      set(value) {
+        this.SET_FELLOW_STUDENT_SURNAME({ id: 2, value });
+      },
+    },
+    getSetFellowStudentSocialLink_2: {
+      get() {
+        return (
+          this.doctorProfile &&
+          this.doctorProfile.info &&
+          this.doctorProfile.info.fellowStudent2.socialLink
+        );
+      },
+      set(value) {
+        this.SET_FELLOW_STUDENT_SOCIAL_LINK({ id: 2, value });
       },
     },
   },
   methods: {
-    ...mapActions(["updateDoctorProfile"]),
+    ...mapActions(["updateDoctorProfile", "uploadDoctorImage"]),
     ...mapMutations([
       "SET_DOCTOR_NAME",
       "SET_DOCTOR_BIRTHDAY",
@@ -285,18 +510,21 @@ export default {
       "SET_DOCTOR_PHOTO",
       "SET_DOCTOR_RESIDENCY",
       "SET_DOCTOR_YEARS_OF_EDUCATION",
+      "SET_SERVICE_LANGUAGES",
+      "SET_FELLOW_STUDENT",
+      "SET_QUALIFICATION",
+      "SET_FELLOW_STUDENT_NAME",
+      "SET_FELLOW_STUDENT_SURNAME",
+      "SET_FELLOW_STUDENT_SOCIAL_LINK",
     ]),
     photoAddHandle(e) {
       this.profileData.selectedPhoto = e;
-    },
-    onLangChange(e) {
-      this.languages = e;
     },
     onPhotoChange(v) {
       this.file = v;
       let formData = new FormData();
       formData.append("file", this.file);
-      this.SET_DOCTOR_PHOTO(formData);
+      this.uploadDoctorImage(formData);
     },
   },
 };

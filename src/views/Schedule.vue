@@ -4,7 +4,7 @@
       <v-sheet height="64">
         <v-toolbar flat>
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
-            Today
+            {{ getCommonTranslation("Today") }}
           </v-btn>
           <v-btn fab text small color="grey darken-2" @click="prev">
             <v-icon small> mdi-chevron-left </v-icon>
@@ -13,7 +13,7 @@
             <v-icon small> mdi-chevron-right </v-icon>
           </v-btn>
           <v-toolbar-title v-if="$refs.calendar">
-            {{ doctor.Schedule }}
+            {{ getDoctorTranslation("Schedule") }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
           <v-menu bottom right>
@@ -80,21 +80,22 @@
       <v-dialog v-model="showEventForm" :max-width="600">
         <v-card>
           <v-card-title>
-            новое событие
+            {{ getCommonTranslation("New event") }}
           </v-card-title>
           <v-card-text>
             <v-text-field
               v-model="eventName"
-              label="Name"
+              :label="getCommonTranslation('Event name')"
               :solo="editingEvent"
-              value="dasdasd"
               hide-details
             ></v-text-field>
             <v-input
               class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
             >
               <template v-slot:default>
-                <v-label :value="true" :absolute="true"> start</v-label>
+                <v-label :value="true" :absolute="true">
+                  {{ getCommonTranslation("Start") }}
+                </v-label>
                 <DatePicker
                   @change="onStartDateChange"
                   :dateProps="eventDefaultData.start.split(' ')[0]"
@@ -109,7 +110,9 @@
               class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
             >
               <template v-slot:default>
-                <v-label :value="true" :absolute="true">end</v-label>
+                <v-label :value="true" :absolute="true">
+                  {{ getCommonTranslation("End") }}
+                </v-label>
                 <DatePicker
                   @change="onEndDateChange"
                   :dateProps="eventDefaultData.end.split(' ')[0]"
@@ -124,7 +127,9 @@
               class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
             >
               <template v-slot:default>
-                <v-label :value="true" :absolute="true"> Color</v-label>
+                <v-label :value="true" :absolute="true">
+                  {{ getCommonTranslation("Color") }}
+                </v-label>
                 <v-icon>mdi-palette</v-icon>
                 <ColorPicker @change="onColorChange" />
               </template>
@@ -134,27 +139,34 @@
               v-model="selectedPatient"
               item-text="name"
               item-value="id"
-              label="Patients"
+              :label="getDoctorTranslation('Patients')"
               @change="onSelectedPatientChange"
             ></v-select>
             <v-radio-group v-model="eventType">
               <v-radio
                 v-for="i in 2"
                 :key="i"
-                :label="i === 1 ? 'Первичное посещение' : 'Вторичное посещение'"
+                :label="
+                  i === 1
+                    ? getCommonTranslation('Initial visit')
+                    : getCommonTranslation('Secondary visit')
+                "
                 :value="i"
               ></v-radio>
             </v-radio-group>
           </v-card-text>
           <v-card-actions>
             <v-btn text color="blue darken-1" @click="showEventForm = false">
-              Закрыть
+              {{ getCommonTranslation("Close") }}
             </v-btn>
-            <v-btn text color="blue darken-1" @click="saveEvent">{{ editingEvent ? 'Редактировать' : 'Создать' }}</v-btn>
+            <v-btn text color="blue darken-1" @click="saveEvent">{{
+              editingEvent
+                ? getCommonTranslation("Edit")
+                : getCommonTranslation("Create")
+            }}</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <!--  -->
       <v-menu
         v-model="eventMenu"
         :position-x="x"
@@ -172,17 +184,17 @@
               "
             >
               <v-list-item-title>
-                Карточка пациента
+                {{ getCommonTranslation("Patient card") }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item @click="eventEdit">
               <v-list-item-title>
-                Редактировать запись
+                {{ getCommonTranslation("Edit event") }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title @click="deleteEventHandler">
-                Удалить запись
+                {{ getCommonTranslation("Delete event") }}
               </v-list-item-title>
             </v-list-item>
           </v-list-item-group>
@@ -194,10 +206,10 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
 const { mapState, mapActions } = createNamespacedHelpers("events");
 const { mapState: State_patients } = createNamespacedHelpers("patients");
-const { mapState: State_lang } = createNamespacedHelpers("lang");
+const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 import DatePicker from "./../components/schedule/DatePicker";
 import TimePicker from "./../components/schedule/TimePicker";
 import ColorPicker from "./../components/schedule/ColorPicker";
@@ -235,13 +247,13 @@ export default {
       editingEvent: false,
       eventType: 1,
       selectedPatient: null,
-      currentDate: dayjs().format("YYYY-MM-DD")
+      currentDate: dayjs().format("YYYY-MM-DD"),
     };
   },
   computed: {
     ...mapState(["events"]),
     ...State_patients(["patients"]),
-    ...State_lang(['doctor', 'common']),
+    ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
     selectedDate() {
       return this.date;
     },
@@ -262,7 +274,7 @@ export default {
       this.patients &&
         this.patients.map((patient) => {
           if (patient.name) {
-            names.push(patient.name + ' ' + patient.id);
+            names.push(patient.name + " " + patient.id);
           }
         });
       return names;
@@ -273,9 +285,9 @@ export default {
       if (!val) {
         this.showButtomCreate = true;
         this.editingEvent = false;
-        this.eventName = ''
-        this.selectedPatient = null
-        this.eventDefaultData.patient_id = null
+        this.eventName = "";
+        this.selectedPatient = null;
+        this.eventDefaultData.patient_id = null;
       }
     },
   },
@@ -341,7 +353,6 @@ export default {
     },
     showEvent({ nativeEvent, event }) {
       this.eventDefaultData = event;
-      //this.showEventForm = true;
       this.showEventMenu(nativeEvent);
       console.log("ev: ", event);
       nativeEvent.stopPropagation();
@@ -381,9 +392,8 @@ export default {
       this.editingEvent = true;
       this.eventName = this.eventDefaultData.name;
       this.eventMenu = false;
-      this.selectedPatient = this.eventDefaultData.patient_id
+      this.selectedPatient = this.eventDefaultData.patient_id;
     },
-    //
     async saveEvent() {
       const payload = {
         color: this.eventDefaultData.color,
@@ -391,14 +401,14 @@ export default {
         start: this.eventDefaultData.start,
         end: this.eventDefaultData.end,
         type_id: this.eventType,
-        patient_id: this.eventDefaultData.patient_id
+        patient_id: this.eventDefaultData.patient_id,
       };
       if (!this.selectedPatient) {
-        alert('couldnt create appointment. Choose a patient')
-        return
+        alert("couldnt create appointment. Choose a patient");
+        return;
       }
       if (this.editingEvent) {
-        payload.id = this.eventDefaultData.id
+        payload.id = this.eventDefaultData.id;
       }
       await this.createEvent(payload);
       this.fetchEvents(this.eventsDate);
@@ -423,8 +433,8 @@ export default {
       this.eventDefaultData.color = color;
     },
     onSelectedPatientChange(patientId) {
-      this.eventDefaultData.patient_id = patientId
-    }
+      this.eventDefaultData.patient_id = patientId;
+    },
   },
 };
 </script>

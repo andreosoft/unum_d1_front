@@ -1,5 +1,5 @@
 <template>
-  <div class='main-layout'>
+  <div class="main-layout">
     <v-app-bar :color="'lighten-2'" id="app-bar" fixed app flat height="60">
       <v-icon class="mr-2" @click="drawer = !drawer">mdi-menu</v-icon>
       <v-toolbar-title>{{ getTitle }}</v-toolbar-title>
@@ -21,8 +21,8 @@
           :to="{ name: 'Profile' }"
         >
           <v-list-item-avatar color="rgb(80, 49, 101)">
-            <v-icon>mdi-account</v-icon>
-            <!-- <v-img :src="doctorProfile.photo"></v-img> -->
+            <v-icon v-if="!getPhoto">mdi-account</v-icon>
+            <v-img v-else :src="getPhoto"></v-img>
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>
@@ -53,7 +53,7 @@
         <v-list-item>
           <v-list-item-action>
             <v-btn color="primary" @click="logout">
-              {{ common["Sign Out"] || "выйти" }}
+              {{ getCommonTranslation("Sign out") }}
             </v-btn>
           </v-list-item-action>
         </v-list-item>
@@ -71,7 +71,10 @@ const { mapState, mapActions } = createNamespacedHelpers("auth");
 const { mapActions: Actions_patients } = createNamespacedHelpers("patients");
 const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
 const { mapActions: Actions_events } = createNamespacedHelpers("events");
-const { mapState: State_lang } = createNamespacedHelpers("lang");
+const {
+  mapState: State_lang,
+  mapGetters: Getters_lang,
+} = createNamespacedHelpers("lang");
 export default {
   data() {
     return {
@@ -79,30 +82,29 @@ export default {
     };
   },
   computed: {
-    ...mapState(["userProfile", "doctorProfile"]),
+    ...mapState(["userProfile", "doctorProfile", "doctorProfileFetched"]),
     ...State_lang(["doctor", "common"]),
+    ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
     navLinks() {
       const links = [
         {
           name: "Dashboard",
-          title: this.common["Home"],
+          title: this.getCommonTranslation("Home"),
           icon: "mdi-view-dashboard",
         },
         {
           name: "Doctors",
-          title: this.common["Doctors"],
+          title: this.getCommonTranslation("Doctors"),
           icon: "mdi-doctor",
         },
         {
           name: "Patients",
-          title: this.doctor["Patients"],
+          title: this.getDoctorTranslation("Patients"),
           icon: "mdi-account-group",
         },
         {
           name: "Schedule",
-          title: this.doctor["Schedule"]
-            ? this.doctor["Schedule"]
-            : "расписание",
+          title: this.getDoctorTranslation("Schedule"),
           icon: "mdi-calendar",
         },
       ];
@@ -112,29 +114,36 @@ export default {
       let title = "";
       switch (this.$route.name) {
         case "Dashboard":
-          title = this.common["Home"];
+          title = this.getCommonTranslation("Home");
           break;
         case "Doctors":
-          title = this.common["Doctors"];
+          title = this.getCommonTranslation("Doctors");
           break;
         case "Doctor":
-          title = "Врач";
+          title = this.getCommonTranslation("Doctor");
           break;
         case "Patients":
-          title = this.doctor["Patients"];
+          title = this.getDoctorTranslation("Patients");
           break;
         case "Patient":
-          title = "Пациент";
+          title = this.getCommonTranslation("Outpatient Card");
           break;
         case "Schedule":
-          title = this.doctor["Schedule"];
+          title = this.getDoctorTranslation("Schedule");
           break;
         case "Profile":
-          title = this.common["My profile"];
+          title = this.getCommonTranslation("My profile");
           break;
       }
 
       return title;
+    },
+    getPhoto() {
+      return (
+        this.doctorProfile &&
+        this.doctorProfile.photo &&
+        `http://api.neomedy.com/api/image/download/${this.doctorProfile.photo}`
+      );
     },
   },
   methods: {
@@ -142,7 +151,6 @@ export default {
     ...Actions_patients(["fetchPatients"]),
     ...Actions_doctors(["fetchDoctors"]),
     ...Actions_events(["fetchEvents"]),
-    // ...Actions_lang(["fetchLangItems"]),
   },
   created() {
     this.fetchPatients();
@@ -161,5 +169,8 @@ export default {
 <style scoped>
 .main-layout {
   height: 100%;
+}
+.v-list-item__title {
+  white-space: normal;
 }
 </style>

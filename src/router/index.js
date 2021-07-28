@@ -2,16 +2,33 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import store from "./../store/index";
 import { axios } from "./../config";
-
 Vue.use(VueRouter);
 const routes = [
   {
     path: "/signup",
+    redirect: {
+      name: "Sign Up",
+      params: {
+        lang: "en",
+      },
+    },
+  },
+  {
+    path: "/signup/:lang",
     name: "Sign Up",
     component: () => import("./../views/SignUp.vue"),
   },
   {
     path: "/login",
+    redirect: {
+      name: "Login",
+      params: {
+        lang: "en",
+      },
+    },
+  },
+  {
+    path: "/login/:lang",
     name: "Login",
     component: () => import("./../views/Login.vue"),
   },
@@ -26,15 +43,6 @@ const routes = [
         meta: {
           requiresAuth: true,
           title: "Главная",
-        },
-      },
-      {
-        path: "/about",
-        name: "About",
-        component: () => import("./../views/About.vue"),
-        meta: {
-          requiresAuth: true,
-          title: "О нас",
         },
       },
       {
@@ -111,7 +119,7 @@ router.beforeEach(async (to, from, next) => {
     if (!store.state.auth.authStatus) {
       const localData = window.localStorage.getItem("neomedy");
       if (!localData) {
-        return next({ name: "Login" });
+        return next({ name: "Login", params: { lang: "en" } });
       }
 
       const login = JSON.parse(localData).login;
@@ -122,11 +130,16 @@ router.beforeEach(async (to, from, next) => {
             axios.defaults.headers.common.Authorization = JSON.parse(
               localData
             ).token;
+            store.dispatch("auth/fetchUserProfile")
+            store.dispatch("auth/fetchDoctorProfile")
 
             return next();
           } else {
             return next({
               name: "Login",
+              params: {
+                lang: "en"
+              }
             });
           }
         });

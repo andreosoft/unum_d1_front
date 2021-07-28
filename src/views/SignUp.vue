@@ -1,24 +1,39 @@
 <template>
   <div class="signup-wrap">
-    <div class='pa-2'>
+    <div style="position: absolute; top: 0; right: 0;">
+      <v-btn
+        v-for="lang in systemLanguages"
+        :key="lang.id"
+        :color="lang.isActive ? 'primary' : ''"
+        :text="!lang.isActive"
+        dark
+        :disabled="lang.disabled"
+        @click="chooseLang(lang.id)"
+      >
+        {{ lang.title }}
+      </v-btn>
+    </div>
+    <div class="pa-2">
       <v-card :max-width="500" class="mb-4 pa-4">
         <form @submit.prevent="signUpHandler">
           <div v-show="step === 0">
-            <h2 class="form__title">Контактная информация</h2>
+            <h2 class="form__title">
+              {{ getCommonTranslation("Contact information") }}
+            </h2>
             <v-text-field
               v-model="$v.email.$model"
               :error="$v.email.$error"
               :error-messages="
                 userError && !$v.email.required
-                  ? 'Поле обязательно'
+                  ? getCommonTranslation('Field is required')
                   : userError && !$v.email.emailValidation
-                  ? 'Введите правильный Email'
+                  ? getCommonTranslation('Enter correct email')
                   : ''
               "
               dense
               outlined
               @input="$v.email.$reset"
-              label="Email"
+              :label="getCommonTranslation('Email')"
             >
             </v-text-field>
             <vue-phone-number-input
@@ -26,8 +41,8 @@
               default-country-code="KG"
               show-code-on-list
               :translations="{
-                countrySelectorLabel: 'Код страны',
-                phoneNumberLabel: 'Номер телефона',
+                countrySelectorLabel: getCommonTranslation('Country code'),
+                phoneNumberLabel: getCommonTranslation('Phone'),
               }"
               no-example
               class="mb-7"
@@ -37,15 +52,15 @@
               :error="$v.password.$error"
               :error-messages="
                 userError && !$v.password.required
-                  ? 'Поле обязательно'
+                  ? getCommonTranslation('Field is required')
                   : userError && !$v.password.minLength
-                  ? 'Пароль должен содержать минимум 6 символов'
+                  ? getCommonTranslation('Password length error')
                   : ''
               "
               dense
               outlined
               @input="$v.password.$reset"
-              label="Пароль"
+              :label="getCommonTranslation('Password')"
               type="password"
             >
             </v-text-field>
@@ -54,27 +69,31 @@
               :error="$v.passwordConfirmation.$error"
               :error-messages="
                 userError && !$v.passwordConfirmation.sameAsPassword
-                  ? 'Пароли должны совпадать'
+                  ? getCommonTranslation('Password match error')
                   : ''
               "
               dense
               outlined
               @input="$v.passwordConfirmation.$reset"
-              label="Подтвердите пароль"
+              :label="getCommonTranslation('Password again')"
               type="password"
             >
             </v-text-field>
           </div>
           <div v-show="step === 1">
-            <h2 class="form__title">Личная информация</h2>
+            <h2 class="form__title">
+              {{ getCommonTranslation("Personal Information") }}
+            </h2>
             <v-text-field
               v-model="$v.name.$model"
               :error="$v.name.$error"
               :error-messages="
-                personalInfoError && !$v.name.required ? 'Поле обязательно' : ''
+                personalInfoError && !$v.name.required
+                  ? getCommonTranslation('Field is required')
+                  : ''
               "
               @input="$v.name.$reset"
-              label="Имя"
+              :label="getCommonTranslation('Name')"
               dense
               outlined
             >
@@ -84,31 +103,55 @@
               :error="$v.surname.$error"
               :error-messages="
                 personalInfoError && !$v.surname.required
-                  ? 'Поле обязательно'
+                  ? getCommonTranslation('Field is required')
                   : ''
               "
               @input="$v.surname.$reset"
-              label="Фамилия"
+              :label="getCommonTranslation('Surname')"
               dense
               outlined
             >
             </v-text-field>
-            <v-text-field v-model="middleName" label="Отчество" dense outlined>
+            <v-text-field
+              v-model="$v.secondname.$model"
+              :error="$v.secondname.$error"
+              :error-messages="
+                personalInfoError && !$v.secondname.required
+                  ? getCommonTranslation('Field is required')
+                  : ''
+              "
+              @input="$v.secondname.$reset"
+              :label="getCommonTranslation('Middle name')"
+              dense
+              outlined
+            >
             </v-text-field>
             <v-file-input
               outlined
               dense
               solo
               accept="image/*"
-              label="Ваша фотография"
+              :label="getCommonTranslation('Your photo')"
               @change="onPhotoChange"
+              :error-messages="
+                personalInfoError && !$v.photo.required
+                  ? getCommonTranslation('Field is required')
+                  : ''
+              "
             ></v-file-input>
             <v-input
               dense
               class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
+              :error-messages="
+                personalInfoError && !$v.dateOfBirth.required
+                  ? getCommonTranslation('Field is required')
+                  : ''
+              "
             >
               <template v-slot:default>
-                <v-label :value="true" :absolute="true">Дата рождения</v-label>
+                <v-label :value="true" :absolute="true">{{
+                  getCommonTranslation("Date of birth")
+                }}</v-label>
                 <div class="d-inline-block">
                   <v-dialog
                     ref="dialog"
@@ -136,7 +179,7 @@
                         color="blue darken-1"
                         @click="showBirthdayPicker = false"
                       >
-                        отменить
+                        {{ getCommonTranslation("Cancel") }}
                       </v-btn>
                       <v-btn
                         text
@@ -154,72 +197,165 @@
               ref="country"
               v-model="country"
               :items="countries"
-              label="Страна"
+              :label="getCommonTranslation('Country')"
               placeholder="Select..."
               dense
               outlined
+              :error-messages="
+                personalInfoError && !$v.country.required
+                  ? getCommonTranslation('Field is required')
+                  : ''
+              "
             ></v-autocomplete>
             <v-autocomplete
               ref="language"
               v-model="language"
               :items="languages"
-              label="Выберите язык для вашего личного кабинета"
+              :label="getCommonTranslation('Language notification')"
               placeholder="Select..."
               dense
               outlined
+              :error-messages="
+                personalInfoError && !$v.language.required
+                  ? getCommonTranslation('Field is required')
+                  : ''
+              "
             >
             </v-autocomplete>
           </div>
           <div v-show="step === 2">
-            <h2 class="form__title">Медицинское образование</h2>
+            <h2 class="form__title">
+              {{ getCommonTranslation("Medical Education") }}
+            </h2>
             <v-text-field
               v-model="medUniversity"
-              label="Медицинский ВУЗ"
+              :label="getCommonTranslation('Medical University')"
               dense
               outlined
+              hide-details
+              class="mb-1"
             >
             </v-text-field>
             <v-text-field
               v-model="yearsOfEducation"
-              label="Годы учебы"
+              :label="getCommonTranslation('Years of education')"
               dense
               outlined
+              hide-details
+              class="mb-1"
             >
             </v-text-field>
             <v-text-field
               v-model="medSpeciality"
-              label="Факультет"
+              :label="getCommonTranslation('Medical specialty')"
               dense
               outlined
+              hide-details
+              class="mb-1"
             >
             </v-text-field>
-            <v-text-field v-model="internship" label="Интернатура" dense outlined
-              ></v-text-field
-            >
+            <v-text-field
+              v-model="internship"
+              :label="getCommonTranslation('Internship')"
+              dense
+              outlined
+              hide-details
+              class="mb-1"
+            ></v-text-field>
             <v-text-field
               v-model="residency"
-              label="Ординатура"
+              :label="getCommonTranslation('Residency')"
               dense
               outlined
+              hide-details
+              class="mb-3"
             ></v-text-field>
-            <v-text-field label="Пожалуйста, укажите двух ваших сокурсников" dense outlined>
-            </v-text-field>
+            <p class="ma-0">
+              {{ getDoctorTranslation("Fellow student") }}
+            </p>
+            <div>
+              <v-text-field
+                v-model="fellowStudent1.name"
+                hide-details
+                class="mb-1"
+                :label="getCommonTranslation('Name')"
+                dense
+                outlined
+              >
+              </v-text-field>
+              <v-text-field
+                v-model="fellowStudent1.surname"
+                hide-details
+                class="mb-1"
+                :label="getCommonTranslation('Surname')"
+                dense
+                outlined
+              >
+              </v-text-field>
+              <v-text-field
+                v-model="fellowStudent1.socialLink"
+                hide-details
+                :label="getCommonTranslation('Social Link')"
+                dense
+                outlined
+              >
+              </v-text-field>
+            </div>
+            <v-divider class="my-2"></v-divider>
+            <div class="mb-3">
+              <v-text-field
+                v-model="fellowStudent2.name"
+                hide-details
+                class="mb-1"
+                :label="getCommonTranslation('Name')"
+                dense
+                outlined
+              >
+              </v-text-field>
+              <v-text-field
+                v-model="fellowStudent2.surname"
+                hide-details
+                class="mb-1"
+                :label="getCommonTranslation('Surname')"
+                dense
+                outlined
+              >
+              </v-text-field>
+              <v-text-field
+                v-model="fellowStudent2.socialLink"
+                hide-details
+                :label="getCommonTranslation('Social Link')"
+                dense
+                outlined
+              >
+              </v-text-field>
+            </div>
           </div>
           <v-btn
             v-show="step === 0"
             class="mr-3"
             @click="$router.push('/login')"
           >
-            Отмена
+            {{ getCommonTranslation("Cancel") }}
           </v-btn>
-          <v-btn v-show="step !== 0" class="mr-3" @click="step--">Назад</v-btn>
-          <v-btn v-show="step !== 2" @click="validateStep">Далее</v-btn>
-          <v-btn v-show="step === 2" type="submit">Регистрация</v-btn>
+          <v-btn v-show="step !== 0" class="mr-3" @click="step--">{{
+            getCommonTranslation("Back")
+          }}</v-btn>
+          <v-btn v-show="step !== 2" @click="validateStep">{{
+            getCommonTranslation("Next")
+          }}</v-btn>
+          <v-btn v-show="step === 2" type="submit">{{
+            getCommonTranslation("Registration")
+          }}</v-btn>
         </form>
       </v-card>
       <v-card style="width: 100%;" class="pa-4">
-        <!-- Already have an account? <router-link to="/login">Login</router-link> -->
-        Уже зарегистрированы? <router-link to="/login">Войти</router-link>
+        <!-- уже зарегистрированы? -->
+        {{ getCommonTranslation("Registered already") }}
+        <router-link
+          :to="{ name: 'Login', params: { lang: $route.params.lang } }"
+          >{{ getCommonTranslation("Sign in") }}</router-link
+        >
       </v-card>
     </div>
   </div>
@@ -228,8 +364,13 @@
 <script>
 import { required, minLength, sameAs } from "vuelidate/lib/validators";
 import { createNamespacedHelpers } from "vuex";
-import dayjs from 'dayjs'
-const { mapActions } = createNamespacedHelpers("auth");
+import dayjs from "dayjs";
+const { mapActions, mapMutations } = createNamespacedHelpers("auth");
+const {
+  mapState: State_lang,
+  mapGetters: Getters_lang,
+  mapActions: Actions_lang,
+} = createNamespacedHelpers("lang");
 export default {
   data() {
     return {
@@ -246,7 +387,7 @@ export default {
       personalInfoError: false,
       name: "",
       surname: "",
-      middleName: "",
+      secondname: "",
       photo: "",
       dateOfBirth: "",
       country: null,
@@ -258,6 +399,16 @@ export default {
       medSpeciality: "",
       internship: "",
       residency: "",
+      fellowStudent1: {
+        name: "",
+        surname: "",
+        socialLink: "",
+      },
+      fellowStudent2: {
+        name: "",
+        surname: "",
+        socialLink: "",
+      },
 
       countries: [
         "Австралия",
@@ -320,6 +471,38 @@ export default {
         "Япония",
       ],
       languages: ["English", "French", "German", "Spanish", "Russian"],
+      systemLanguages: [
+        {
+          title: "en",
+          isActive: false,
+          id: 1,
+          disabled: false,
+        },
+        {
+          title: "ru",
+          isActive: false,
+          id: 2,
+          disabled: false,
+        },
+        {
+          title: "fr",
+          isActive: false,
+          id: 3,
+          disabled: true,
+        },
+        {
+          title: "es",
+          isActive: false,
+          id: 4,
+          disabled: true,
+        },
+        {
+          title: "de",
+          isActive: false,
+          id: 5,
+          disabled: true,
+        },
+      ],
     };
   },
   validations: {
@@ -340,9 +523,38 @@ export default {
     surname: {
       required,
     },
+    secondname: {
+      required,
+    },
+    photo: {
+      required,
+    },
+    dateOfBirth: {
+      required,
+    },
+    country: {
+      required,
+    },
+    language: {
+      required,
+    },
+  },
+  computed: {
+    ...State_lang(["common", "doctor"]),
+    ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
   },
   methods: {
-    ...mapActions(["signUp"]),
+    ...mapActions(["signUp", "uploadDoctorImage"]),
+    ...mapMutations([
+      "SET_DOCTOR_MEDICAL_UNIVERSITY",
+      "SET_DOCTOR_MEDICAL_SPECIALTY",
+      "SET_DOCTOR_YEARS_OF_EDUCATION",
+      "SET_DOCTOR_INTERNSHIP",
+      "SET_DOCTOR_RESIDENCY",
+      "SET_DOCTOR_PHONE",
+      "SET_AUTH_STATUS",
+    ]),
+    ...Actions_lang(["fetchLangItems"]),
     validateStep() {
       if (this.step === 0) {
         const requiredFields = ["email", "password", "passwordConfirmation"];
@@ -359,18 +571,37 @@ export default {
           return;
         }
       } else if (this.step === 1) {
-        const requiredFields = ["name", "surname"];
+        const requiredFields = [
+          "name",
+          "surname",
+          "secondname",
+          "photo",
+          "dateOfBirth",
+          "country",
+          "language",
+        ];
         requiredFields.map((field) => {
           this.$v[field].$touch();
         });
-        if (this.$v.name.$invalid || this.$v.surname.$invalid) {
+        if (
+          this.$v.name.$invalid ||
+          this.$v.surname.$invalid ||
+          this.$v.secondname.$invalid ||
+          this.$v.photo.$invalid ||
+          this.$v.dateOfBirth.$invalid ||
+          this.$v.country.$invalid ||
+          this.$v.language.$invalid
+        ) {
           this.personalInfoError = true;
           return;
         }
       }
       this.step++;
     },
-    signUpHandler() {
+    async signUpHandler() {
+      if (this.step !== 2) {
+        return;
+      }
       let langValue = "";
       switch (this.language) {
         case "English":
@@ -396,29 +627,70 @@ export default {
           phone: this.phone,
           lang: langValue,
           country: this.country,
-          photo: this.photo
+          photo: this.photo,
         },
         doctor: {
           name: this.name,
           surname: this.surname,
-          secondname: this.middleName,
-          dateOfBirth: this.dateOfBirth
+          secondname: this.secondname,
+          dateOfBirth: this.dateOfBirth,
+        },
+        education: {
+          medical_university: this.medUniversity,
+          medical_specialty: this.medSpeciality,
+          years_of_education: this.yearsOfEducation,
+          internship: this.internship,
+          residency: this.residency,
+          fellowStudent1: this.fellowStudent1,
+          fellowStudent2: this.fellowStudent2,
         },
       };
       this.signUp(data);
     },
     onPhotoChange(v) {
-      const photo = v
+      const photo = v;
       let formData = new FormData();
       formData.append("file", photo);
-      this.photo = formData
+      this.photo = formData;
     },
+    chooseLang(id) {
+      let choosenLang = "";
+      this.systemLanguages.map((lang) => {
+        lang.isActive = false;
+        if (lang.id === id) {
+          lang.isActive = true;
+          choosenLang = lang.title;
+        }
+      });
+
+      this.$router
+        .replace({ name: "Sign Up", params: { lang: choosenLang } })
+        .catch((err) => {});
+
+      this.fetchLangItems({ lang: choosenLang, type: "common" });
+      this.fetchLangItems({ lang: choosenLang, type: "doctor" });
+    },
+  },
+  created() {
+    this.systemLanguages.map((lang) =>
+      lang.title === this.$route.params.lang ? (lang.isActive = true) : ""
+    );
+
+    this.fetchLangItems({
+      lang: this.$route.params.lang,
+      type: "common",
+    });
+    this.fetchLangItems({
+      lang: this.$route.params.lang,
+      type: "doctor",
+    });
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .signup-wrap {
+  position: relative;
   height: 100%;
   width: 100%;
   display: flex;

@@ -5,6 +5,7 @@ import patients from './modules/patients'
 import doctors from './modules/doctors'
 import lang from './modules/lang'
 import events from './modules/events'
+import alerts from './modules/alerts'
 import debounce from 'lodash/debounce'
 
 
@@ -20,6 +21,12 @@ const updateDoctorProfileOn = [
   "SET_DOCTOR_PHOTO",
   "SET_DOCTOR_RESIDENCY",
   "SET_DOCTOR_YEARS_OF_EDUCATION",
+  "SET_SERVICE_LANGUAGES",
+  "SET_FELLOW_STUDENT",
+  "SET_QUALIFICATION",
+  "SET_FELLOW_STUDENT_NAME",
+  "SET_FELLOW_STUDENT_SURNAME",
+  "SET_FELLOW_STUDENT_SOCIAL_LINK",
 ];
 
 
@@ -31,7 +38,8 @@ const store = new Vuex.Store({
     patients,
     doctors,
     lang,
-    events
+    events,
+    alerts
   }
 })
 
