@@ -111,7 +111,15 @@ const actions = {
       .then((res) => {
         commit("SET_CLINICAL_RECORDS", res.data.data);
       });
+  },  
+  uploadFile({ commit }, file) {
+    return axios.post(api.postFile, file).then((res) => {
+      console.log(res)
+    })
   },
+  fetchUploadedFile({ commit }) {
+
+  }
 };
 
 export default {

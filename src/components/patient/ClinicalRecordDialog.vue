@@ -59,6 +59,7 @@
               v-model="clinicalRecord.recomendations"
             ></v-textarea>
           </div>
+          <v-file-input v-model="attachedFile" type="file" accept="application/pdf, .docx"></v-file-input>
           <v-radio-group v-model="clinicalRecord.type_id">
             <v-radio
               v-for="i in 2"
@@ -126,6 +127,7 @@ export default {
         recomendations: "",
         initialVisitId: null,
       },
+      attachedFile: null,
       treatmentFinished: false,
       clinicalRecordDialog: false,
     };
@@ -156,31 +158,29 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["addClinicalRecord"]),
-    addClinicalRecordHandler() {
-      this.$emit("clinicalRecordReset");
-      const data = {
-        diagnos: this.clinicalRecord.diagnos,
-        description: this.clinicalRecord.description,
-        recomendations: this.clinicalRecord.recomendations,
-      };
-      if (this.clinicalRecord.type_id === 2) {
-        data.initialVisitId = this.clinicalRecord.initialVisitId;
+    ...mapActions(["addClinicalRecord", "uploadFile"]),
+    async addClinicalRecordHandler() {
+      if (this.attachedFile) {
+        console.log(this.attachedFile)
+        // await this.uploadFile(this.attachedFile)
       }
-      const payload = {
-        patient_id: Number(this.$route.params.id),
-        type_id: this.clinicalRecord.type_id,
-        status_id: 1,
-        data: JSON.stringify(data),
-        treatmentFinished: this.treatmentFinished,
-      };
-      this.addClinicalRecord(payload);
-      this.clinicalRecord.type_id = 1;
-      this.clinicalRecord.initialVisitId = null;
-      this.clinicalRecord.diagnos = "";
-      this.clinicalRecord.description = "";
-      this.clinicalRecord.recomendations = "";
-      this.treatmentFinished = false;
+      // const data = {
+      //   diagnos: this.clinicalRecord.diagnos,
+      //   description: this.clinicalRecord.description,
+      //   recomendations: this.clinicalRecord.recomendations,
+      // };
+      // if (this.clinicalRecord.type_id === 2) {
+      //   data.initialVisitId = this.clinicalRecord.initialVisitId;
+      // }
+      // const payload = {
+      //   patient_id: Number(this.$route.params.id),
+      //   type_id: this.clinicalRecord.type_id,
+      //   status_id: 1,
+      //   data: JSON.stringify(data),
+      //   treatmentFinished: this.treatmentFinished,
+      // };
+      // this.addClinicalRecord(payload);
+      // this.clinicalRecordReset()
     },
     clinicalRecordReset() {
       this.$emit("clinicalRecordReset");
@@ -189,6 +189,8 @@ export default {
       this.clinicalRecord.description = "";
       this.clinicalRecord.recomendations = "";
       this.clinicalRecord.initialVisitId = null;
+      this.treatmentFinished = false;
+      this.attachedFile = null
     },
   },
 };
