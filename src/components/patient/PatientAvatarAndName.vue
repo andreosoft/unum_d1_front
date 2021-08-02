@@ -18,7 +18,7 @@
       <v-card-text class="pa-0 d-flex">
         {{
           (selectedPatient && selectedPatient.name) ||
-            getCommonTranslation("Name")
+          getCommonTranslation("Name")
         }}
         <br />
       </v-card-text>
@@ -26,23 +26,33 @@
 
     <div class="d-flex patient-actions__list">
       <v-responsive
-        style="overflow: unset; position: relative;"
-        v-for="(icon, index) in patientActions"
-        :key="icon"
+        style="overflow: unset; position: relative"
+        v-for="(item, index) in patientActions"
+        :key="item.id"
         :aspect-ratio="2 / 1"
         :class="{ 'mr-1': index !== patientActions.length - 1 }"
       >
-        <div class="py-1 rounded patient-actions__item">
-          <v-icon size="17" v-text="icon" color="white"> </v-icon>
-        </div>
-        <div v-show="false" class="patient-notifications">
-          <!-- notifications count -->
-          <!-- :class="[
+        <v-tooltip bottom>
+          <template #activator="{ on, attrs }">
+            <a
+              class="rounded patient-actions__item"
+              :href="item.href"
+              v-on="on"
+              v-bind="attrs"
+            >
+              <v-icon size="17" v-text="item.icon" color="white"> </v-icon>
+            </a>
+            <div v-show="false" class="patient-notifications">
+              <!-- notifications count -->
+              <!-- :class="[
             notif.length < 2
               ? 'rounded-circle width-15'
               : 'rounded-pill width-content px-1',
           ]" -->
-        </div>
+            </div>
+          </template>
+          <span>{{ item.tooltip }}</span>
+        </v-tooltip>
       </v-responsive>
     </div>
 
@@ -69,13 +79,30 @@ const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 
 export default {
   name: "PatientAvatarAndName",
-  data: () => ({
-    patientActions: ["mdi-phone", "mdi-video", "mdi-message", "mdi-email"],
-  }),
   computed: {
     ...mapState(["selectedPatient"]),
     ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
     ...Actions_doctors(["imageSrc"]),
+    patientActions() {
+      const actions = [
+        {
+          icon: "mdi-phone",
+          href: "tel:+900300400",
+          tooltip: '+900300400',
+          id: 1,
+        },
+        {
+          icon: "mdi-email",
+          href: `mailto:${this.getPatientEmail}`,
+          id: 2,
+          tooltip: this.getPatientEmail
+        },
+      ];
+      return actions;
+    },
+    getPatientEmail() {
+      return this.selectedPatient && this.selectedPatient.email;
+    },
   },
 };
 </script>
@@ -85,6 +112,8 @@ export default {
   display: flex;
   justify-content: center;
   background-color: rgb(14, 98, 154);
+  padding: 10px 0;
+  text-decoration: none;
 }
 .patient-notifications {
   color: #fff;

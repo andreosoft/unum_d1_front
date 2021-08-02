@@ -252,7 +252,6 @@ export default {
   },
   data() {
     return {
-      patientActions: ["mdi-phone", "mdi-video", "mdi-message", "mdi-email"],
       patientLinks: [
         {
           title: "Анамнез",
