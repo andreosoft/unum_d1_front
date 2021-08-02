@@ -92,6 +92,7 @@
           outlined
           class="mb-2"
           v-model="newPatient.email"
+          type="email"
         >
         </v-text-field>
 
@@ -150,8 +151,7 @@ export default {
         this.newPatient.name === "" ||
         this.newPatient.surname === "" ||
         this.newPatient.middleName === "" ||
-        this.newPatient.birthday === "" ||
-        this.newPatient.email === ""
+        this.newPatient.birthday === ""
       ) {
         return true;
       }
