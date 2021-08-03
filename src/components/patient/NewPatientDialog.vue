@@ -75,8 +75,9 @@
           </template>
         </v-input>
         <vue-phone-number-input
-          v-model="newPatient.phone"
           default-country-code="KG"
+          v-model="phoneModel"
+          @update="numberInput"
           show-code-on-list
           :translations="{
             countrySelectorLabel: getCommonTranslation('Country code'),
@@ -139,6 +140,7 @@ export default {
         info: "",
       },
       currentDate: dayjs().format("YYYY-MM-DD"),
+      phoneModel: "",
     };
   },
   computed: {
@@ -190,6 +192,9 @@ export default {
     },
     onChange() {
       this.showBirthdayPicker = false;
+    },
+    numberInput(val) {
+      this.newPatient.phone = val.formatInternational;
     },
   },
 };
