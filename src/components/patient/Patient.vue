@@ -2,9 +2,8 @@
   <v-container fluid class="patient-container">
     <div
       v-show="$vuetify.breakpoint.smAndDown"
-      class="mb-3"
+      class="mb-3 cursor-pointer"
       @click="drawer = true"
-      style="cursor: pointer;"
     >
       <v-icon>
         mdi-account-box
@@ -88,15 +87,27 @@
                 </h3>
                 <v-divider class="mt-1 mb-3"></v-divider>
                 <div class="records__list">
-                  <v-expansion-panels>
+                  <v-expansion-panels v-model="panels">
                     <v-expansion-panel
-                      v-for="record in formattedClinicalRecords"
+                      v-for="(record, index) in formattedClinicalRecords"
                       :key="record.id"
                       :disabled="!record.second_appointments.length"
+                      style="position: relative;"
                     >
-                      <v-expansion-panel-header>{{
-                        JSON.parse(record.data).diagnos
-                      }}</v-expansion-panel-header>
+                      <div
+                        v-show="!record.second_appointments.length"
+                        @click="showVisitDialog(record)"
+                        class="cursor-pointer records__overlay"
+                      ></div>
+                      <v-expansion-panel-header
+                        >{{ JSON.parse(record.data).diagnos }}&nbsp;
+                        <span
+                          v-show="index === panels"
+                          @click="showVisitDialog(record)"
+                          class="grey--text"
+                          >(показать первичную запись)</span
+                        >
+                      </v-expansion-panel-header>
                       <v-expansion-panel-content
                         v-if="record.second_appointments.length"
                       >
@@ -106,12 +117,11 @@
                             :key="index"
                           >
                             <template v-slot="{ hover }">
-                              <v-card-text
-                                :class="{ record__card: hover }"
-                                @click="showVisitDialog(event)"
-                              >
-                                {{ JSON.parse(event.data).diagnos }}
-                              </v-card-text>
+                              <div :class="{ record__card: hover }">
+                                <v-card-text @click="showVisitDialog(event)">
+                                  {{ JSON.parse(event.data).diagnos }}
+                                </v-card-text>
+                              </div>
                             </template>
                           </v-hover>
                         </v-card>
@@ -136,6 +146,17 @@
                           JSON.parse(selectedVisit.data).diagnos
                         }}</v-card-title
                       >
+                      <v-card-actions
+                        v-if="JSON.parse(selectedVisit.data).file"
+                        class="pa-0"
+                      >
+                        <a
+                          :href="download(JSON.parse(selectedVisit.data).file)"
+                          target="_blank"
+                        >
+                          {{ getCommonTranslation("Download attached file") }}
+                        </a>
+                      </v-card-actions>
                     </v-card>
                   </v-dialog>
                 </div>
@@ -233,6 +254,7 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
+import { api } from "./../../config/index";
 
 import AnamnesisDialog from "./AnamnesisDialog.vue";
 import ClinicalRecordDialog from "./ClinicalRecordDialog.vue";
@@ -252,6 +274,7 @@ export default {
   },
   data() {
     return {
+      panels: null,
       patientLinks: [
         {
           title: "Анамнез",
@@ -368,6 +391,9 @@ export default {
       this.visitDialog = true;
       this.selectedVisit = event;
     },
+    download(id) {
+      return `http://api.neomedy.com/api${api.getFile}/${id}`;
+    },
   },
   created() {
     this.fetchSelectedPatient(this.$route.params.id);
@@ -384,6 +410,13 @@ export default {
 .records__list {
   display: grid;
   grid-gap: 20px;
+}
+.records__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .table-title {
@@ -425,6 +458,14 @@ export default {
 .v-expansion-panel--disabled {
   button {
     color: #000;
+  }
+}
+.v-expansion-panel-header > *:not(.v-expansion-panel-header__icon) {
+  flex: unset;
+}
+.v-expansion-panel-header {
+  span {
+    text-decoration: underline;
   }
 }
 .record__card {
