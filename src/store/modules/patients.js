@@ -25,39 +25,40 @@ const mutations = {
     } catch (err) {
       payload.anamnesis = {};
       // anamnesis
-      payload.anamnesis.generalAnamnesis = {}
-      payload.anamnesis.generalAnamnesis['Complaints'] = [];
-      payload.anamnesis.generalAnamnesis['Drugs taken'] = [];
-      payload.anamnesis.generalAnamnesis['Allergies'] = [];
+      payload.anamnesis.generalAnamnesis = {};
+      payload.anamnesis.generalAnamnesis["Complaints"] = [];
+      payload.anamnesis.generalAnamnesis["Drugs taken"] = [];
+      payload.anamnesis.generalAnamnesis["Allergies"] = [];
       state.selectedPatient = payload;
 
-
       // lifeAnamnesis
-      payload.anamnesis.lifeAnamnesis = {}
-      payload.anamnesis.lifeAnamnesis['Chronic diseases'] = []
-      payload.anamnesis.lifeAnamnesis['Injuries'] = []
-      payload.anamnesis.lifeAnamnesis['Operations'] = []
-      payload.anamnesis.lifeAnamnesis['Bad habits'] = []
-      payload.anamnesis.lifeAnamnesis['Blood transfusion'] = []
-      payload.anamnesis.lifeAnamnesis['Heredity'] = []
-      payload.anamnesis.lifeAnamnesis['Medications'] = []
-      payload.anamnesis.lifeAnamnesis['Diet'] = []
+      payload.anamnesis.lifeAnamnesis = {};
+      payload.anamnesis.lifeAnamnesis["Chronic diseases"] = [];
+      payload.anamnesis.lifeAnamnesis["Injuries"] = [];
+      payload.anamnesis.lifeAnamnesis["Operations"] = [];
+      payload.anamnesis.lifeAnamnesis["Bad habits"] = [];
+      payload.anamnesis.lifeAnamnesis["Blood transfusion"] = [];
+      payload.anamnesis.lifeAnamnesis["Heredity"] = [];
+      payload.anamnesis.lifeAnamnesis["Medications"] = [];
+      payload.anamnesis.lifeAnamnesis["Diet"] = [];
 
       // allergicAnamnesis: {
-      payload.anamnesis.allergicAnamnesis = {}
-      payload.anamnesis.allergicAnamnesis['Allergies to medicinal substances'] = []
-      payload.anamnesis.allergicAnamnesis['Food allergy'] = []
-      payload.anamnesis.allergicAnamnesis['Household allergies'] = []
+      payload.anamnesis.allergicAnamnesis = {};
+      payload.anamnesis.allergicAnamnesis[
+        "Allergies to medicinal substances"
+      ] = [];
+      payload.anamnesis.allergicAnamnesis["Food allergy"] = [];
+      payload.anamnesis.allergicAnamnesis["Household allergies"] = [];
 
       // objectiveAnamnesis
-      payload.anamnesis.objectiveAnamnesis = {}
-      payload.anamnesis.objectiveAnamnesis['General anamnesis'] = []
-      payload.anamnesis.objectiveAnamnesis['Local anamnesis'] = []
-      
+      payload.anamnesis.objectiveAnamnesis = {};
+      payload.anamnesis.objectiveAnamnesis["General anamnesis"] = [];
+      payload.anamnesis.objectiveAnamnesis["Local anamnesis"] = [];
+
       // surveys
-      payload.anamnesis.surveys = {}
-      payload.anamnesis.surveys['Laboratory surveys'] = []
-      payload.anamnesis.surveys['Hardware and instrumental surveys'] = []
+      payload.anamnesis.surveys = {};
+      payload.anamnesis.surveys["Laboratory surveys"] = [];
+      payload.anamnesis.surveys["Hardware and instrumental surveys"] = [];
     }
   },
   SET_CLINICAL_RECORDS(state, payload) {
@@ -111,15 +112,17 @@ const actions = {
       .then((res) => {
         commit("SET_CLINICAL_RECORDS", res.data.data);
       });
-  },  
+  },
   uploadFile({ commit }, file) {
     return axios.post(api.postFile, file).then((res) => {
-      console.log(res)
-    })
+      return res.data.data.file;
+    });
   },
-  fetchUploadedFile({ commit }) {
-
-  }
+  requestPatientCardAccess({}, email) {
+    return axios.post(api.requestAccess, { email }).then((res) => {
+      console.log(res);
+    });
+  },
 };
 
 export default {
