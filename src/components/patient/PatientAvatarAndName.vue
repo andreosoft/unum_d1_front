@@ -18,7 +18,7 @@
       <v-card-text class="pa-0 d-flex">
         {{
           (selectedPatient && selectedPatient.name) ||
-          getCommonTranslation("Name")
+            getCommonTranslation("Name")
         }}
         <br />
       </v-card-text>
@@ -88,20 +88,23 @@ export default {
         {
           icon: "mdi-phone",
           href: "tel:+900300400",
-          tooltip: '+900300400',
+          tooltip: this.getPatientPhone,
           id: 1,
         },
         {
           icon: "mdi-email",
           href: `mailto:${this.getPatientEmail}`,
           id: 2,
-          tooltip: this.getPatientEmail
+          tooltip: this.getPatientEmail,
         },
       ];
       return actions;
     },
     getPatientEmail() {
       return this.selectedPatient && this.selectedPatient.email;
+    },
+    getPatientPhone() {
+      return this.selectedPatient && this.selectedPatient.phones;
     },
   },
 };
