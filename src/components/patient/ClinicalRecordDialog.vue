@@ -27,7 +27,11 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <form @submit.prevent="addClinicalRecordHandler" class="pa-5">
+        <form
+          @submit.prevent="addClinicalRecordHandler"
+          class="pa-5"
+          enctype="multipart/form-data"
+        >
           <div class="mb-4">
             <p class="ma-0">{{ getCommonTranslation("Diagnosis") }} *</p>
             <v-text-field
@@ -59,7 +63,7 @@
               v-model="clinicalRecord.recomendations"
             ></v-textarea>
           </div>
-          <v-file-input v-model="attachedFile" type="file" accept="application/pdf, .docx"></v-file-input>
+          <input type="file" @change="onChange" ref="file" />
           <v-radio-group v-model="clinicalRecord.type_id">
             <v-radio
               v-for="i in 2"
@@ -107,6 +111,7 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
+// import { axios, api } from "./../../config/index";
 const { mapState, mapActions } = createNamespacedHelpers("patients");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 
@@ -160,27 +165,27 @@ export default {
   methods: {
     ...mapActions(["addClinicalRecord", "uploadFile"]),
     async addClinicalRecordHandler() {
+      const clinicalRecordData = {
+        diagnos: this.clinicalRecord.diagnos,
+        description: this.clinicalRecord.description,
+        recomendations: this.clinicalRecord.recomendations,
+      };
       if (this.attachedFile) {
-        console.log(this.attachedFile)
-        // await this.uploadFile(this.attachedFile)
+        const fileId = await this.uploadFile(this.attachedFile);
+        clinicalRecordData.file = fileId;
       }
-      // const data = {
-      //   diagnos: this.clinicalRecord.diagnos,
-      //   description: this.clinicalRecord.description,
-      //   recomendations: this.clinicalRecord.recomendations,
-      // };
-      // if (this.clinicalRecord.type_id === 2) {
-      //   data.initialVisitId = this.clinicalRecord.initialVisitId;
-      // }
-      // const payload = {
-      //   patient_id: Number(this.$route.params.id),
-      //   type_id: this.clinicalRecord.type_id,
-      //   status_id: 1,
-      //   data: JSON.stringify(data),
-      //   treatmentFinished: this.treatmentFinished,
-      // };
-      // this.addClinicalRecord(payload);
-      // this.clinicalRecordReset()
+      if (this.clinicalRecord.type_id === 2) {
+        clinicalRecordData.initialVisitId = this.clinicalRecord.initialVisitId;
+      }
+      const payload = {
+        patient_id: Number(this.$route.params.id),
+        type_id: this.clinicalRecord.type_id,
+        status_id: 1,
+        data: JSON.stringify(clinicalRecordData),
+        treatmentFinished: this.treatmentFinished,
+      };
+      this.addClinicalRecord(payload);
+      this.clinicalRecordReset();
     },
     clinicalRecordReset() {
       this.$emit("clinicalRecordReset");
@@ -190,7 +195,28 @@ export default {
       this.clinicalRecord.recomendations = "";
       this.clinicalRecord.initialVisitId = null;
       this.treatmentFinished = false;
-      this.attachedFile = null
+      this.attachedFile = null;
+    },
+    onChange() {
+      const file = this.$refs.file.files[0];
+      const fileNameReversed = this.reverseString(file.name);
+      const fileExtension = this.reverseString(fileNameReversed.split(".")[0]);
+      const formData = new FormData();
+      if (fileExtension === "docx") {
+        formData.append("file", file, `document.${fileExtension}`);
+        this.attachedFile = formData;
+        return;
+      }
+      formData.append("file", file);
+      this.attachedFile = formData;
+    },
+    reverseString(string) {
+      const reversedString = string
+        .split("")
+        .reverse()
+        .join("");
+
+      return reversedString;
     },
   },
 };
