@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="dialog" :max-width="600" @input="$emit('close')">
+  <v-dialog :value="dialog" :max-width="600" @input="resetForm">
     <v-card class="py-3 px-6">
       <v-card-title class="pa-0 pt-3">
         {{ getDoctorTranslation("New patient") }}
@@ -75,8 +75,9 @@
           </template>
         </v-input>
         <vue-phone-number-input
-          v-model="newPatient.phone"
           default-country-code="KG"
+          v-model="phoneModel"
+          @update="numberInput"
           show-code-on-list
           :translations="{
             countrySelectorLabel: getCommonTranslation('Country code'),
@@ -92,11 +93,12 @@
           outlined
           class="mb-2"
           v-model="newPatient.email"
+          type="email"
         >
         </v-text-field>
 
         <v-spacer class="mb-6"></v-spacer>
-        <v-btn class="mr-3" @click="$emit('close')">
+        <v-btn class="mr-3" @click="resetForm">
           {{ getCommonTranslation("Cancel") }}
         </v-btn>
         <v-btn type="submit" :disabled="isInvalid">
@@ -138,6 +140,7 @@ export default {
         info: "",
       },
       currentDate: dayjs().format("YYYY-MM-DD"),
+      phoneModel: "",
     };
   },
   computed: {
@@ -150,8 +153,7 @@ export default {
         this.newPatient.name === "" ||
         this.newPatient.surname === "" ||
         this.newPatient.middleName === "" ||
-        this.newPatient.birthday === "" ||
-        this.newPatient.email === ""
+        this.newPatient.birthday === ""
       ) {
         return true;
       }
@@ -179,11 +181,7 @@ export default {
         createdby_id: this.userProfile.doctor_id,
       };
       this.createNewPatient(data);
-      this.$emit("close");
-      this.newPatient.name = "";
-      this.newPatient.birthday = "";
-      this.newPatient.phone = "";
-      this.newPatient.email = "";
+      this.resetForm()
     },
     capitalizeString(str) {
       return str[0].toUpperCase() + str.slice(1);
@@ -191,6 +189,19 @@ export default {
     onChange() {
       this.showBirthdayPicker = false;
     },
+    numberInput(val) {
+      this.newPatient.phone = val.formatInternational;
+    },
+    resetForm() {
+      this.$emit("close");
+      this.newPatient.name = "";
+      this.newPatient.birthday = "";
+      this.newPatient.phone = "";
+      this.newPatient.email = "";
+      this.newPatient.surname = "";
+      this.newPatient.middleName = "";
+      this.phoneModel = "";
+    }
   },
 };
 </script>

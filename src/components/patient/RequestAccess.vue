@@ -9,6 +9,7 @@
           v-model="$v.patientEmail.$model"
           outlined
           :error="$v.patientEmail.$error"
+          type="email"
           dense
           :label="getDoctorTranslation('Patient email')"
           :error-messages="
@@ -38,6 +39,7 @@ import { required } from "vuelidate/lib/validators";
 
 const { mapGetters } = createNamespacedHelpers("lang");
 const { mapActions: Action_alerts } = createNamespacedHelpers("alerts");
+const { mapActions: Actions_patients } = createNamespacedHelpers("patients");
 export default {
   name: "RequestAccess",
   props: {
@@ -61,17 +63,15 @@ export default {
   },
   methods: {
     ...Action_alerts(["addAlert"]),
+    ...Actions_patients(["requestPatientCardAccess"]),
     sendEmail() {
       this.$v.patientEmail.$touch();
       if (this.$v.patientEmail.$invalid) {
         this.patientEmailError = true;
         return;
       }
-      window.open(
-        `mailto:${this.patientEmail}?subject=${this.getDoctorTranslation(
-          "Request access to patient card"
-        )}`
-      );
+      this.requestPatientCardAccess(this.patientEmail);
+      this.$emit("close");
     },
   },
 };

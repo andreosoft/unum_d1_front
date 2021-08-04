@@ -6,17 +6,10 @@ const state = {
 };
 const getters = {
   getDoctorTranslation: (state) => (key) => {
-<<<<<<< HEAD
-    return state.doctor[key] ? state.doctor[key] : `${key}`
-  },
-  getCommonTranslation: (state) => (key) => {
-    return state.common[key] ? state.common[key] : `${key}`
-=======
     return state.doctor[key] ? state.doctor[key] : `${key}`;
   },
   getCommonTranslation: (state) => (key) => {
     return state.common[key] ? state.common[key] : `${key}`;
->>>>>>> bc52a42b5d2334e5ef461851e4864e805b96fa7a
   },
 };
 const mutations = {

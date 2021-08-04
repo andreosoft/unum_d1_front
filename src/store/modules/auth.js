@@ -150,7 +150,7 @@ const actions = {
           type: "error",
           text: rootState.lang.common["Email taken"]
             ? rootState.lang.common["Email taken"]
-            : "_Email taken",
+            : "Email taken",
         },
         { root: true }
       );
@@ -165,7 +165,7 @@ const actions = {
             type: "error",
             text: rootState.lang.common["Credentials error"]
             ? rootState.lang.common["Credentials error"]
-            : "_Credentials error",
+            : "Credentials error",
           },
           { root: true }
         );

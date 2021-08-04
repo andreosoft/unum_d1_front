@@ -209,8 +209,7 @@
           <v-divider class="my-2"></v-divider>
           <v-textarea
             v-model="getSetQualification"
-            auto-grow
-            :rows="1"
+            :rows="10"
             hide-details
             dense
             no-resize

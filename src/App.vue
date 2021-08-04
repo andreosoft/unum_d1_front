@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <router-view/>
+      <router-view />
 
       <div class="alerts">
         <v-alert v-for="alert in alerts" :key="alert.id" :type="alert.type">
@@ -13,14 +13,14 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex'
+import { createNamespacedHelpers } from "vuex";
 import "dayjs/locale/ru";
-const { mapState } = createNamespacedHelpers('alerts')
+const { mapState } = createNamespacedHelpers("alerts");
 export default {
-  name: 'App',
+  name: "App",
   computed: {
-    ...mapState(['alerts'])
-  }
+    ...mapState(["alerts"]),
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -31,19 +31,22 @@ export default {
 }
 </style>
 <style lang="scss">
-  .justify-content-between {
-    justify-content: space-between;
-  }
-  .justify-content-center {
-    justify-content: center;
-  }
-  .align-items-center {
-    align-items: center;
-  }
-  .flex-column {
-    flex-direction: column;
-  }
-  .theme--light.v-data-table
+.justify-content-between {
+  justify-content: space-between;
+}
+.justify-content-center {
+  justify-content: center;
+}
+.align-items-center {
+  align-items: center;
+}
+.flex-column {
+  flex-direction: column;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.theme--light.v-data-table
   > .v-data-table__wrapper
   > table
   > tbody

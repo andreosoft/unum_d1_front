@@ -2,9 +2,8 @@
   <div>
     <div
       v-show="$vuetify.breakpoint.smAndDown"
-      class="mb-3"
+      class="mb-3 cursor-pointer"
       @click="$emit('openDrawer')"
-      style="cursor: pointer;"
     >
       <v-icon>
         mdi-account-box
