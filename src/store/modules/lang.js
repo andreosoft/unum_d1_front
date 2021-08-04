@@ -6,10 +6,10 @@ const state = {
 };
 const getters = {
   getDoctorTranslation: (state) => (key) => {
-    return state.doctor[key] ? state.doctor[key] : `_${key}`
+    return state.doctor[key] ? state.doctor[key] : `${key}`
   },
   getCommonTranslation: (state) => (key) => {
-    return state.common[key] ? state.common[key] : `_${key}`
+    return state.common[key] ? state.common[key] : `${key}`
   },
 }
 const mutations = {
