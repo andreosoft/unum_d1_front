@@ -6,20 +6,11 @@
       </v-card-title>
       <form @submit.prevent="sendEmail">
         <v-text-field
-          v-model="$v.patientEmail.$model"
+          v-model="patientEmail"
           outlined
-          :error="$v.patientEmail.$error"
           type="email"
           dense
           :label="getDoctorTranslation('Patient email')"
-          :error-messages="
-            patientEmailError && !$v.patientEmail.required
-              ? getCommonTranslation('Field is required')
-              : patientEmailError && !$v.patientEmail.emailValidation
-              ? getCommonTranslation('Enter correct email')
-              : ''
-          "
-          @input="$v.patientEmail.$reset"
         >
         </v-text-field>
         <v-btn class="mr-3" @click="$emit('close')">
@@ -35,7 +26,6 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-import { required } from "vuelidate/lib/validators";
 
 const { mapGetters } = createNamespacedHelpers("lang");
 const { mapActions: Action_alerts } = createNamespacedHelpers("alerts");
@@ -50,14 +40,7 @@ export default {
   },
   data: () => ({
     patientEmail: "",
-    patientEmailError: false,
   }),
-  validations: {
-    patientEmail: {
-      required,
-      emailValidation: (email) => /.+@.+\..+/.test(email),
-    },
-  },
   computed: {
     ...mapGetters(["getDoctorTranslation", "getCommonTranslation"]),
   },
@@ -65,13 +48,9 @@ export default {
     ...Action_alerts(["addAlert"]),
     ...Actions_patients(["requestPatientCardAccess"]),
     sendEmail() {
-      this.$v.patientEmail.$touch();
-      if (this.$v.patientEmail.$invalid) {
-        this.patientEmailError = true;
-        return;
-      }
       this.requestPatientCardAccess(this.patientEmail);
       this.$emit("close");
+      this.patientEmail = "";
     },
   },
 };

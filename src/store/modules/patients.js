@@ -118,10 +118,39 @@ const actions = {
       return res.data.data.file;
     });
   },
-  requestPatientCardAccess({}, email) {
-    return axios.post(api.requestAccess, { email }).then((res) => {
-      console.log(res);
-    });
+  requestPatientCardAccess({ dispatch, rootState }, email) {
+    return axios
+      .post(api.requestAccess, { email })
+      .then((res) => {
+        if (res.data.status === "ok") {
+          return dispatch(
+            "alerts/addAlert",
+            {
+              type: "success",
+              text: rootState.lang.common["Access request sent"]
+                ? rootState.lang.common["Access request sent"]
+                : "Access request sent",
+            },
+            {
+              root: true,
+            }
+          );
+        }
+      })
+      .catch(() => {
+        dispatch(
+          "alerts/addAlert",
+          {
+            type: "error",
+            text: rootState.lang.common["Email doesn't exist"]
+              ? rootState.lang.common["Email doesn't exist"]
+              : "Email doesn't exist",
+          },
+          {
+            root: true,
+          }
+        );
+      });
   },
 };
 
