@@ -87,7 +87,7 @@ export default {
       const actions = [
         {
           icon: "mdi-phone",
-          href: "tel:+900300400",
+          href: `tel:${this.getPatientPhone}`,
           tooltip: this.getPatientPhone,
           id: 1,
         },
