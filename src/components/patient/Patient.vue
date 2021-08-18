@@ -142,10 +142,20 @@
                       >
                       <v-card-title class="pa-0"
                         >{{ getCommonTranslation("Diagnosis") }} -
-                        {{
-                          JSON.parse(selectedVisit.data).diagnos
-                        }}</v-card-title
-                      >
+                        {{ selectedVisitDiagonsis }}
+                      </v-card-title>
+                      <v-card-title
+                        v-show="selectedVisitDescription.length"
+                        class="pa-0"
+                        >{{ getCommonTranslation("Description") }} -
+                        {{ selectedVisitDescription }}
+                      </v-card-title>
+                      <v-card-title
+                        v-show="selectedVisitRecommnedations.length"
+                        class="pa-0"
+                        >{{ getCommonTranslation("Recommendations") }} -
+                        {{ selectedVisitRecommnedations }}
+                      </v-card-title>
                       <v-card-actions
                         v-if="JSON.parse(selectedVisit.data).file"
                         class="pa-0"
@@ -374,6 +384,19 @@ export default {
         }
       });
       return this.patientLinks;
+    },
+    selectedVisitDiagonsis() {
+      return this.selectedVisit && JSON.parse(this.selectedVisit.data).diagnos;
+    },
+    selectedVisitDescription() {
+      return (
+        this.selectedVisit && JSON.parse(this.selectedVisit.data).description
+      );
+    },
+    selectedVisitRecommnedations() {
+      return (
+        this.selectedVisit && JSON.parse(this.selectedVisit.data).recomendations
+      );
     },
   },
   methods: {
