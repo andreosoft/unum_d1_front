@@ -14,26 +14,16 @@
       {{ fullName }}
     </h2>
     <v-card :min-height="400">
-      <v-list>
+      <v-list v-if="doctorSpecialty">
         <v-list-item>Специализация - {{ doctorSpecialty }}</v-list-item>
-        <!-- <v-list-item
-          >{{ getCommonTranslation("Surname") }} - {{ lastName }}</v-list-item
-        > -->
-        <!-- <v-list-item v-show="country">
-          {{ getCommonTranslation("Country") }} - {{ country }}
-        </v-list-item> -->
       </v-list>
       <v-list>
-        <!-- <v-list-item v-if="doctorSpecialty">
-          {{ getDoctorTranslation("Medical specialty") }} -
-          {{ doctorSpecialty }}
-        </v-list-item> -->
         <v-list-item v-if="doctorUniversity">
           {{ getDoctorTranslation("Medical Education") }}
           -
           {{ doctorUniversity }}
         </v-list-item>
-        <v-list-item v-if="doctorUniversity">
+        <v-list-item v-if="yearsOfEducation">
           {{ getCommonTranslation("Years of education") }}
           -
           {{ yearsOfEducation }}
