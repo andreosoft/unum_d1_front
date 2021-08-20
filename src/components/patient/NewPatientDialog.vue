@@ -174,14 +174,14 @@ export default {
         inn: null,
         doc_soc: null,
         doc_pass: null,
-        phones: [this.newPatient.phone],
+        phones: this.newPatient.phone,
         email: this.newPatient.email,
         info: null,
         anamnesis: null,
         createdby_id: this.userProfile.doctor_id,
       };
       this.createNewPatient(data);
-      this.resetForm()
+      this.resetForm();
     },
     capitalizeString(str) {
       return str[0].toUpperCase() + str.slice(1);
@@ -201,7 +201,7 @@ export default {
       this.newPatient.surname = "";
       this.newPatient.middleName = "";
       this.phoneModel = "";
-    }
+    },
   },
 };
 </script>

@@ -1,6 +1,6 @@
 import { axios, api } from "./../../config";
 import router from "./../../router/index";
-import _ from 'lodash'
+import _ from "lodash";
 
 const state = {
   authStatus: false,
@@ -16,25 +16,25 @@ const mutations = {
   },
   SET_DOCTOR_PROFILE(state, payload) {
     try {
-      const info = JSON.parse(payload.info)
-      if (!payload.info) throw Error
-      payload.info = info
-    } catch(err) {
-      payload.info = {}
-      payload.info.serviceLanguages = []
-      payload.info.qualification = ''
+      const info = JSON.parse(payload.info);
+      if (!payload.info) throw Error;
+      payload.info = info;
+    } catch (err) {
+      payload.info = {};
+      payload.info.serviceLanguages = [];
+      payload.info.qualification = "";
 
       // first fellow student
-      payload.info.fellowStudent1 = {}
-      payload.info.fellowStudent1.name = ''
-      payload.info.fellowStudent1.surname = ''
-      payload.info.fellowStudent1.socialLink = ''
+      payload.info.fellowStudent1 = {};
+      payload.info.fellowStudent1.name = "";
+      payload.info.fellowStudent1.surname = "";
+      payload.info.fellowStudent1.socialLink = "";
 
       // second fellow student
-      payload.info.fellowStudent2 = {}
-      payload.info.fellowStudent2.name = ''
-      payload.info.fellowStudent2.surname = ''
-      payload.info.fellowStudent2.socialLink = ''
+      payload.info.fellowStudent2 = {};
+      payload.info.fellowStudent2.name = "";
+      payload.info.fellowStudent2.surname = "";
+      payload.info.fellowStudent2.socialLink = "";
     }
     state.doctorProfile = payload;
   },
@@ -73,38 +73,41 @@ const mutations = {
     state.doctorProfile.years_of_education = payload;
   },
   SET_SERVICE_LANGUAGES(state, payload) {
-    state.doctorProfile.info.serviceLanguages = payload
+    state.doctorProfile.info.serviceLanguages = payload;
   },
   SET_FELLOW_STUDENT(state, payload) {
     if (payload.id === 1) {
-      state.doctorProfile.info.fellowStudent1 = payload.value
-      return
+      state.doctorProfile.info.fellowStudent1 = payload.value;
+      return;
     }
-    state.doctorProfile.info.fellowStudent2 = payload.value
+    state.doctorProfile.info.fellowStudent2 = payload.value;
   },
-  SET_FELLOW_STUDENT_NAME(state, payload){
+  SET_FELLOW_STUDENT_NAME(state, payload) {
     if (payload.id === 1) {
-      state.doctorProfile.info.fellowStudent1.name = payload.value
-      return
+      state.doctorProfile.info.fellowStudent1.name = payload.value;
+      return;
     }
-    state.doctorProfile.info.fellowStudent2.name = payload.value
+    state.doctorProfile.info.fellowStudent2.name = payload.value;
   },
-  SET_FELLOW_STUDENT_SURNAME(state, payload){
+  SET_FELLOW_STUDENT_SURNAME(state, payload) {
     if (payload.id === 1) {
-      state.doctorProfile.info.fellowStudent1.surname = payload.value
-      return
+      state.doctorProfile.info.fellowStudent1.surname = payload.value;
+      return;
     }
-    state.doctorProfile.info.fellowStudent2.surname = payload.value
+    state.doctorProfile.info.fellowStudent2.surname = payload.value;
   },
-  SET_FELLOW_STUDENT_SOCIAL_LINK(state, payload){
+  SET_FELLOW_STUDENT_SOCIAL_LINK(state, payload) {
     if (payload.id === 1) {
-      state.doctorProfile.info.fellowStudent1.socialLink = payload.value
-      return
+      state.doctorProfile.info.fellowStudent1.socialLink = payload.value;
+      return;
     }
-    state.doctorProfile.info.fellowStudent2.socialLink = payload.value
+    state.doctorProfile.info.fellowStudent2.socialLink = payload.value;
   },
   SET_QUALIFICATION(state, payload) {
-    state.doctorProfile.info.qualification = payload 
+    state.doctorProfile.info.qualification = payload;
+  },
+  SET_DOCTOR_TIME_INTERVAL(state, payload) {
+    state.doctorProfile.time_interval = payload;
   },
 };
 
@@ -117,10 +120,10 @@ const actions = {
             login: data.user.login,
             password: data.user.password,
           }).then(async () => {
-            await dispatch('fetchDoctorProfile')
-            commit("SET_DOCTOR_PHONE", data.user.phone)
-            commit("SET_DOCTOR_COUNTRY", data.user.country)
-            commit("SET_DOCTOR_BIRTHDAY", data.doctor.dateOfBirth)
+            await dispatch("fetchDoctorProfile");
+            commit("SET_DOCTOR_PHONE", data.user.phone);
+            commit("SET_DOCTOR_COUNTRY", data.user.country);
+            commit("SET_DOCTOR_BIRTHDAY", data.doctor.dateOfBirth);
             commit(
               "SET_DOCTOR_MEDICAL_UNIVERSITY",
               data.education.medical_university
@@ -138,8 +141,14 @@ const actions = {
             if (data.user.photo) {
               dispatch("uploadDoctorImage", data.user.photo);
             }
-            commit("SET_FELLOW_STUDENT", { id: 1, value: data.education.fellowStudent1 })
-            commit("SET_FELLOW_STUDENT", { id: 2, value: data.education.fellowStudent2 })
+            commit("SET_FELLOW_STUDENT", {
+              id: 1,
+              value: data.education.fellowStudent1,
+            });
+            commit("SET_FELLOW_STUDENT", {
+              id: 2,
+              value: data.education.fellowStudent2,
+            });
           });
         });
       }
@@ -157,33 +166,35 @@ const actions = {
     });
   },
   login({ commit, dispatch, rootState }, { login, password }) {
-    return axios.post(api.doctorLogin, { login, password }).then(async (res) => {
-      if (res.data.status === "error" || res.data.data.profile.role !== 100) {
-        dispatch(
-          "alerts/addAlert",
-          {
-            type: "error",
-            text: rootState.lang.common["Credentials error"]
-            ? rootState.lang.common["Credentials error"]
-            : "Credentials error",
-          },
-          { root: true }
+    return axios
+      .post(api.doctorLogin, { login, password })
+      .then(async (res) => {
+        if (res.data.status === "error" || res.data.data.profile.role !== 100) {
+          dispatch(
+            "alerts/addAlert",
+            {
+              type: "error",
+              text: rootState.lang.common["Credentials error"]
+                ? rootState.lang.common["Credentials error"]
+                : "Credentials error",
+            },
+            { root: true }
+          );
+          return;
+        }
+        commit("SET_AUTH_STATUS", true);
+        window.localStorage.setItem(
+          "neomedy",
+          JSON.stringify({
+            login: res.data.data.profile.login,
+            token: res.data.data.token,
+          })
         );
-        return;
-      }
-      commit("SET_AUTH_STATUS", true);
-      window.localStorage.setItem(
-        "neomedy",
-        JSON.stringify({
-          login: res.data.data.profile.login,
-          token: res.data.data.token,
-        })
-      );
-      axios.defaults.headers.common.Authorization = res.data.data.token;
-      dispatch("fetchUserProfile");
-      dispatch("fetchDoctorProfile")
-      router.push({ name: "Dashboard" });
-    });
+        axios.defaults.headers.common.Authorization = res.data.data.token;
+        dispatch("fetchUserProfile");
+        dispatch("fetchDoctorProfile");
+        router.push({ name: "Dashboard" });
+      });
   },
   confirmLogin({ commit, dispatch }, login) {
     return axios
@@ -215,7 +226,7 @@ const actions = {
   },
   fetchDoctorProfile({ commit }) {
     return axios.get(api.getDoctorProfile).then((res) => {
-        commit("SET_DOCTOR_PROFILE", res.data.data);
+      commit("SET_DOCTOR_PROFILE", res.data.data);
     });
   },
   logout({ commit }) {
@@ -237,13 +248,11 @@ const actions = {
   },
   updateDoctorProfile({ commit, state }) {
     console.log("saving...");
-    const profile = _.cloneDeep(state.doctorProfile)
-    profile.info = JSON.stringify(profile.info)
-    return axios
-      .post(api.postDoctorProfile, profile)
-      .then((res) => {
-        console.log("saved");
-      });
+    const profile = _.cloneDeep(state.doctorProfile);
+    profile.info = JSON.stringify(profile.info);
+    return axios.post(api.postDoctorProfile, profile).then((res) => {
+      console.log("saved");
+    });
   },
   uploadDoctorImage({ dispatch, commit }, data) {
     return axios.post(api.postImage, data).then((res) => {

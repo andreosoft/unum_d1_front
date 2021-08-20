@@ -143,6 +143,15 @@
               :label="getCommonTranslation('Years of education')"
             ></v-text-field>
           </div>
+          <v-text-field
+            v-model="getSetVisitDuration"
+            hide-details
+            outlined
+            dense
+            class="mb-2"
+            type="number"
+            :label="getDoctorTranslation('Visit duration')"
+          ></v-text-field>
           <v-select
             v-model="getSetLanguages"
             persistent-hint
@@ -214,7 +223,7 @@
             dense
             no-resize
             outlined
-            :label="getDoctorTranslation('Qualification')"
+            :label="getCommonTranslation('Qualification')"
           ></v-textarea>
         </v-col>
       </v-row>
@@ -494,6 +503,14 @@ export default {
         this.SET_FELLOW_STUDENT_SOCIAL_LINK({ id: 2, value });
       },
     },
+    getSetVisitDuration: {
+      get() {
+        return this.doctorProfile && this.doctorProfile.time_interval;
+      },
+      set(val) {
+        this.SET_DOCTOR_TIME_INTERVAL(val);
+      },
+    },
   },
   methods: {
     ...mapActions(["updateDoctorProfile", "uploadDoctorImage"]),
@@ -515,6 +532,7 @@ export default {
       "SET_FELLOW_STUDENT_NAME",
       "SET_FELLOW_STUDENT_SURNAME",
       "SET_FELLOW_STUDENT_SOCIAL_LINK",
+      "SET_DOCTOR_TIME_INTERVAL",
     ]),
     photoAddHandle(e) {
       this.profileData.selectedPhoto = e;

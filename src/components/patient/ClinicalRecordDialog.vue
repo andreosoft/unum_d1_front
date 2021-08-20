@@ -63,7 +63,7 @@
               v-model="clinicalRecord.recomendations"
             ></v-textarea>
           </div>
-          <input type="file" @change="onChange" ref="file" />
+          <input type="file" @change="onChange" ref="file" multiple />
           <v-radio-group v-model="clinicalRecord.type_id">
             <v-radio
               v-for="i in 2"
@@ -111,7 +111,8 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-// import { axios, api } from "./../../config/index";
+import dayjs from "dayjs";
+import { axios, api } from "./../../config";
 const { mapState, mapActions } = createNamespacedHelpers("patients");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 
@@ -169,11 +170,29 @@ export default {
         diagnos: this.clinicalRecord.diagnos,
         description: this.clinicalRecord.description,
         recomendations: this.clinicalRecord.recomendations,
+        createdAt: dayjs(),
       };
       if (this.attachedFile) {
-        const fileId = await this.uploadFile(this.attachedFile);
-        clinicalRecordData.file = fileId;
+        const filesArray = [];
+        for (let i = 0; i < this.attachedFile.length; i++) {
+          const file = await this.uploadFile(this.attachedFile[i]);
+          filesArray.push(file);
+        }
+        clinicalRecordData.files = filesArray;
       }
+
+      /**
+       * if (есть файлы) {
+       *    массив из ID = []
+       *    файлы.map(файл => {
+       *      const file = загрузить файл(файл)
+       *      добавить fileId в массив из ID -> массив из ID.push(file)
+       *    })
+       *
+       *    clinicalRecordData.file = массив из ID
+       * }
+       */
+
       if (this.clinicalRecord.type_id === 2) {
         clinicalRecordData.initialVisitId = this.clinicalRecord.initialVisitId;
       }
@@ -198,17 +217,7 @@ export default {
       this.attachedFile = null;
     },
     onChange() {
-      const file = this.$refs.file.files[0];
-      const fileNameReversed = this.reverseString(file.name);
-      const fileExtension = this.reverseString(fileNameReversed.split(".")[0]);
-      const formData = new FormData();
-      if (fileExtension === "docx") {
-        formData.append("file", file, `document.${fileExtension}`);
-        this.attachedFile = formData;
-        return;
-      }
-      formData.append("file", file);
-      this.attachedFile = formData;
+      this.attachedFile = this.$refs.file.files;
     },
     reverseString(string) {
       const reversedString = string

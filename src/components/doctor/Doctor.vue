@@ -11,14 +11,19 @@
           :firstName="getFirstName"
           :lastName="getLastName"
           :middleName="getMiddleName"
+          :email="getEmail"
+          :phone="getPhone"
           :doctorSpecialty="selectedDoctor && selectedDoctor.medical_specialty"
         />
       </v-col>
       <v-divider vertical></v-divider>
       <v-col :cols="$vuetify.breakpoint.mdAndUp ? 9 : 12">
         <DoctorInfo
+          :fullName="getFullName"
           :firstName="getFirstName"
           :lastName="getLastName"
+          :qualification="getQualification"
+          :yearsOfEducation="getYearsOfEducation"
           :country="selectedDoctor && selectedDoctor.country"
           :doctorSpecialty="selectedDoctor && selectedDoctor.medical_specialty"
           :doctorUniversity="
@@ -73,6 +78,25 @@ export default {
     },
     getMiddleName() {
       return this.selectedDoctor && this.selectedDoctor.name.split(" ")[2];
+    },
+    getFullName() {
+      return this.selectedDoctor && this.selectedDoctor.name;
+    },
+    getPhone() {
+      return this.selectedDoctor && this.selectedDoctor.phone;
+    },
+    getEmail() {
+      return this.selectedDoctor && this.selectedDoctor.email;
+    },
+    getQualification() {
+      return (
+        this.selectedDoctor &&
+        JSON.parse(this.selectedDoctor.info).qualification &&
+        JSON.parse(this.selectedDoctor.info).qualification
+      );
+    },
+    getYearsOfEducation() {
+      return this.selectedDoctor && this.selectedDoctor.years_of_education;
     },
   },
   methods: {

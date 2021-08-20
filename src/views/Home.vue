@@ -10,7 +10,7 @@
     <v-divider></v-divider>
     <div v-if="events.length">
       <h2 class="mx-3">{{ getDoctorTranslation("My events") }}</h2>
-      <Events :events="events" />
+      <Events :events="getAppointments" />
     </div>
     <div v-else>
       <h2 class="mx-3">{{ getDoctorTranslation("No events yet") }}</h2>
@@ -25,7 +25,10 @@ import PatientsCardList from "./../components/patient/PatientCardList.vue";
 import Events from "./../components/Events.vue";
 import dayjs from "dayjs";
 
-const { mapState: State_events } = createNamespacedHelpers("events");
+const {
+  mapState: State_events,
+  mapGetters: Getters_events,
+} = createNamespacedHelpers("events");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 export default {
   name: "Home",
@@ -47,6 +50,7 @@ export default {
   computed: {
     ...mapState(["patients"]),
     ...State_events(["events"]),
+    ...Getters_events(["getAppointments"]),
     ...Getters_lang(["getDoctorTranslation"]),
   },
 };

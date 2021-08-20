@@ -45,7 +45,7 @@
           ref="calendar"
           v-model="focus"
           color="primary"
-          :events="events"
+          :events="getAppointments"
           :event-color="getEventColor"
           :event-ripple="false"
           :type="type"
@@ -77,18 +77,35 @@
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </v-fab-transition>
+
+      <!-- выбор действия при нажатии на день -->
+      <v-dialog v-model="chooseAction" :max-width="500">
+        <v-card class="mx-auto d-flex justify-content-center">
+          <v-card-actions>
+            <v-btn @click="showEventForm = true">{{
+              getDoctorTranslation("Create event")
+            }}</v-btn>
+            <v-btn @click="visitTimeGap = true">{{
+              getDoctorTranslation("Set working time")
+            }}</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!-- создание события -->
       <v-dialog v-model="showEventForm" :max-width="600">
         <v-card>
           <v-card-title>
             {{ getCommonTranslation("New event") }}
           </v-card-title>
           <v-card-text>
-            <v-text-field
-              v-model="eventName"
-              :label="getCommonTranslation('Event name')"
-              :solo="editingEvent"
-              hide-details
-            ></v-text-field>
+            <v-select
+              :items="patients"
+              v-model="selectedPatient"
+              item-text="name"
+              item-value="id"
+              :label="getDoctorTranslation('Patients')"
+              @change="onSelectedPatientChange"
+            ></v-select>
             <v-input
               class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
             >
@@ -134,26 +151,14 @@
                 <ColorPicker @change="onColorChange" />
               </template>
             </v-input>
-            <v-select
-              :items="patients"
-              v-model="selectedPatient"
-              item-text="name"
-              item-value="id"
-              :label="getDoctorTranslation('Patients')"
-              @change="onSelectedPatientChange"
-            ></v-select>
-            <v-radio-group v-model="eventType">
-              <v-radio
-                v-for="i in 2"
-                :key="i"
-                :label="
-                  i === 1
-                    ? getCommonTranslation('Initial visit')
-                    : getCommonTranslation('Secondary visit')
-                "
-                :value="i"
-              ></v-radio>
-            </v-radio-group>
+            <v-text-field
+              :label="getCommonTranslation('Doctor specialty')"
+              :value="getDoctorSpecialty"
+              outlined
+              readonly
+              dense
+              hide-details
+            ></v-text-field>
           </v-card-text>
           <v-card-actions>
             <v-btn text color="blue darken-1" @click="showEventForm = false">
@@ -163,6 +168,55 @@
               editingEvent
                 ? getCommonTranslation("Edit")
                 : getCommonTranslation("Create")
+            }}</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!-- создание диапазона посещений -->
+      <v-dialog v-model="visitTimeGap" width="350">
+        <v-card v-if="visitTimeGap" class="pa-3">
+          <v-card-title class="pa-0">
+            {{ getDoctorTranslation("Working time on") }}&nbsp;
+            <span style="white-space: nowrap;">{{ getStartDate }}</span>
+          </v-card-title>
+          <v-card-text class="pa-0">
+            <v-input
+              class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
+            >
+              <template v-slot:default>
+                <v-label :value="true" :absolute="true">
+                  {{ getCommonTranslation("Start") }}
+                </v-label>
+                <TimePicker
+                  :padding="false"
+                  @change="visitStartTimeChange"
+                  :timeProps="visitingStartTime"
+                />
+              </template>
+            </v-input>
+          </v-card-text>
+          <v-card-text class="pa-0">
+            <v-input
+              class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
+            >
+              <template v-slot:default>
+                <v-label :value="true" :absolute="true">
+                  {{ getCommonTranslation("End") }}
+                </v-label>
+                <TimePicker
+                  :padding="false"
+                  @change="visitEndTimeChange"
+                  :timeProps="visitingEndTime"
+                />
+              </template>
+            </v-input>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="visitTimeGap = false">{{
+              getCommonTranslation("Close")
+            }}</v-btn>
+            <v-btn @click="saveVisitTimeGap">{{
+              getCommonTranslation("Save")
             }}</v-btn>
           </v-card-actions>
         </v-card>
@@ -207,9 +261,11 @@
 <script>
 import { createNamespacedHelpers } from "vuex";
 import dayjs from "dayjs";
-const { mapState, mapActions } = createNamespacedHelpers("events");
+const { mapState, mapGetters, mapActions } = createNamespacedHelpers("events");
 const { mapState: State_patients } = createNamespacedHelpers("patients");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
+const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
+const { mapState: State_auth } = createNamespacedHelpers("auth");
 import DatePicker from "./../components/schedule/DatePicker";
 import TimePicker from "./../components/schedule/TimePicker";
 import ColorPicker from "./../components/schedule/ColorPicker";
@@ -224,7 +280,9 @@ export default {
   data() {
     return {
       eventName: "",
+      chooseAction: false,
       showEventForm: false,
+      visitTimeGap: false,
       eventMenu: false,
       x: 0,
       y: 0,
@@ -245,14 +303,17 @@ export default {
       startTime: new Date().toISOString().substr(11, 5),
       endTime: new Date().toISOString().substr(11, 5),
       editingEvent: false,
-      eventType: 1,
       selectedPatient: null,
       currentDate: dayjs().format("YYYY-MM-DD"),
+      visitingStartTime: "10:00",
+      visitingEndTime: "11:00",
     };
   },
   computed: {
     ...mapState(["events"]),
+    ...mapGetters(["getAppointments"]),
     ...State_patients(["patients"]),
+    ...State_auth(["doctorProfile"]),
     ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
     selectedDate() {
       return this.date;
@@ -279,6 +340,9 @@ export default {
         });
       return names;
     },
+    getDoctorSpecialty() {
+      return this.doctorProfile && this.doctorProfile.medical_specialty;
+    },
   },
   watch: {
     showEventForm(val) {
@@ -296,6 +360,7 @@ export default {
   },
   methods: {
     ...mapActions(["createEvent", "fetchEvents", "deleteEvent"]),
+    ...Actions_alerts(["addAlert"]),
     intervalFormat(interval) {
       return interval.time;
     },
@@ -328,7 +393,7 @@ export default {
       //
       this.startTime = getFormattedStartTime;
       this.endTime = getFormattedEndTime;
-      this.showEventForm = true;
+      this.chooseAction = true;
     },
     async deleteEventHandler() {
       await this.deleteEvent(this.eventDefaultData.id);
@@ -400,8 +465,8 @@ export default {
         name: this.eventName,
         start: this.eventDefaultData.start,
         end: this.eventDefaultData.end,
-        type_id: this.eventType,
         patient_id: this.eventDefaultData.patient_id,
+        type_id: 1,
       };
       if (!this.selectedPatient) {
         alert("couldnt create appointment. Choose a patient");
@@ -414,6 +479,7 @@ export default {
       this.fetchEvents(this.eventsDate);
       this.eventName = "";
       this.showEventForm = false;
+      this.chooseAction = false;
       this.eventDefaultData.color = "";
     },
     // onChange
@@ -434,6 +500,30 @@ export default {
     },
     onSelectedPatientChange(patientId) {
       this.eventDefaultData.patient_id = patientId;
+      const patient = this.patients.find((p) => p.id === patientId);
+      this.eventName = patient.name;
+    },
+    visitStartTimeChange(time) {
+      this.visitingStartTime = time;
+    },
+    visitEndTimeChange(time) {
+      this.visitingEndTime = time;
+    },
+    async saveVisitTimeGap() {
+      const payload = {
+        name: "Прием пациентов",
+        start: `${this.getStartDate} ${this.visitingStartTime}:00`,
+        end: `${this.getStartDate} ${this.visitingEndTime}:00`,
+        type_id: "2",
+      };
+      this.showEventForm = false;
+      this.visitTimeGap = false;
+      this.chooseAction = false;
+      await this.createEvent(payload);
+      this.addAlert({
+        type: "success",
+        text: this.getDoctorTranslation("Working time set"),
+      });
     },
   },
 };
