@@ -98,12 +98,6 @@
             {{ getCommonTranslation("New event") }}
           </v-card-title>
           <v-card-text>
-            <!-- <v-text-field
-              v-model="eventName"
-              :label="getCommonTranslation('Event name')"
-              :solo="editingEvent"
-              hide-details
-            ></v-text-field> -->
             <v-select
               :items="patients"
               v-model="selectedPatient"
@@ -157,6 +151,14 @@
                 <ColorPicker @change="onColorChange" />
               </template>
             </v-input>
+            <v-text-field
+              :label="getDoctorTranslation('Medical specialty')"
+              :value="getDoctorSpecialty"
+              outlined
+              readonly
+              dense
+              hide-details
+            ></v-text-field>
           </v-card-text>
           <v-card-actions>
             <v-btn text color="blue darken-1" @click="showEventForm = false">
@@ -263,6 +265,7 @@ const { mapState, mapGetters, mapActions } = createNamespacedHelpers("events");
 const { mapState: State_patients } = createNamespacedHelpers("patients");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
+const { mapState: State_auth } = createNamespacedHelpers("auth");
 import DatePicker from "./../components/schedule/DatePicker";
 import TimePicker from "./../components/schedule/TimePicker";
 import ColorPicker from "./../components/schedule/ColorPicker";
@@ -310,6 +313,7 @@ export default {
     ...mapState(["events"]),
     ...mapGetters(["getAppointments"]),
     ...State_patients(["patients"]),
+    ...State_auth(["doctorProfile"]),
     ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
     selectedDate() {
       return this.date;
@@ -335,6 +339,9 @@ export default {
           }
         });
       return names;
+    },
+    getDoctorSpecialty() {
+      return this.doctorProfile && this.doctorProfile.medical_specialty;
     },
   },
   watch: {
@@ -497,11 +504,9 @@ export default {
     },
     visitStartTimeChange(time) {
       this.visitingStartTime = time;
-      console.log({ time: this.visitingStartTime });
     },
     visitEndTimeChange(time) {
       this.visitingEndTime = time;
-      console.log({ time: this.visitingEndTime });
     },
     async saveVisitTimeGap() {
       const payload = {

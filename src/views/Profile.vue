@@ -544,9 +544,6 @@ export default {
       this.uploadDoctorImage(formData);
     },
   },
-  mounted() {
-    console.log();
-  },
 };
 </script>
 

@@ -218,19 +218,6 @@ export default {
     },
     onChange() {
       this.attachedFile = this.$refs.file.files;
-      // for (let i = 0; i < this.attachedFile.length; i++) {
-      //   console.log(this.attachedFile[i]);
-      // }
-      // const fileNameReversed = this.reverseString(file.name);
-      // const fileExtension = this.reverseString(fileNameReversed.split(".")[0]);
-      // const formData = new FormData();
-      // if (fileExtension === "docx") {
-      //   formData.append("file", file, `document.${fileExtension}`);
-      //   this.attachedFile = formData;
-      //   return;
-      // }
-      // formData.append("file", file);
-      // this.attachedFile = formData;
     },
     reverseString(string) {
       const reversedString = string

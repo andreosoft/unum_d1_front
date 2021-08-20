@@ -184,7 +184,7 @@
                           v-for="(file, index) in JSON.parse(selectedVisit.data)
                             .files"
                           :key="index"
-                          class="pa-0"
+                          class="pa-0 d-flex justify-content-between"
                         >
                           <a :href="download(file.file)" target="_blank">
                             {{ getCommonTranslation("Download attached file") }}
