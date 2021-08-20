@@ -152,7 +152,7 @@
               </template>
             </v-input>
             <v-text-field
-              :label="getDoctorTranslation('Medical specialty')"
+              :label="getCommonTranslation('Doctor specialty')"
               :value="getDoctorSpecialty"
               outlined
               readonly
@@ -466,6 +466,7 @@ export default {
         start: this.eventDefaultData.start,
         end: this.eventDefaultData.end,
         patient_id: this.eventDefaultData.patient_id,
+        type_id: 1,
       };
       if (!this.selectedPatient) {
         alert("couldnt create appointment. Choose a patient");

@@ -23,19 +23,6 @@ const actions = {
       events.map((event) => {
         event.color ? "" : (event.color = "#CC0000");
         event.name ? "" : (event.name = event.patient);
-        // rootState.patients.patients.map((patient) => {
-        //   if (event.patient_id && event.patient_id !== patient.id) {
-        //     console.log(event.patient);
-        //     dispatch('patients/createNewPatient', {
-        //       name: event.patient,
-        //       birthday: null,
-        //       inn: null,
-        //       doc_soc: null,
-        //       doc_pass: null,
-        //       phones: event
-        //     })
-        //   }
-        // });
       });
       commit("SET_EVENTS", res.data.data);
     });
