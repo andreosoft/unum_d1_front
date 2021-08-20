@@ -28,9 +28,11 @@ export default {
   position: fixed;
   right: 10px;
   bottom: 0;
+  z-index: 99999;
 }
 </style>
 <style lang="scss">
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:wght@500;600&display=swap");
 .justify-content-between {
   justify-content: space-between;
 }

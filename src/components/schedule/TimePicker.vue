@@ -1,5 +1,5 @@
 <template>
-  <div class="d-inline-block pl-5">
+  <div class="d-inline-block" :class="{ 'pl-5': padding }">
     <v-icon>mdi-clock</v-icon>
     <div class="d-inline-block">
       <v-dialog ref="dialog" v-model="showPicker" persistent width="290px">
@@ -10,7 +10,12 @@
             </div>
           </slot>
         </template>
-        <v-time-picker v-if="showPicker" v-model="time" full-width>
+        <v-time-picker
+          v-if="showPicker"
+          v-model="time"
+          full-width
+          format="24hr"
+        >
           <v-spacer></v-spacer>
           <v-btn text color="blue darken-1" @click="showPicker = false">
             {{ getCommonTranslation("Cancel") }}
@@ -33,6 +38,10 @@ export default {
     timeProps: {
       type: String,
       default: "",
+    },
+    padding: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {

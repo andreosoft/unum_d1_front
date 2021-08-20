@@ -134,39 +134,64 @@
                     :max-width="600"
                   >
                     <v-card class="pa-4">
-                      <v-card-title class="pa-0"
-                        >{{ getCommonTranslation("Therapist") }} -
-                        {{
-                          getDoctorName(selectedVisit.doctor_id)
-                        }}</v-card-title
+                      <v-card-title class="pa-0">
+                        {{ getCommonTranslation("Therapist") }} -&nbsp;
+                        <span>
+                          {{ getDoctorName(selectedVisit.doctor_id) }}
+                        </span>
+                      </v-card-title>
+                      <v-card-title class="pa-0">
+                        {{ getCommonTranslation("Therapist specialty") }}
+                        -&nbsp;
+                        <span>
+                          {{ getDoctorSpecialty(selectedVisit.doctor_id) }}
+                        </span>
+                      </v-card-title>
+                      <v-card-title
+                        v-show="selectedVisitCreatedDate"
+                        class="pa-0"
                       >
-                      <v-card-title class="pa-0"
-                        >{{ getCommonTranslation("Diagnosis") }} -
-                        {{ selectedVisitDiagonsis }}
+                        {{ getCommonTranslation("Created date") }} -&nbsp;
+                        <span>
+                          {{ selectedVisitCreatedDate }}
+                        </span>
+                      </v-card-title>
+                      <v-card-title class="pa-0">
+                        {{ getCommonTranslation("Diagnosis") }} -&nbsp;
+                        <span>{{ selectedVisitDiagonsis }}</span>
                       </v-card-title>
                       <v-card-title
                         v-show="selectedVisitDescription.length"
                         class="pa-0"
-                        >{{ getCommonTranslation("Description") }} -
-                        {{ selectedVisitDescription }}
+                      >
+                        {{ getCommonTranslation("Description") }} -&nbsp;
+                        <span>{{ selectedVisitDescription }}</span>
                       </v-card-title>
                       <v-card-title
                         v-show="selectedVisitRecommnedations.length"
                         class="pa-0"
-                        >{{ getCommonTranslation("Recommendations") }} -
-                        {{ selectedVisitRecommnedations }}
-                      </v-card-title>
-                      <v-card-actions
-                        v-if="JSON.parse(selectedVisit.data).file"
-                        class="pa-0"
                       >
-                        <a
-                          :href="download(JSON.parse(selectedVisit.data).file)"
-                          target="_blank"
+                        {{ getCommonTranslation("Recommendations") }} -&nbsp;
+                        <span>{{ selectedVisitRecommnedations }}</span>
+                      </v-card-title>
+                      <div
+                        v-if="
+                          JSON.parse(selectedVisit.data).files &&
+                            JSON.parse(selectedVisit.data).files.length
+                        "
+                      >
+                        <v-card-actions
+                          v-for="(file, index) in JSON.parse(selectedVisit.data)
+                            .files"
+                          :key="index"
+                          class="pa-0"
                         >
-                          {{ getCommonTranslation("Download attached file") }}
-                        </a>
-                      </v-card-actions>
+                          <a :href="download(file.file)" target="_blank">
+                            {{ getCommonTranslation("Download attached file") }}
+                          </a>
+                          {{ file.name }}
+                        </v-card-actions>
+                      </div>
                     </v-card>
                   </v-dialog>
                 </div>
@@ -190,7 +215,6 @@
             </v-row>
           </v-container>
         </v-card>
-        <v-card></v-card>
       </v-col>
       <v-speed-dial
         v-model="fab"
@@ -264,6 +288,7 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
+import dayjs from "dayjs";
 import { api } from "./../../config/index";
 
 import AnamnesisDialog from "./AnamnesisDialog.vue";
@@ -337,7 +362,7 @@ export default {
   },
   computed: {
     ...mapState(["selectedPatient", "selectedPatientClinicalRecords"]),
-    ...Getters_doctors(["getDoctorName"]),
+    ...Getters_doctors(["getDoctorName", "getDoctorSpecialty"]),
     ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
     getActiveLink() {
       const activeTab = this.patientLinks.find((link) => link.active);
@@ -396,6 +421,15 @@ export default {
     selectedVisitRecommnedations() {
       return (
         this.selectedVisit && JSON.parse(this.selectedVisit.data).recomendations
+      );
+    },
+    selectedVisitCreatedDate() {
+      return (
+        this.selectedVisit &&
+        JSON.parse(this.selectedVisit.data).createdAt &&
+        dayjs(JSON.parse(this.selectedVisit.data).createdAt).format(
+          "YYYY-DD-MM"
+        )
       );
     },
   },
@@ -489,6 +523,11 @@ export default {
 .v-expansion-panel-header {
   span {
     text-decoration: underline;
+  }
+}
+.v-card__title {
+  span {
+    font-weight: normal;
   }
 }
 .record__card {

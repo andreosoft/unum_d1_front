@@ -1,13 +1,12 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import auth from './modules/auth'
-import patients from './modules/patients'
-import doctors from './modules/doctors'
-import lang from './modules/lang'
-import events from './modules/events'
-import alerts from './modules/alerts'
-import debounce from 'lodash/debounce'
-
+import Vue from "vue";
+import Vuex from "vuex";
+import auth from "./modules/auth";
+import patients from "./modules/patients";
+import doctors from "./modules/doctors";
+import lang from "./modules/lang";
+import events from "./modules/events";
+import alerts from "./modules/alerts";
+import debounce from "lodash/debounce";
 
 const updateDoctorProfileOn = [
   "SET_DOCTOR_NAME",
@@ -27,10 +26,10 @@ const updateDoctorProfileOn = [
   "SET_FELLOW_STUDENT_NAME",
   "SET_FELLOW_STUDENT_SURNAME",
   "SET_FELLOW_STUDENT_SOCIAL_LINK",
+  "SET_DOCTOR_TIME_INTERVAL",
 ];
 
-
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 const store = new Vuex.Store({
   modules: {
@@ -39,20 +38,20 @@ const store = new Vuex.Store({
     doctors,
     lang,
     events,
-    alerts
-  }
-})
+    alerts,
+  },
+});
 
 const autosaveProgram = debounce(
-  () => store.dispatch('auth/updateDoctorProfile'),
+  () => store.dispatch("auth/updateDoctorProfile"),
   1000,
   { maxWait: 4000 }
-)
+);
 
 store.subscribe((mutation) => {
-  if (updateDoctorProfileOn.indexOf(mutation.type.split('/')[1]) > -1) {
-    autosaveProgram()
+  if (updateDoctorProfileOn.indexOf(mutation.type.split("/")[1]) > -1) {
+    autosaveProgram();
   }
 });
 
-export default store
+export default store;

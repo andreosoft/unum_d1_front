@@ -37,13 +37,14 @@
 
       <v-divider></v-divider>
 
-      <v-list class="py-5">
+      <v-list class="py-5 nav-links__list">
         <v-list-item
           v-for="(link, index) in navLinks"
           :key="index"
           link
           :to="{ name: link.name }"
           exact
+          class="nav-links__item"
         >
           <v-list-item-icon>
             <v-icon>{{ link.icon }}</v-icon>
@@ -166,11 +167,20 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .main-layout {
   height: 100%;
 }
 .v-list-item__title {
   white-space: normal;
+}
+.nav-links__item {
+  .v-list-item__title {
+    font-size: 1.2rem;
+    // font-family: Exo 2;
+  }
+}
+.v-list-item__subtitle {
+  font-weight: 300;
 }
 </style>

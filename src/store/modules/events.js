@@ -3,6 +3,13 @@ import { axios, api } from "./../../config/index";
 const state = {
   events: [],
 };
+
+const getters = {
+  getAppointments(state) {
+    return state.events.filter((event) => event.type_id === 1);
+  },
+};
+
 const mutations = {
   SET_EVENTS(state, payload) {
     state.events = payload;
@@ -10,14 +17,33 @@ const mutations = {
 };
 
 const actions = {
-  fetchEvents({ commit }, { start, end }) {
+  fetchEvents({ commit, rootState, dispatch }, { start, end }) {
     return axios.get(api.schedule, { params: { start, end } }).then((res) => {
+      const events = res.data.data;
+      events.map((event) => {
+        event.color ? "" : (event.color = "#CC0000");
+        event.name ? "" : (event.name = event.patient);
+        // rootState.patients.patients.map((patient) => {
+        //   if (event.patient_id && event.patient_id !== patient.id) {
+        //     console.log(event.patient);
+        //     dispatch('patients/createNewPatient', {
+        //       name: event.patient,
+        //       birthday: null,
+        //       inn: null,
+        //       doc_soc: null,
+        //       doc_pass: null,
+        //       phones: event
+        //     })
+        //   }
+        // });
+      });
       commit("SET_EVENTS", res.data.data);
     });
   },
   createEvent({ commit }, data) {
     return axios.post(api.addDoctorSchedule, data).then((res) => {
       // response handling
+      console.log(res);
     });
   },
   deleteEvent({}, id) {
@@ -37,6 +63,7 @@ const actions = {
 export default {
   namespaced: true,
   state,
+  getters,
   mutations,
   actions,
 };

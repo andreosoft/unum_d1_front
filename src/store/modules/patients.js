@@ -114,9 +114,18 @@ const actions = {
       });
   },
   uploadFile({ commit }, file) {
-    return axios.post(api.postFile, file).then((res) => {
-      return res.data.data.file;
-    });
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("name", file.name);
+    return axios
+      .post(api.postFile, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => {
+        return res.data.data;
+      });
   },
   requestPatientCardAccess({ dispatch, rootState }, email) {
     return axios
