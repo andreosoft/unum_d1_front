@@ -101,6 +101,14 @@
               :label="getDoctorTranslation('Medical specialty')"
             ></v-text-field>
             <v-text-field
+              v-model="getSetDoctorSpecialty"
+              hide-details
+              outlined
+              dense
+              class="mb-2"
+              :label="getDoctorTranslation('Doctor specialty')"
+            ></v-text-field>
+            <v-text-field
               v-model="getSetMedicalUniversity"
               hide-details
               outlined
@@ -367,6 +375,9 @@ export default {
         this.SET_DOCTOR_MEDICAL_SPECIALTY(value);
       },
     },
+    getSetDoctorSpecialty() {
+      return this.doctorProfile && this.doctorProfile.info.doctor_specialty;
+    },
     getSetMedicalUniversity: {
       get() {
         return this.doctorProfile && this.doctorProfile.medical_university;
@@ -543,6 +554,9 @@ export default {
       formData.append("file", this.file);
       this.uploadDoctorImage(formData);
     },
+  },
+  mounted() {
+    console.log(this.doctorProfile);
   },
 };
 </script>

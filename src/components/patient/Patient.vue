@@ -100,7 +100,9 @@
                         class="cursor-pointer records__overlay"
                       ></div>
                       <v-expansion-panel-header
-                        >{{ JSON.parse(record.data).diagnos }}&nbsp;
+                        >{{ JSON.parse(record.data).diagnos }} (
+                        {{ getDoctorSpecialty(record.doctor_id) }}
+                        {{ getDoctorName(record.doctor_id) }})&nbsp;
                         <span
                           v-show="index === panels"
                           @click="showVisitDialog(record)"
