@@ -100,8 +100,10 @@
                         class="cursor-pointer records__overlay"
                       ></div>
                       <v-expansion-panel-header
-                        >{{ JSON.parse(record.data).diagnos }} (
-                        {{ getDoctorSpecialty(record.doctor_id) }}
+                        >{{ JSON.parse(record.data).diagnos }} ({{
+                          record.data | getCreatedDate
+                        }}
+                        - {{ getDoctorSpecialty(record.doctor_id) }}
                         {{ getDoctorName(record.doctor_id) }})&nbsp;
                         <span
                           v-show="index === panels"
@@ -121,7 +123,11 @@
                             <template v-slot="{ hover }">
                               <div :class="{ record__card: hover }">
                                 <v-card-text @click="showVisitDialog(event)">
-                                  {{ JSON.parse(event.data).diagnos }}
+                                  {{ JSON.parse(event.data).diagnos }} ({{
+                                    event.data | getCreatedDate
+                                  }}
+                                  - {{ getDoctorSpecialty(event.doctor_id) }}
+                                  {{ getDoctorName(record.doctor_id) }})
                                 </v-card-text>
                               </div>
                             </template>
@@ -314,25 +320,25 @@ export default {
       panels: null,
       patientLinks: [
         {
-          title: "Анамнез",
+          title: "",
           active: true,
           id: 1,
           disabled: false,
         },
         {
-          title: "История посещений",
+          title: "",
           active: false,
-          id: 3,
+          id: 2,
           disabled: false,
         },
         {
-          title: "Документы",
+          title: "",
           active: false,
-          id: 2,
+          id: 3,
           disabled: true,
         },
         {
-          title: "Загруженные файлы",
+          title: "",
           active: false,
           id: 4,
           disabled: true,
@@ -368,7 +374,7 @@ export default {
     ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
     getActiveLink() {
       const activeTab = this.patientLinks.find((link) => link.active);
-      return activeTab.title;
+      return this.getCommonTranslation(activeTab.title);
     },
     formattedClinicalRecords() {
       const first_appointments = [];
@@ -395,17 +401,17 @@ export default {
     },
     computedPatientLinks() {
       this.patientLinks.map((link) => {
-        switch (link.title) {
-          case "Анамнез":
+        switch (link.id) {
+          case 1:
             link.title = this.getCommonTranslation("Anamnesis");
             break;
-          case "История посещений":
+          case 2:
             link.title = this.getCommonTranslation("Clinical records");
             break;
-          case "Документы":
+          case 3:
             link.title = this.getCommonTranslation("Documents");
             break;
-          case "Загруженные файлы":
+          case 4:
             link.title = this.getCommonTranslation("Uploaded files");
             break;
         }
@@ -433,6 +439,16 @@ export default {
           "YYYY-DD-MM"
         )
       );
+    },
+  },
+  filters: {
+    getCreatedDate(val) {
+      try {
+        const date = JSON.parse(val).createdAt;
+        return dayjs(date).format("DD.MM.YYYY");
+      } catch (err) {
+        return "";
+      }
     },
   },
   methods: {
