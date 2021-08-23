@@ -30,7 +30,7 @@ export default {
       if (!this.getDoctorSpecialty(id).length) {
         return "";
       }
-      return this.getDoctorSpecialty(id).toLowerCase();
+      return this.getDoctorSpecialty(id);
     },
   },
 };
