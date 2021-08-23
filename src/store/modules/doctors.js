@@ -18,8 +18,8 @@ const getters = {
   getDoctorSpecialty: (state) => (doctorId) => {
     const doctor = state.doctors.filter((doc) => doc.id === doctorId);
     try {
-      if (!doctor[0] || !doctor[0].medical_specialty) throw Error;
-      return doctor[0].medical_specialty;
+      if (!doctor[0] || !doctor[0].info.doctor_specialty) throw Error;
+      return doctor[0].info.doctor_specialty.toLowerCase();
     } catch (err) {
       return "";
     }
@@ -40,7 +40,6 @@ const actions = {
   fetchDoctors({ commit }) {
     return axios.get(api.getDoctors).then((res) => {
       commit("SET_DOCTORS", res.data.data);
-      console.log("doctors fetched", res.data.data);
     });
   },
   fetchSelectedDoctor({ commit }, id) {
