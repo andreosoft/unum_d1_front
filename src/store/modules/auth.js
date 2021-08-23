@@ -35,6 +35,7 @@ const mutations = {
       payload.info.fellowStudent2.name = "";
       payload.info.fellowStudent2.surname = "";
       payload.info.fellowStudent2.socialLink = "";
+      payload.info.doctor_specialty = "";
     }
     state.doctorProfile = payload;
   },
@@ -56,6 +57,9 @@ const mutations = {
   },
   SET_DOCTOR_MEDICAL_SPECIALTY(state, payload) {
     state.doctorProfile.medical_specialty = payload;
+  },
+  SET_DOCTOR_DOCTOR_SPECIALTY(state, payload) {
+    state.doctorProfile.info.doctor_specialty = payload;
   },
   SET_DOCTOR_MEDICAL_UNIVERSITY(state, payload) {
     state.doctorProfile.medical_university = payload;
@@ -131,6 +135,10 @@ const actions = {
             commit(
               "SET_DOCTOR_MEDICAL_SPECIALTY",
               data.education.medical_specialty
+            );
+            commit(
+              "SET_DOCTOR_DOCTOR_SPECIALTY",
+              data.education.doctor_specialty
             );
             commit(
               "SET_DOCTOR_YEARS_OF_EDUCATION",

@@ -25,7 +25,7 @@
           :qualification="getQualification"
           :yearsOfEducation="getYearsOfEducation"
           :country="selectedDoctor && selectedDoctor.country"
-          :doctorSpecialty="selectedDoctor && selectedDoctor.medical_specialty"
+          :doctorSpecialty="getDoctorSpecialty"
           :doctorUniversity="
             selectedDoctor && selectedDoctor.medical_university
           "
@@ -97,6 +97,13 @@ export default {
     },
     getYearsOfEducation() {
       return this.selectedDoctor && this.selectedDoctor.years_of_education;
+    },
+    getDoctorSpecialty() {
+      return (
+        this.selectedDoctor &&
+        JSON.parse(this.selectedDoctor.info).doctor_specialty &&
+        JSON.parse(this.selectedDoctor.info).doctor_specialty
+      );
     },
   },
   methods: {
