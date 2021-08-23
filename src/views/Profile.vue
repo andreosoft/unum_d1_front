@@ -375,8 +375,13 @@ export default {
         this.SET_DOCTOR_MEDICAL_SPECIALTY(value);
       },
     },
-    getSetDoctorSpecialty() {
-      return this.doctorProfile && this.doctorProfile.info.doctor_specialty;
+    getSetDoctorSpecialty: {
+      get() {
+        return this.doctorProfile && this.doctorProfile.info.doctor_specialty;
+      },
+      set(val) {
+        return this.SET_DOCTOR_DOCTOR_SPECIALTY(val);
+      },
     },
     getSetMedicalUniversity: {
       get() {
@@ -532,6 +537,7 @@ export default {
       "SET_DOCTOR_EMAIL",
       "SET_DOCTOR_INTERNSHIP",
       "SET_DOCTOR_MEDICAL_SPECIALTY",
+      "SET_DOCTOR_DOCTOR_SPECIALTY",
       "SET_DOCTOR_MEDICAL_UNIVERSITY",
       "SET_DOCTOR_PHONE",
       "SET_DOCTOR_PHOTO",
@@ -554,9 +560,6 @@ export default {
       formData.append("file", this.file);
       this.uploadDoctorImage(formData);
     },
-  },
-  mounted() {
-    console.log(this.doctorProfile);
   },
 };
 </script>
