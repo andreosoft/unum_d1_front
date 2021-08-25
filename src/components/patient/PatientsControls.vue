@@ -30,7 +30,7 @@
         :class="{ 'mb-2 request-access__btn': $vuetify.breakpoint.smAndDown }"
         @click="$emit('openRequestAccessDialog')"
       >
-        {{ getDoctorTranslation("Request access to patient card") }}
+        {{ getDoctorTranslation("Request access") }}
       </v-btn>
       <v-btn @click="$emit('openNewPatientDialog')">
         {{ getDoctorTranslation("New patient") }}
