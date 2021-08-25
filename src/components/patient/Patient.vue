@@ -16,7 +16,7 @@
 
         <v-list class="patient-links__list pa-0">
           <v-list-item
-            v-for="link in computedPatientLinks"
+            v-for="link in patientLinks"
             :key="link.id"
             :ripple="false"
             :dark="link.active"
@@ -60,13 +60,11 @@
         <v-card :elevation="0" rounded="0">
           <v-container>
             <v-row>
-              <v-col
-                v-show="getActiveLink === getCommonTranslation('Anamnesis')"
-              >
+              <v-col v-show="getActiveLink === 1">
                 <h3>
                   {{ getCommonTranslation("Anamnesis") }}
                 </h3>
-                <v-divider class="mb-2"></v-divider>
+                <v-divider class="mt-1 mb-3"></v-divider>
                 <div v-for="(item, index) in anamnesisKeys" :key="index">
                   <AnamnesisSection
                     v-for="(value, key, index) in selectedPatient &&
@@ -77,11 +75,7 @@
                   />
                 </div>
               </v-col>
-              <v-col
-                v-show="
-                  getActiveLink === getCommonTranslation('Clinical records')
-                "
-              >
+              <v-col v-show="getActiveLink === 2">
                 <h3>
                   {{ getCommonTranslation("Clinical records") }}
                 </h3>
@@ -103,7 +97,8 @@
                         >{{ JSON.parse(record.data).diagnos }} ({{
                           record.data | getCreatedDate
                         }}
-                        - {{ getDoctorSpecialty(record.doctor_id) }}
+                        -
+                        {{ getDoctorSpecialty(record.doctor_id).toLowerCase() }}
                         {{ getDoctorName(record.doctor_id) }})&nbsp;
                         <span
                           v-show="index === panels"
@@ -126,7 +121,12 @@
                                   {{ JSON.parse(event.data).diagnos }} ({{
                                     event.data | getCreatedDate
                                   }}
-                                  - {{ getDoctorSpecialty(event.doctor_id) }}
+                                  -
+                                  {{
+                                    getDoctorSpecialty(
+                                      event.doctor_id
+                                    ).toLowerCase()
+                                  }}
                                   {{ getDoctorName(record.doctor_id) }})
                                 </v-card-text>
                               </div>
@@ -139,83 +139,91 @@
                   <v-dialog
                     v-if="selectedVisit"
                     v-model="visitDialog"
-                    :max-width="600"
+                    fullscreen
+                    content-class="clinical-record-view__dialog"
                   >
-                    <v-card class="pa-4">
-                      <v-card-title class="pa-0">
-                        {{ getCommonTranslation("Therapist") }} -&nbsp;
-                        <span>
-                          {{ getDoctorName(selectedVisit.doctor_id) }}
-                        </span>
-                      </v-card-title>
-                      <v-card-title class="pa-0">
-                        {{ getCommonTranslation("Therapist specialty") }}
-                        -&nbsp;
-                        <span>
-                          {{ getDoctorSpecialty(selectedVisit.doctor_id) }}
-                        </span>
-                      </v-card-title>
-                      <v-card-title
-                        v-show="selectedVisitCreatedDate"
-                        class="pa-0"
-                      >
-                        {{ getCommonTranslation("Created date") }} -&nbsp;
-                        <span>
-                          {{ selectedVisitCreatedDate }}
-                        </span>
-                      </v-card-title>
-                      <v-card-title class="pa-0">
-                        {{ getCommonTranslation("Diagnosis") }} -&nbsp;
-                        <span>{{ selectedVisitDiagonsis }}</span>
-                      </v-card-title>
-                      <v-card-title
-                        v-show="selectedVisitDescription.length"
-                        class="pa-0"
-                      >
-                        {{ getCommonTranslation("Description") }} -&nbsp;
-                        <span>{{ selectedVisitDescription }}</span>
-                      </v-card-title>
-                      <v-card-title
-                        v-show="selectedVisitRecommnedations.length"
-                        class="pa-0"
-                      >
-                        {{ getCommonTranslation("Recommendations") }} -&nbsp;
-                        <span>{{ selectedVisitRecommnedations }}</span>
-                      </v-card-title>
-                      <div
-                        v-if="
-                          JSON.parse(selectedVisit.data).files &&
-                            JSON.parse(selectedVisit.data).files.length
-                        "
-                      >
-                        <v-card-actions
-                          v-for="(file, index) in JSON.parse(selectedVisit.data)
-                            .files"
-                          :key="index"
-                          class="pa-0 d-flex justify-content-between"
-                        >
-                          <a :href="download(file.file)" target="_blank">
-                            {{ getCommonTranslation("Download attached file") }}
-                          </a>
-                          {{ file.name }}
-                        </v-card-actions>
-                      </div>
+                    <v-toolbar dark color="primary">
+                      <v-toolbar-title>
+                        {{ getCommonTranslation("Clinical record view") }}
+                      </v-toolbar-title>
+                      <v-toolbar-items>
+                        <v-btn icon @click="visitDialog = false">
+                          <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                      </v-toolbar-items>
+                    </v-toolbar>
+                    <v-card class="pa-4 rounded-0" :elevation="0">
+                      <v-simple-table>
+                        <template #default>
+                          <tbody>
+                            <tr>
+                              <td>{{ getCommonTranslation("Therapist") }}</td>
+                              <td>
+                                {{ getDoctorName(selectedVisit.doctor_id) }}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                {{
+                                  getCommonTranslation("Therapist specialty")
+                                }}
+                              </td>
+                              <td>
+                                {{
+                                  getDoctorSpecialty(selectedVisit.doctor_id)
+                                }}
+                              </td>
+                            </tr>
+                            <tr v-show="selectedVisitCreatedDate">
+                              <td>
+                                {{ getCommonTranslation("Created date") }}
+                              </td>
+                              <td>{{ selectedVisitCreatedDate }}</td>
+                            </tr>
+                            <tr>
+                              <td>{{ getCommonTranslation("Diagnosis") }}</td>
+                              <td>{{ selectedVisitDiagonsis }}</td>
+                            </tr>
+                            <tr v-show="selectedVisitDescription.length">
+                              <td>{{ getCommonTranslation("Description") }}</td>
+                              <td>{{ selectedVisitDescription }}</td>
+                            </tr>
+                            <tr v-show="selectedVisitRecommnedations.length">
+                              <td>
+                                {{ getCommonTranslation("Recommendations") }}
+                              </td>
+                              <td>{{ selectedVisitRecommnedations }}</td>
+                            </tr>
+                            <tr
+                              v-for="(file, index) in JSON.parse(
+                                selectedVisit.data
+                              ).files"
+                              :key="index"
+                            >
+                              <td>
+                                <a :href="download(file.file)" target="_blank">
+                                  {{
+                                    getCommonTranslation(
+                                      "Download attached file"
+                                    )
+                                  }}
+                                </a>
+                              </td>
+                              <td>{{ file.name }}</td>
+                            </tr>
+                          </tbody>
+                        </template>
+                      </v-simple-table>
                     </v-card>
                   </v-dialog>
                 </div>
               </v-col>
-              <v-col
-                v-show="getActiveLink === getCommonTranslation('Documents')"
-              >
+              <v-col v-show="getActiveLink === 3">
                 <h3>
                   {{ getCommonTranslation("Documents") }}
                 </h3>
               </v-col>
-              <v-col
-                v-show="
-                  getActiveLink === getCommonTranslation('Uploaded files')
-                "
-              >
+              <v-col v-show="getActiveLink === 4">
                 <h3>
                   {{ getCommonTranslation("Uploaded files") }}
                 </h3>
@@ -306,7 +314,10 @@ import AnamnesisSectionItem from "./AnamnesisSectionItem";
 import PatientAvatarAndName from "./PatientAvatarAndName";
 const { mapState, mapActions } = createNamespacedHelpers("patients");
 const { mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
-const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
+const {
+  mapGetters: Getters_lang,
+  mapState: State_lang,
+} = createNamespacedHelpers("lang");
 export default {
   components: {
     AnamnesisDialog,
@@ -372,9 +383,10 @@ export default {
     ...mapState(["selectedPatient", "selectedPatientClinicalRecords"]),
     ...Getters_doctors(["getDoctorName", "getDoctorSpecialty"]),
     ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
+    ...State_lang(["common"]),
     getActiveLink() {
       const activeTab = this.patientLinks.find((link) => link.active);
-      return this.getCommonTranslation(activeTab.title);
+      return activeTab.id;
     },
     formattedClinicalRecords() {
       const first_appointments = [];
@@ -398,25 +410,6 @@ export default {
         result_array.push(event);
       });
       return result_array;
-    },
-    computedPatientLinks() {
-      this.patientLinks.map((link) => {
-        switch (link.id) {
-          case 1:
-            link.title = this.getCommonTranslation("Anamnesis");
-            break;
-          case 2:
-            link.title = this.getCommonTranslation("Clinical records");
-            break;
-          case 3:
-            link.title = this.getCommonTranslation("Documents");
-            break;
-          case 4:
-            link.title = this.getCommonTranslation("Uploaded files");
-            break;
-        }
-      });
-      return this.patientLinks;
     },
     selectedVisitDiagonsis() {
       return this.selectedVisit && JSON.parse(this.selectedVisit.data).diagnos;
@@ -451,6 +444,29 @@ export default {
       }
     },
   },
+  watch: {
+    common: {
+      immediate: true,
+      handler(val) {
+        this.patientLinks.map((link) => {
+          switch (link.id) {
+            case 1:
+              link.title = this.getCommonTranslation("Anamnesis");
+              break;
+            case 2:
+              link.title = this.getCommonTranslation("Clinical records");
+              break;
+            case 3:
+              link.title = this.getCommonTranslation("Documents");
+              break;
+            case 4:
+              link.title = this.getCommonTranslation("Uploaded files");
+              break;
+          }
+        });
+      },
+    },
+  },
   methods: {
     ...mapActions(["fetchSelectedPatient", "fetchPatientClinicalRecordsById"]),
     changeActiveView(id) {
@@ -476,7 +492,15 @@ export default {
   },
 };
 </script>
-
+<style lang="scss">
+.clinical-record-view__dialog {
+  .v-toolbar__content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+</style>
 <style lang="scss" scoped>
 .patient-container {
   background-color: rgb(224, 224, 224);
