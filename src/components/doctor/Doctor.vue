@@ -13,7 +13,7 @@
           :middleName="getMiddleName"
           :email="getEmail"
           :phone="getPhone"
-          :doctorSpecialty="selectedDoctor && selectedDoctor.medical_specialty"
+          :doctorSpecialty="getDoctorSpecialty"
         />
       </v-col>
       <v-divider vertical></v-divider>
