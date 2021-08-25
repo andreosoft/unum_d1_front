@@ -1,5 +1,5 @@
 <template>
-  <div class="login-wrap">
+  <div class="login-wrap pa-2">
     <div style="position: absolute; top: 0; right: 0;">
       <v-btn
         v-for="lang in languages"
@@ -13,12 +13,12 @@
         {{ lang.title }}
       </v-btn>
     </div>
-    <div class="pa-2">
-      <v-card max-width="500" class="mb-4 pa-4">
+    <div class="login-wrap__container">
+      <v-card style="width: 100%;" class="mb-4 pa-5">
         <form @submit.prevent="loginHandler">
-          <h2 class="form__title">
+          <p class="form__title">
             {{ getCommonTranslation("Sign in") }}
-          </h2>
+          </p>
           <v-text-field
             v-model="$v.email.$model"
             :error="$v.email.$error"
@@ -56,12 +56,14 @@
           <v-btn type="submit">{{ getCommonTranslation("Sign in") }}</v-btn>
         </form>
       </v-card>
-      <v-card style="width: 100%;" class="pa-4">
-        {{ getCommonTranslation("Not registered yet") }}
-        <router-link
-          :to="{ name: 'Sign Up', params: { lang: $route.params.lang } }"
-          >{{ getCommonTranslation("Registration") }}</router-link
-        >
+      <v-card style="width: 100%;">
+        <v-card-text
+          >{{ getCommonTranslation("Not registered yet") }}
+          <router-link
+            :to="{ name: 'Sign Up', params: { lang: $route.params.lang } }"
+            >{{ getCommonTranslation("Registration") }}</router-link
+          >
+        </v-card-text>
       </v-card>
     </div>
   </div>
@@ -173,7 +175,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .login-wrap {
   position: relative;
   height: 100%;
@@ -183,8 +185,9 @@ export default {
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.8);
-}
-.form__title {
-  font-size: 36px;
+  &__container {
+    width: 100%;
+    max-width: 500px;
+  }
 }
 </style>

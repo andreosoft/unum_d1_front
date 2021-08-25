@@ -1,5 +1,5 @@
 <template>
-  <div class="signup-wrap">
+  <div class="signup-wrap pa-2">
     <div style="position: absolute; top: 0; right: 0;">
       <v-btn
         v-for="lang in systemLanguages"
@@ -13,13 +13,13 @@
         {{ lang.title }}
       </v-btn>
     </div>
-    <div class="pa-2">
-      <v-card :max-width="500" class="mb-4 pa-4">
+    <div class="signup-wrap__container">
+      <v-card :max-width="500" class="mb-4 pa-5">
         <form @submit.prevent="signUpHandler">
           <div v-show="step === 0">
-            <h2 class="form__title">
+            <p class="form__title">
               {{ getCommonTranslation("Contact information") }}
-            </h2>
+            </p>
             <v-text-field
               v-model="$v.email.$model"
               :error="$v.email.$error"
@@ -81,9 +81,9 @@
             </v-text-field>
           </div>
           <div v-show="step === 1">
-            <h2 class="form__title">
+            <p class="form__title">
               {{ getCommonTranslation("Personal Information") }}
-            </h2>
+            </p>
             <v-text-field
               v-model="$v.name.$model"
               :error="$v.name.$error"
@@ -224,9 +224,9 @@
             </v-autocomplete>
           </div>
           <div v-show="step === 2">
-            <h2 class="form__title">
+            <p class="form__title">
               {{ getCommonTranslation("Medical Education") }}
-            </h2>
+            </p>
             <v-text-field
               v-model="medUniversity"
               :label="getCommonTranslation('Medical University')"
@@ -358,13 +358,15 @@
           }}</v-btn>
         </form>
       </v-card>
-      <v-card style="width: 100%;" class="pa-4">
+      <v-card style="width: 100%;">
         <!-- уже зарегистрированы? -->
-        {{ getCommonTranslation("Registered already") }}
-        <router-link
-          :to="{ name: 'Login', params: { lang: $route.params.lang } }"
-          >{{ getCommonTranslation("Sign in") }}</router-link
-        >
+        <v-card-text>
+          {{ getCommonTranslation("Registered already") }}
+          <router-link
+            :to="{ name: 'Login', params: { lang: $route.params.lang } }"
+            >{{ getCommonTranslation("Sign in") }}</router-link
+          >
+        </v-card-text>
       </v-card>
     </div>
   </div>
@@ -709,8 +711,9 @@ export default {
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.8);
-}
-.form__title {
-  font-size: 36px;
+  &__container {
+    width: 100%;
+    max-width: 500px;
+  }
 }
 </style>
