@@ -55,4 +55,8 @@ export default {
   > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
   background: transparent !important;
 }
+.form__title {
+  font-size: 36px;
+  font-weight: bold;
+}
 </style>

@@ -130,16 +130,16 @@ router.beforeEach(async (to, from, next) => {
             axios.defaults.headers.common.Authorization = JSON.parse(
               localData
             ).token;
-            store.dispatch("auth/fetchUserProfile")
-            store.dispatch("auth/fetchDoctorProfile")
+            store.dispatch("auth/fetchUserProfile");
+            store.dispatch("auth/fetchDoctorProfile");
 
             return next();
           } else {
             return next({
               name: "Login",
               params: {
-                lang: "en"
-              }
+                lang: "en",
+              },
             });
           }
         });

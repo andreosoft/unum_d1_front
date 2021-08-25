@@ -19,7 +19,7 @@ const getters = {
     const doctor = state.doctors.filter((doc) => doc.id === doctorId);
     try {
       if (!doctor[0] || !doctor[0].info.doctor_specialty) throw Error;
-      return doctor[0].info.doctor_specialty.toLowerCase();
+      return doctor[0].info.doctor_specialty;
     } catch (err) {
       return "";
     }
