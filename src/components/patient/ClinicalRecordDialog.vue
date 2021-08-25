@@ -86,12 +86,15 @@
     </v-dialog>
 
     <!-- выбор вторичного посещения для первичного -->
-    <v-dialog v-model="clinicalRecordDialog" persistent :max-width="600">
-      <v-card :max-height="300">
-        <v-card-title
-          style="position: sticky; top: 0; background-color: #fff; z-index: 1;"
-          >{{ getDoctorTranslation("Choose initial visit") }}</v-card-title
-        >
+    <v-dialog
+      v-model="clinicalRecordDialog"
+      :max-width="600"
+      content-class="secondary-visit__dialog"
+    >
+      <v-card :max-height="300" class="secondary-visit__card">
+        <v-card-title>{{
+          getDoctorTranslation("Choose initial visit")
+        }}</v-card-title>
         <v-list>
           <v-list-item
             v-for="event in initialVisits"
@@ -101,7 +104,7 @@
               clinicalRecordDialog = false;
             "
           >
-            {{ JSON.parse(event.data).diagnos }}
+            {{ event.data | getDiagnos }} ({{ event.data | formatDate }})
           </v-list-item>
         </v-list>
       </v-card>
@@ -112,7 +115,6 @@
 <script>
 import { createNamespacedHelpers } from "vuex";
 import dayjs from "dayjs";
-import { axios, api } from "./../../config";
 const { mapState, mapActions } = createNamespacedHelpers("patients");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 
@@ -154,12 +156,27 @@ export default {
       return !this.clinicalRecord.diagnos.length;
     },
   },
+  filters: {
+    formatDate(val) {
+      const date = JSON.parse(val).createdAt;
+      return dayjs(date).format("DD.MM.YYYY");
+    },
+    getDiagnos(val) {
+      const diagnos = JSON.parse(val).diagnos;
+      return diagnos;
+    },
+  },
   watch: {
     "clinicalRecord.type_id"(val) {
       if (val === 2) {
         this.clinicalRecordDialog = true;
       } else {
         this.clinicalRecord.initialVisitId = null;
+      }
+    },
+    clinicalRecordDialog(val) {
+      if (!val && !this.clinicalRecord.initialVisitId) {
+        this.clinicalRecord.type_id = 1;
       }
     },
   },
@@ -180,18 +197,6 @@ export default {
         }
         clinicalRecordData.files = filesArray;
       }
-
-      /**
-       * if (есть файлы) {
-       *    массив из ID = []
-       *    файлы.map(файл => {
-       *      const file = загрузить файл(файл)
-       *      добавить fileId в массив из ID -> массив из ID.push(file)
-       *    })
-       *
-       *    clinicalRecordData.file = массив из ID
-       * }
-       */
 
       if (this.clinicalRecord.type_id === 2) {
         clinicalRecordData.initialVisitId = this.clinicalRecord.initialVisitId;
@@ -231,4 +236,19 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.secondary-visit__dialog {
+  overflow: hidden;
+}
+</style>
+<style lang="scss" scoped>
+.secondary-visit__card {
+  overflow-y: auto;
+  .v-card__title {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 1;
+  }
+}
+</style>
