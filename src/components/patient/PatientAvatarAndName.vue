@@ -88,13 +88,5 @@ export default {
       }
     },
   },
-  watch: {
-    selectedPatient: {
-      immediate: true,
-      handler(val) {
-        console.log(val);
-      },
-    },
-  },
 };
 </script>

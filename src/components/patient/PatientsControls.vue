@@ -27,10 +27,10 @@
     <div :style="$vuetify.breakpoint.smAndDown ? 'order: 1;' : ''">
       <v-btn
         class="mr-2"
-        :class="{ 'mb-2 request-access__btn': $vuetify.breakpoint.smAndDown }"
+        :class="{ 'mb-2': $vuetify.breakpoint.smAndDown }"
         @click="$emit('openRequestAccessDialog')"
       >
-        {{ getDoctorTranslation("Request access to patient card") }}
+        {{ getDoctorTranslation("Request access") }}
       </v-btn>
       <v-btn @click="$emit('openNewPatientDialog')">
         {{ getDoctorTranslation("New patient") }}
@@ -49,9 +49,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.v-btn.request-access__btn {
-  font-size: 10px !important;
-}
-</style>

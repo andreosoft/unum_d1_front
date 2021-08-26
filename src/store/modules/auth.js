@@ -125,6 +125,11 @@ const actions = {
             password: data.user.password,
           }).then(async () => {
             await dispatch("fetchDoctorProfile");
+            /**
+             * The data that's being commited below doesn't come from the API
+             * That's why I'm calling commits right after registration
+             * These commits trigger updateProfile method which saves new data on server by POST method
+             */
             commit("SET_DOCTOR_PHONE", data.user.phone);
             commit("SET_DOCTOR_COUNTRY", data.user.country);
             commit("SET_DOCTOR_BIRTHDAY", data.doctor.dateOfBirth);
@@ -215,33 +220,47 @@ const actions = {
         return res.data.data;
       });
   },
-  fetchUserProfile({ state, commit, dispatch }) {
-    return axios
-      .get(api.getUserProfile)
-      .then((res) => {
+  fetchUserProfile({ state, commit, dispatch, rootState }) {
+    return axios.get(api.getUserProfile).then((res) => {
+      try {
+        if (res.data.profile.role !== 100) throw Error;
         commit("SET_USER_PROFILE", res.data.profile);
-      })
-      .then(() => {
         dispatch("fetchLangItems", {
-          lang: state.userProfile.lang,
+          lang: res.data.profile.lang,
           type: "common",
         });
         dispatch("fetchLangItems", {
-          lang: state.userProfile.lang,
+          lang: res.data.profile.lang,
           type: "doctor",
         });
-      });
+      } catch (err) {
+        const errorText = rootState.lang.common["Profile not found"]
+          ? rootState.lang.common["Profile not found"]
+          : "Profile not found";
+        const systemLang = res.data.profile.lang;
+        commit("SET_AUTH_STATUS", false);
+        dispatch(
+          "alerts/addAlert",
+          {
+            text: errorText,
+            type: "error",
+          },
+          { root: true }
+        );
+        dispatch("logout", systemLang.toLowerCase());
+      }
+    });
   },
   fetchDoctorProfile({ commit }) {
     return axios.get(api.getDoctorProfile).then((res) => {
       commit("SET_DOCTOR_PROFILE", res.data.data);
     });
   },
-  logout({ commit }) {
+  logout({ commit }, lang = "en") {
     commit("SET_AUTH_STATUS", false);
     commit("SET_USER_PROFILE", null);
     window.localStorage.clear();
-    router.push({ name: "Login", params: { lang: "en" } });
+    router.push({ name: "Login", params: { lang } });
     delete axios.defaults.headers.common.Authorization;
   },
   fetchLangItems({ dispatch }, { lang, type }) {
