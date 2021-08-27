@@ -20,12 +20,6 @@
                   <tbody>
                     <tr>
                       <td class="table-title">
-                        {{ getCommonTranslation("Event number") }}
-                      </td>
-                      <td>{{ event.id }}</td>
-                    </tr>
-                    <tr>
-                      <td class="table-title">
                         {{ getCommonTranslation("Event name") }}
                       </td>
                       <td>{{ event.name }}</td>
@@ -54,14 +48,6 @@
                         {{ event.start | getTime }}
                       </td>
                     </tr>
-                    <tr>
-                      <td class="table-title">
-                        {{ getCommonTranslation("End") }}
-                      </td>
-                      <td>
-                        {{ event.end | getTime }}
-                      </td>
-                    </tr>
                   </tbody>
                 </template>
               </v-simple-table>
@@ -88,11 +74,10 @@ export default {
   },
   filters: {
     getDate(value) {
-      return dayjs(value.split(" ")[0]).format("YYYY MMM DD");
+      return dayjs(value.split(" ")[0]).format("DD.MM.YYYY");
     },
     getTime(value) {
       const time = value.split(" ")[1];
-
       return time.substr(0, 5);
     },
   },
@@ -107,6 +92,6 @@ export default {
   cursor: pointer;
 }
 .table-title {
-  width: 20%;
+  width: 40%;
 }
 </style>
