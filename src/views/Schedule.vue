@@ -47,6 +47,7 @@
           color="primary"
           :events="getAppointments"
           :event-color="getEventColor"
+          :event-name="getEventName"
           :event-ripple="false"
           :type="type"
           @click:event="showEvent"
@@ -98,6 +99,11 @@
             {{ getCommonTranslation("New event") }}
           </v-card-title>
           <v-card-text>
+            <v-text-field
+              dense
+              :label="getCommonTranslation('Event name')"
+              v-model="eventName"
+            ></v-text-field>
             <v-select
               :items="patients"
               v-model="selectedPatient"
@@ -341,7 +347,11 @@ export default {
       return names;
     },
     getDoctorSpecialty() {
-      return this.doctorProfile && this.doctorProfile.medical_specialty;
+      return this.doctorProfile &&
+        this.doctorProfile.info &&
+        this.doctorProfile.info.doctor_specialty
+        ? this.doctorProfile.info.doctor_specialty
+        : "no specialty";
     },
   },
   watch: {
@@ -406,6 +416,9 @@ export default {
     },
     getEventColor(event) {
       return event.color;
+    },
+    getEventName(event) {
+      return event.input.patient;
     },
     setToday() {
       this.focus = "";
@@ -501,7 +514,7 @@ export default {
     onSelectedPatientChange(patientId) {
       this.eventDefaultData.patient_id = patientId;
       const patient = this.patients.find((p) => p.id === patientId);
-      this.eventName = patient.name;
+      this.selectedPatient = patientId;
     },
     visitStartTimeChange(time) {
       this.visitingStartTime = time;
