@@ -568,46 +568,46 @@ export default {
     ]),
     ...Actions_lang(["fetchLangItems"]),
     validateStep() {
-      // if (this.step === 0) {
-      //   const requiredFields = ["email", "password", "passwordConfirmation"];
-      //   requiredFields.map((field) => {
-      //     this.$v[field].$touch();
-      //   });
+      if (this.step === 0) {
+        const requiredFields = ["email", "password", "passwordConfirmation"];
+        requiredFields.map((field) => {
+          this.$v[field].$touch();
+        });
 
-      //   if (
-      //     this.$v.email.$invalid ||
-      //     this.$v.password.$invalid ||
-      //     this.$v.passwordConfirmation.$invalid
-      //   ) {
-      //     this.userError = true;
-      //     return;
-      //   }
-      // } else if (this.step === 1) {
-      //   const requiredFields = [
-      //     "name",
-      //     "surname",
-      //     "secondname",
-      //     "photo",
-      //     "dateOfBirth",
-      //     "country",
-      //     "language",
-      //   ];
-      //   requiredFields.map((field) => {
-      //     this.$v[field].$touch();
-      //   });
-      //   if (
-      //     this.$v.name.$invalid ||
-      //     this.$v.surname.$invalid ||
-      //     this.$v.secondname.$invalid ||
-      //     this.$v.photo.$invalid ||
-      //     this.$v.dateOfBirth.$invalid ||
-      //     this.$v.country.$invalid ||
-      //     this.$v.language.$invalid
-      //   ) {
-      //     this.personalInfoError = true;
-      //     return;
-      //   }
-      // }
+        if (
+          this.$v.email.$invalid ||
+          this.$v.password.$invalid ||
+          this.$v.passwordConfirmation.$invalid
+        ) {
+          this.userError = true;
+          return;
+        }
+      } else if (this.step === 1) {
+        const requiredFields = [
+          "name",
+          "surname",
+          "secondname",
+          "photo",
+          "dateOfBirth",
+          "country",
+          "language",
+        ];
+        requiredFields.map((field) => {
+          this.$v[field].$touch();
+        });
+        if (
+          this.$v.name.$invalid ||
+          this.$v.surname.$invalid ||
+          this.$v.secondname.$invalid ||
+          this.$v.photo.$invalid ||
+          this.$v.dateOfBirth.$invalid ||
+          this.$v.country.$invalid ||
+          this.$v.language.$invalid
+        ) {
+          this.personalInfoError = true;
+          return;
+        }
+      }
       this.step++;
     },
     async signUpHandler() {

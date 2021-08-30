@@ -10,22 +10,20 @@
       </v-icon>
       {{ getCommonTranslation("Show doctor info") }}
     </div>
-    <h2 class="mb-3 section-title">
+    <h2 class="mb-3 mt-0 section-title">
       {{ fullName }}
     </h2>
     <v-card :min-height="400">
       <v-list v-if="doctorSpecialty">
-        <v-list-item>Специализация - {{ doctorSpecialty }}</v-list-item>
+        <v-list-item>Специализация: {{ doctorSpecialty }}</v-list-item>
       </v-list>
       <v-list>
         <v-list-item v-if="doctorUniversity">
-          {{ getDoctorTranslation("Medical Education") }}
-          -
+          {{ getDoctorTranslation("Medical Education") }}:
           {{ doctorUniversity }}
         </v-list-item>
         <v-list-item v-if="yearsOfEducation">
-          {{ getCommonTranslation("Years of education") }}
-          -
+          {{ getCommonTranslation("Years of education") }}:
           {{ yearsOfEducation }}
         </v-list-item>
       </v-list>
