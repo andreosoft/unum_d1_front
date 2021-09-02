@@ -1,8 +1,22 @@
 <template>
   <div class="main-layout">
-    <v-app-bar :color="'lighten-2'" id="app-bar" fixed app flat height="60">
-      <v-icon class="mr-2" @click="drawer = !drawer">mdi-menu</v-icon>
-      <v-toolbar-title>{{ getTitle }}</v-toolbar-title>
+    <v-app-bar
+      v-if="
+        $vuetify.breakpoint.smAndDown ? !$route.meta.hideMobileTopNavbar : true
+      "
+      :color="'lighten-2'"
+      id="app-bar"
+      fixed
+      app
+      flat
+      height="60"
+    >
+      <div class="d-flex">
+        <v-icon class="mr-2" @click="drawer = !drawer">mdi-menu</v-icon>
+        <v-toolbar-title>{{ getTitle }}</v-toolbar-title>
+      </div>
+      <v-spacer></v-spacer>
+      <portal-target name="toolbar-action"></portal-target>
     </v-app-bar>
     <v-navigation-drawer
       v-model="drawer"
@@ -43,7 +57,7 @@
           :key="index"
           link
           :to="{ name: link.name }"
-          exact
+          :exact="link.name === 'Dashboard'"
           class="nav-links__item"
         >
           <v-list-item-icon>
@@ -94,6 +108,16 @@ export default {
           icon: "mdi-view-dashboard",
         },
         {
+          name: "Chats",
+          title: this.getCommonTranslation("Chats"),
+          icon: "mdi-message-text",
+        },
+        {
+          name: "Consillium",
+          title: this.getCommonTranslation("Consillium"),
+          icon: "mdi-forum",
+        },
+        {
           name: "Doctors",
           title: this.getCommonTranslation("Doctors"),
           icon: "mdi-doctor",
@@ -116,6 +140,15 @@ export default {
       switch (this.$route.name) {
         case "Dashboard":
           title = this.getCommonTranslation("Home");
+          break;
+        case "Chats":
+          title = this.getCommonTranslation("Chats");
+          break;
+        case "Chat":
+          title = this.getCommonTranslation("Chat");
+          break;
+        case "Consillium":
+          title = this.getCommonTranslation("Consillium");
           break;
         case "Doctors":
           title = this.getCommonTranslation("Doctors");
