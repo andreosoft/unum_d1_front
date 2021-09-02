@@ -46,6 +46,48 @@ const routes = [
         },
       },
       {
+        path: "/chats",
+        component: () => import("./../views/Chats.vue"),
+        meta: {
+          requiresAuth: true,
+          title: "Чаты",
+        },
+        children: [
+          {
+            path: "",
+            name: "Chats",
+            components: {
+              list: () => import("./../components/chat/List.vue"),
+              messages: () => import("./../components/chat/NoSelected.vue"),
+            },
+            meta: {
+              hideMobileList: false,
+            },
+          },
+          {
+            path: ":id",
+            name: "Chat",
+            components: {
+              list: () => import("./../components/chat/List.vue"),
+              messages: () => import("./../components/chat/ChatWindow.vue"),
+            },
+            meta: {
+              hideMobileList: true,
+              hideMobileTopNavbar: true,
+            },
+          },
+        ],
+      },
+      {
+        path: "/consillium",
+        name: "Consillium",
+        component: () => import("./../views/Consillium.vue"),
+        meta: {
+          requiresAuth: true,
+          title: "Консиллиум",
+        },
+      },
+      {
         path: "/profile",
         name: "Profile",
         component: () => import("./../views/Profile.vue"),
