@@ -16,7 +16,7 @@
       {{ doctor.name }}
     </v-card-text>
     <v-card-text>
-      <span v-if="doctor.info.doctor_specialty">{{
+      <span v-if="doctor.info && doctor.info.doctor_specialty">{{
         doctor.info.doctor_specialty
       }}</span>
       <span v-else class="grey--text text--lighten-1">{{
