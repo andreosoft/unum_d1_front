@@ -8,24 +8,34 @@
         </v-toolbar-title>
       </v-toolbar>
 
-      <div class="pa-5">
-        <div class="d-flex mb-7 justify-content-between">
-          <v-text-field
-            hide-details
-            :label="$_lang_getDoctorTranslation('Provisional diagnosis')"
-            dense
-            class="mt-0 mb-7"
-            style="max-width: 48%;"
-          ></v-text-field>
-
-          <v-text-field
-            hide-details
-            :label="$_lang_getDoctorTranslation('Select a patient')"
-            dense
-            class="mt-0"
-            style="max-width: 48%;"
-          ></v-text-field>
-        </div>
+      <v-container fluid class="pa-5">
+        <v-row
+          no-gutters
+          :class="[
+            $vuetify.breakpoint.smAndDown
+              ? 'flex-column'
+              : 'justify-content-between',
+          ]"
+          class="mb-7"
+        >
+          <v-col md="5">
+            <v-text-field
+              hide-details
+              :label="$_lang_getDoctorTranslation('Provisional diagnosis')"
+              dense
+              class="mt-0"
+              :class="{ 'mb-7': $vuetify.breakpoint.smAndDown }"
+            ></v-text-field>
+          </v-col>
+          <v-col md="5">
+            <v-text-field
+              hide-details
+              :label="$_lang_getDoctorTranslation('Select a patient')"
+              dense
+              class="mt-0"
+            ></v-text-field>
+          </v-col>
+        </v-row>
         <v-textarea
           hide-details
           :label="$_lang_getDoctorTranslation('Problem description')"
@@ -34,82 +44,105 @@
           :rows="1"
           class="mt-0 mb-7"
         ></v-textarea>
-        <div>
+        <v-row no-gutters class="flex-column">
           <h3 class="ma-0 mb-4">
             {{ $_lang_getDoctorTranslation("Invite") }}
           </h3>
-          <v-autocomplete
-            prepend-inner-icon="mdi-magnify"
-            :items="people"
-            v-model="choosenPeople"
-            item-text="name"
-            item-value="name"
-            hide-details
-            :label="$_lang_getCommonTranslation('By name')"
-            multiple
-            dense
-            class="mt-0 mb-7"
-            autocomplete="off"
-            style="width: 48%;"
+
+          <!-- 48 -->
+          <v-col md="5" class="mb-7">
+            <v-autocomplete
+              prepend-inner-icon="mdi-magnify"
+              :items="people"
+              v-model="choosenPeople"
+              item-text="name"
+              item-value="name"
+              hide-details
+              :label="$_lang_getCommonTranslation('By name')"
+              multiple
+              dense
+              class="mt-0"
+              autocomplete="off"
+            >
+              <template #selection="data">
+                <v-chip
+                  v-bind="data.attrs"
+                  :input-value="data.selected"
+                  close
+                  @click="data.select"
+                  @click:close="remove(data.item)"
+                  color="#406278"
+                  dark
+                >
+                  {{ data.item.name }}
+                </v-chip>
+              </template>
+              <template #item="data">
+                <v-list-item-avatar>
+                  <v-img style="background-color: black;"></v-img>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  {{ data.item.name }}
+                </v-list-item-content>
+              </template>
+            </v-autocomplete>
+          </v-col>
+
+          <v-row
+            no-gutters
+            :class="
+              $vuetify.breakpoint.smAndDown
+                ? 'flex-column'
+                : 'justify-content-between'
+            "
+            class="mb-7"
           >
-            <template #selection="data">
-              <v-chip
-                v-bind="data.attrs"
-                :input-value="data.selected"
-                close
-                @click="data.select"
-                @click:close="remove(data.item)"
+            <!-- 48 -->
+            <v-col md="5" :class="{ 'mb-7': $vuetify.breakpoint.smAndDown }">
+              <v-select
+                dense
+                hide-details
+                :label="$_lang_getCommonTranslation('By specialty')"
+                class="mt-0"
+              ></v-select>
+            </v-col>
+
+            <!-- 48 -->
+            <v-col md="5">
+              <v-select
+                hide-details
+                :label="$_lang_getCommonTranslation('By language')"
+                dense
+                class="mt-0"
+              ></v-select>
+            </v-col>
+          </v-row>
+
+          <!-- 48 -->
+          <v-col md="4">
+            <span
+              class="d-flex align-items-center justify-content-between mb-7"
+            >
+              {{ $_lang_getDoctorTranslation("Urgent consillium") }}
+              <v-switch
+                class="ml-3 ma-0 pa-0"
                 color="#406278"
-                dark
-              >
-                {{ data.item.name }}
-              </v-chip>
-            </template>
-            <template #item="data">
-              <v-list-item-avatar>
-                <v-img style="background-color: black;"></v-img>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                {{ data.item.name }}
-              </v-list-item-content>
-            </template>
-          </v-autocomplete>
+                :ripple="false"
+                hide-details
+              ></v-switch>
+            </span>
+          </v-col>
 
-          <div class="mb-6 d-flex justify-content-between">
-            <v-select
-              dense
-              hide-details
-              :label="$_lang_getCommonTranslation('By specialty')"
-              class="mt-0"
-              style="max-width: 48%;"
-            ></v-select>
-            <v-select
-              hide-details
-              :label="$_lang_getCommonTranslation('By language')"
+          <!-- 48 -->
+          <v-col md="5">
+            <v-text-field
               dense
               class="mt-0"
-              style="max-width: 48%;"
-            ></v-select>
-          </div>
-
-          <span style="width: 48%;" class="d-flex align-items-center mb-7">
-            {{ $_lang_getDoctorTranslation("Urgent consillium") }}
-            <v-switch
-              class="ml-3 ma-0 pa-0"
-              color="#406278"
-              :ripple="false"
               hide-details
-            ></v-switch>
-          </span>
-
-          <v-text-field
-            dense
-            class="mt-0"
-            hide-details
-            :label="$_lang_getCommonTranslation('Tags')"
-            style="width: 48%;"
-          ></v-text-field>
-        </div>
+              :label="$_lang_getCommonTranslation('Tags')"
+            ></v-text-field>
+          </v-col>
+        </v-row>
         <v-card-actions>
           <v-spacer></v-spacer>
           <div>
@@ -120,12 +153,15 @@
               @click="$emit('close')"
               >{{ $_lang_getCommonTranslation("Cancel") }}</v-btn
             >
-            <v-btn class="pa-0 px-5" color="primary">{{
-              $_lang_getCommonTranslation("Create")
-            }}</v-btn>
+            <v-btn
+              class="pa-0 px-5"
+              :text="$vuetify.breakpoint.smAndDown"
+              :color="$vuetify.breakpoint.smAndDown ? '#406278' : 'primary'"
+              >{{ $_lang_getCommonTranslation("Create") }}</v-btn
+            >
           </div>
         </v-card-actions>
-      </div>
+      </v-container>
     </v-card>
   </v-dialog>
 </template>

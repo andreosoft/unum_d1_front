@@ -9,25 +9,28 @@
           {{ $_lang_getDoctorTranslation("Close consillium") }}
         </v-toolbar-title>
       </v-toolbar>
-      <div class="px-5 py-3">
-        <div class="mb-3">
-          <v-text-field
-            dense
-            class="mt-0"
-            :label="$_lang_getDoctorTranslation('Diagnosed')"
-            style="width: 47%;"
-          >
-          </v-text-field>
-          <v-textarea
-            dense
-            hide-details
-            :rows="1"
-            auto-grow
-            class="mt-0"
-            :label="$_lang_getDoctorTranslation('Comments')"
-          >
-          </v-textarea>
-        </div>
+      <v-container fluid class="px-5 py-3">
+        <v-row no-gutters class="mb-3 flex-column">
+          <v-col md="6">
+            <v-text-field
+              dense
+              class="mt-0"
+              :label="$_lang_getDoctorTranslation('Diagnosed')"
+            >
+            </v-text-field>
+          </v-col>
+          <v-col>
+            <v-textarea
+              dense
+              hide-details
+              :rows="1"
+              auto-grow
+              class="mt-0"
+              :label="$_lang_getDoctorTranslation('Comments')"
+            >
+            </v-textarea>
+          </v-col>
+        </v-row>
         <v-card-actions class="pa-0">
           <v-spacer></v-spacer>
           <div>
@@ -38,12 +41,15 @@
               @click="$emit('close')"
               >{{ $_lang_getCommonTranslation("Cancel") }}</v-btn
             >
-            <v-btn class="pa-0 px-5" color="primary">{{
-              $_lang_getCommonTranslation("Create")
-            }}</v-btn>
+            <v-btn
+              class="pa-0 px-5"
+              :text="$vuetify.breakpoint.smAndDown"
+              :color="$vuetify.breakpoint.smAndDown ? '#406278' : 'primary'"
+              >{{ $_lang_getCommonTranslation("Create") }}</v-btn
+            >
           </div>
         </v-card-actions>
-      </div>
+      </v-container>
     </v-card>
   </v-dialog>
 </template>
