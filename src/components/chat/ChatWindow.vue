@@ -15,6 +15,7 @@
       v-model="companionDialog"
       :max-width="580"
       content-class="rounded-0 dialog"
+      :fullscreen="$vuetify.breakpoint.smAndDown"
     >
       <v-card color="#EEEEEE" tile :min-height="680">
         <CompanionInfo @close="companionDialog = false" :online="online" />

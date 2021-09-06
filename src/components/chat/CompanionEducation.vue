@@ -56,4 +56,7 @@ export default {
 .v-list-item:after {
   content: unset;
 }
+.v-list-item__title {
+  white-space: normal;
+}
 </style>
