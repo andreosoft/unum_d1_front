@@ -2,20 +2,20 @@
   <v-expansion-panel>
     <v-expansion-panel-header class="d-flex justify-content-between py-3">
       <div class="d-flex align-items-center">
-        <span class="mr-2">
+        <v-icon
+          v-show="item.notifications"
+          color="error"
+          size="20"
+          class="mr-2"
+        >
+          mdi-alert
+        </v-icon>
+        <span>
           {{ $_lang_getDoctorTranslation("Consillium") }} № {{ item.id }}
         </span>
-        <v-icon v-show="item.notifications" color="error" size="20">
-          mdi-alert-circle
-        </v-icon>
       </div>
-      <span class="d-flex flex-column align-items-end">
-        {{ $_lang_getCommonTranslation("Status") }}:
-        {{
-          item.status
-            ? $_lang_getCommonTranslation("Opened")
-            : $_lang_getCommonTranslation("Closed")
-        }}
+      <span v-if="item.status" class="d-flex flex-column align-items-end">
+        <v-icon color="success">mdi-check-circle</v-icon>
       </span>
     </v-expansion-panel-header>
     <v-expansion-panel-content>

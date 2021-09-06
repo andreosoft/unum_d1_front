@@ -79,7 +79,7 @@ export default {
           tags: ["Кубанов Алексей", "Николай Спаркович"],
           id: 3,
           status: true,
-          notifications: 2,
+          notifications: 0,
         },
         {
           createdDate: "2021-09-01",

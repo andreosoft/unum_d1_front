@@ -1,128 +1,131 @@
 <template>
-  <v-dialog
-    content-class="rounded-0 dialog"
-    :value="dialog"
-    @input="$emit('close')"
-    :max-width="500"
-  >
-    <v-card
-      tile
-      class="py-4 px-6 d-flex flex-column justify-content-between"
-      :height="600"
-    >
-      <v-card-title class="pa-0">
-        <v-icon class="mr-2" color="#000">mdi-plus</v-icon>
-        {{ $_lang_getDoctorTranslation("Create consillium") }}
-      </v-card-title>
-      <v-container fluid class="pa-0">
-        <v-row class="flex-column" no-gutters>
-          <v-col class="pa-0 mb-4">
-            <v-text-field
-              hide-details
-              :label="$_lang_getDoctorTranslation('Provisional diagnosis')"
-              dense
-              class="mt-0 mb-7"
-            ></v-text-field>
-            <v-text-field
-              hide-details
-              :label="$_lang_getDoctorTranslation('Problem description')"
-              dense
-              class="mt-0 mb-7"
-            ></v-text-field>
-            <v-text-field
-              hide-details
-              :label="$_lang_getDoctorTranslation('Select a patient')"
-              dense
-              class="mt-0"
-            ></v-text-field>
-          </v-col>
-          <v-col class="mb-8">
-            <h3 class="ma-0 mb-4">
-              {{ $_lang_getDoctorTranslation("Invite") }}
-            </h3>
-            <v-autocomplete
-              :items="people"
-              v-model="choosenPeople"
-              item-text="name"
-              item-value="name"
-              hide-details
-              :label="$_lang_getCommonTranslation('By name')"
-              multiple
-              dense
-              class="mt-0"
-              autocomplete="off"
-            >
-              <template #selection="data">
-                <v-chip
-                  v-bind="data.attrs"
-                  :input-value="data.selected"
-                  close
-                  @click="data.select"
-                  @click:close="remove(data.item)"
-                  color="#406278"
-                  dark
-                >
-                  {{ data.item.name }}
-                </v-chip>
-              </template>
-              <template #item="data">
-                <v-list-item-avatar>
-                  <v-img style="background-color: black;"></v-img>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  {{ data.item.name }}
-                </v-list-item-content>
-              </template>
-            </v-autocomplete>
-          </v-col>
-          <v-col cols="6" class="mb-4">
+  <v-dialog :value="dialog" @input="$emit('close')" hide-overlay fullscreen>
+    <v-card tile style="overflow: hidden;">
+      <v-toolbar color="#F5F5F5" :elevation="0" short>
+        <v-toolbar-title>
+          <v-icon color="#6A6A6A" @click="$emit('close')">mdi-close</v-icon>
+          {{ $_lang_getDoctorTranslation("Create consillium") }}
+        </v-toolbar-title>
+      </v-toolbar>
+
+      <div class="pa-5">
+        <div class="d-flex mb-7 justify-content-between">
+          <v-text-field
+            hide-details
+            :label="$_lang_getDoctorTranslation('Provisional diagnosis')"
+            dense
+            class="mt-0 mb-7"
+            style="max-width: 48%;"
+          ></v-text-field>
+
+          <v-text-field
+            hide-details
+            :label="$_lang_getDoctorTranslation('Select a patient')"
+            dense
+            class="mt-0"
+            style="max-width: 48%;"
+          ></v-text-field>
+        </div>
+        <v-textarea
+          hide-details
+          :label="$_lang_getDoctorTranslation('Problem description')"
+          dense
+          auto-grow
+          :rows="1"
+          class="mt-0 mb-7"
+        ></v-textarea>
+        <div>
+          <h3 class="ma-0 mb-4">
+            {{ $_lang_getDoctorTranslation("Invite") }}
+          </h3>
+          <v-autocomplete
+            prepend-inner-icon="mdi-magnify"
+            :items="people"
+            v-model="choosenPeople"
+            item-text="name"
+            item-value="name"
+            hide-details
+            :label="$_lang_getCommonTranslation('By name')"
+            multiple
+            dense
+            class="mt-0 mb-7"
+            autocomplete="off"
+            style="width: 48%;"
+          >
+            <template #selection="data">
+              <v-chip
+                v-bind="data.attrs"
+                :input-value="data.selected"
+                close
+                @click="data.select"
+                @click:close="remove(data.item)"
+                color="#406278"
+                dark
+              >
+                {{ data.item.name }}
+              </v-chip>
+            </template>
+            <template #item="data">
+              <v-list-item-avatar>
+                <v-img style="background-color: black;"></v-img>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                {{ data.item.name }}
+              </v-list-item-content>
+            </template>
+          </v-autocomplete>
+
+          <div class="mb-6 d-flex justify-content-between">
             <v-select
               dense
               hide-details
               :label="$_lang_getCommonTranslation('By specialty')"
-              class="mt-0 mb-7"
+              class="mt-0"
+              style="max-width: 48%;"
             ></v-select>
             <v-select
               hide-details
               :label="$_lang_getCommonTranslation('By language')"
               dense
-              class="mt-0 mb-6"
-            ></v-select>
-            <span class="d-flex align-items-center">
-              {{ $_lang_getDoctorTranslation("Urgent consillium") }}
-              <v-switch
-                class="ml-3 ma-0 pa-0"
-                color="#406278"
-                :ripple="false"
-                hide-details
-              ></v-switch>
-            </span>
-          </v-col>
-          <v-col>
-            <v-text-field
-              dense
               class="mt-0"
+              style="max-width: 48%;"
+            ></v-select>
+          </div>
+
+          <span style="width: 48%;" class="d-flex align-items-center mb-7">
+            {{ $_lang_getDoctorTranslation("Urgent consillium") }}
+            <v-switch
+              class="ml-3 ma-0 pa-0"
+              color="#406278"
+              :ripple="false"
               hide-details
-              :label="$_lang_getCommonTranslation('Tags')"
-            ></v-text-field>
-          </v-col>
-        </v-row>
-      </v-container>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <div>
-          <v-btn
-            class="mr-5 pa-0"
-            text
-            color="#406278"
-            @click="$emit('close')"
-            >{{ $_lang_getCommonTranslation("Cancel") }}</v-btn
-          >
-          <v-btn class="pa-0" text color="#406278">{{
-            $_lang_getCommonTranslation("Create")
-          }}</v-btn>
+            ></v-switch>
+          </span>
+
+          <v-text-field
+            dense
+            class="mt-0"
+            hide-details
+            :label="$_lang_getCommonTranslation('Tags')"
+            style="width: 48%;"
+          ></v-text-field>
         </div>
-      </v-card-actions>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <div>
+            <v-btn
+              class="mr-5 pa-0 px-5"
+              text
+              color="#406278"
+              @click="$emit('close')"
+              >{{ $_lang_getCommonTranslation("Cancel") }}</v-btn
+            >
+            <v-btn class="pa-0 px-5" color="primary">{{
+              $_lang_getCommonTranslation("Create")
+            }}</v-btn>
+          </div>
+        </v-card-actions>
+      </div>
     </v-card>
   </v-dialog>
 </template>
