@@ -42,11 +42,26 @@ export default {
 .align-items-center {
   align-items: center;
 }
-.flex-column {
-  flex-direction: column;
+.align-items-start {
+  align-items: start !important;
+}
+.align-items-end {
+  align-items: flex-end !important;
+}
+.align-self-start {
+  align-self: start !important;
+}
+.align-self-end {
+  align-self: flex-end;
 }
 .cursor-pointer {
   cursor: pointer;
+}
+.position-relative {
+  position: relative;
+}
+.position-absolute {
+  position: absolute !important;
 }
 .theme--light.v-data-table
   > .v-data-table__wrapper
