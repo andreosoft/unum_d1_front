@@ -112,8 +112,10 @@ export default {
 
 <style lang="scss" scoped>
 .v-expansion-panel-header,
-.v-expansion-panel-content,
-.v-list {
+.v-expansion-panel-content {
   background-color: #f5f5f5;
+}
+.v-list {
+  background: transparent !important;
 }
 </style>
