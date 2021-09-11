@@ -45,7 +45,7 @@
               class="pa-0 px-5"
               :text="$vuetify.breakpoint.smAndDown"
               :color="$vuetify.breakpoint.smAndDown ? '#406278' : 'primary'"
-              >{{ $_lang_getCommonTranslation("Create") }}</v-btn
+              >{{ $_lang_getCommonTranslation("Save") }}</v-btn
             >
           </div>
         </v-card-actions>
