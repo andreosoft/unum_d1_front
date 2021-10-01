@@ -149,12 +149,7 @@ export default {
     ...State_lang(["doctor", "common"]),
     ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
     isInvalid() {
-      if (
-        this.newPatient.name === "" ||
-        this.newPatient.surname === "" ||
-        this.newPatient.middleName === "" ||
-        this.newPatient.birthday === ""
-      ) {
+      if (this.newPatient.name === "" || this.newPatient.surname === "") {
         return true;
       }
       return false;
