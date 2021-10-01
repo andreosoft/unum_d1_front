@@ -61,7 +61,9 @@
               outlined
               @input="$v.password.$reset"
               :label="getCommonTranslation('Password')"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              @click:append="showPassword = !showPassword"
             >
             </v-text-field>
             <v-text-field
@@ -76,7 +78,13 @@
               outlined
               @input="$v.passwordConfirmation.$reset"
               :label="getCommonTranslation('Password again')"
-              type="password"
+              :type="showPasswordConfirmation ? 'text' : 'password'"
+              :append-icon="
+                showPasswordConfirmation ? 'mdi-eye' : 'mdi-eye-off'
+              "
+              @click:append="
+                showPasswordConfirmation = !showPasswordConfirmation
+              "
             >
             </v-text-field>
           </div>
@@ -84,20 +92,6 @@
             <p class="form__title">
               {{ getCommonTranslation("Personal Information") }}
             </p>
-            <v-text-field
-              v-model="$v.name.$model"
-              :error="$v.name.$error"
-              :error-messages="
-                personalInfoError && !$v.name.required
-                  ? getCommonTranslation('Field is required')
-                  : ''
-              "
-              @input="$v.name.$reset"
-              :label="getCommonTranslation('Name')"
-              dense
-              outlined
-            >
-            </v-text-field>
             <v-text-field
               v-model="$v.surname.$model"
               :error="$v.surname.$error"
@@ -113,20 +107,27 @@
             >
             </v-text-field>
             <v-text-field
-              v-model="$v.secondname.$model"
-              :error="$v.secondname.$error"
+              v-model="$v.name.$model"
+              :error="$v.name.$error"
               :error-messages="
-                personalInfoError && !$v.secondname.required
+                personalInfoError && !$v.name.required
                   ? getCommonTranslation('Field is required')
                   : ''
               "
-              @input="$v.secondname.$reset"
+              @input="$v.name.$reset"
+              :label="getCommonTranslation('Name')"
+              dense
+              outlined
+            >
+            </v-text-field>
+            <v-text-field
+              v-model="secondname"
               :label="getCommonTranslation('Middle name')"
               dense
               outlined
             >
             </v-text-field>
-            <v-file-input
+            <!-- <v-file-input
               outlined
               dense
               solo
@@ -138,6 +139,14 @@
                   ? getCommonTranslation('Field is required')
                   : ''
               "
+            ></v-file-input> -->
+            <v-file-input
+              outlined
+              dense
+              solo
+              accept="image/*"
+              :label="getCommonTranslation('Your photo')"
+              @change="onPhotoChange"
             ></v-file-input>
             <v-input
               dense
@@ -395,6 +404,9 @@ export default {
       passwordConfirmation: "",
       phone: "",
 
+      showPassword: false,
+      showPasswordConfirmation: false,
+
       personalInfoError: false,
       name: "",
       surname: "",
@@ -535,12 +547,9 @@ export default {
     surname: {
       required,
     },
-    secondname: {
-      required,
-    },
-    photo: {
-      required,
-    },
+    // photo: {
+    //   required,
+    // },
     dateOfBirth: {
       required,
     },
@@ -586,8 +595,7 @@ export default {
         const requiredFields = [
           "name",
           "surname",
-          "secondname",
-          "photo",
+          // "photo",
           "dateOfBirth",
           "country",
           "language",
@@ -598,8 +606,7 @@ export default {
         if (
           this.$v.name.$invalid ||
           this.$v.surname.$invalid ||
-          this.$v.secondname.$invalid ||
-          this.$v.photo.$invalid ||
+          // this.$v.photo.$invalid ||
           this.$v.dateOfBirth.$invalid ||
           this.$v.country.$invalid ||
           this.$v.language.$invalid
