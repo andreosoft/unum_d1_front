@@ -157,14 +157,6 @@
                 <ColorPicker @change="onColorChange" />
               </template>
             </v-input>
-            <v-text-field
-              :label="getCommonTranslation('Doctor specialty')"
-              :value="getDoctorSpecialty"
-              outlined
-              readonly
-              dense
-              hide-details
-            ></v-text-field>
           </v-card-text>
           <v-card-actions>
             <v-btn text color="blue darken-1" @click="showEventForm = false">
