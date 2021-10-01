@@ -42,6 +42,17 @@
             ></v-text-field>
           </div>
           <div class="mb-4">
+            <p class="ma-0">{{ getCommonTranslation("Diagnosis comments") }}</p>
+            <v-textarea
+              no-resize
+              auto-grow
+              outlined
+              rows="3"
+              hide-details
+              v-model="clinicalRecord.diagnosComments"
+            ></v-textarea>
+          </div>
+          <div class="mb-4">
             <p class="ma-0">{{ getCommonTranslation("Description") }}</p>
             <v-textarea
               no-resize
@@ -131,6 +142,7 @@ export default {
       clinicalRecord: {
         type_id: 1,
         diagnos: "",
+        diagnosComments: "",
         description: "",
         recomendations: "",
         initialVisitId: null,
@@ -185,6 +197,7 @@ export default {
     async addClinicalRecordHandler() {
       const clinicalRecordData = {
         diagnos: this.clinicalRecord.diagnos,
+        diagnosComments: this.clinicalRecord.diagnosComments,
         description: this.clinicalRecord.description,
         recomendations: this.clinicalRecord.recomendations,
         createdAt: dayjs(),
