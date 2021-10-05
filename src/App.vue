@@ -48,6 +48,9 @@ export default {
 .align-items-end {
   align-items: flex-end !important;
 }
+.align-self-center {
+  align-items: center !important;
+}
 .align-self-start {
   align-self: start !important;
 }
