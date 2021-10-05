@@ -37,16 +37,6 @@ export default {
     ChatList,
     ChatWindow,
   },
-  data() {
-    return {
-      online: true,
-    };
-  },
-  mounted() {
-    setInterval(() => {
-      this.online = !this.online;
-    }, 10000);
-  },
 };
 </script>
 
