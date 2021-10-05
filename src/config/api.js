@@ -1,33 +1,38 @@
 const api = {
-  doctorSignUp: "/signup/registration/doctor",
-  doctorLogin: "/signup/get_token",
-  getUserProfile: "/signup/get_profile",
-  getDoctorProfile: "/doctor/profile",
-  postDoctorProfile: "/doctor/profile",
-  confirmLogin: "/signup/login_exists",
+  doctorSignUp: "/api/signup/registration/doctor",
+  doctorLogin: "/api/signup/get_token",
+  getUserProfile: "/api/signup/get_profile",
+  getDoctorProfile: "/api/doctor/profile",
+  postDoctorProfile: "/api/doctor/profile",
+  confirmLogin: "/api/signup/login_exists",
 
-  getPatients: "/doctor/patients",
-  getSelectedPatient: "/doctor/patients", // :id
-  createNewPatient: "/doctor/patients",
+  getPatients: "/api/doctor/patients",
+  getSelectedPatient: "/api/doctor/patients", // :id
+  createNewPatient: "/api/doctor/patients",
   updatePatient: "doctor/patients",
-  requestAccess: "/doctor/patients/request-access",
+  requestAccess: "/api/doctor/patients/request-access",
 
-  getDoctors: "/doctor/doctors",
-  getSelectedDoctor: "/doctor/doctors", // :id
+  getDoctors: "/api/doctor/doctors",
+  getSelectedDoctor: "/api/doctor/doctors", // :id
 
-  postClinicalRecords: "/doctor/clinical_records",
-  getClinicalRecords: "/doctor/clinical_records", // /doctor/clinical_records?filters={"patient_id":31}
+  postClinicalRecords: "/api/doctor/clinical_records",
+  getClinicalRecords: "/api/doctor/clinical_records", // /doctor/clinical_records?filters={"patient_id":31}
 
-  getLangItems: "/translations", // /translations/:lang/:item
+  getLangItems: "/api/translations", // /translations/:lang/:item
 
-  schedule: "/doctor/schedule", // get
+  schedule: "/api/doctor/schedule", // get
   addDoctorSchedule: "doctor/schedule", // post
   deleteScheduleItem: "doctor/schedule", // delete doctor/schedule/:id
 
-  postImage: "/image/upload",
-  getImage: "http://api.neomedy.com/api/image/download", // '/image/download/:name', width & height queries
+  postImage: "/api/image/upload",
+  getImage: "http://api.neomedy.com/api/image/download", // '/image/download/:id', width & height queries
 
-  postFile: "/file/upload",
-  getFile: "/file/download", // '/file/download/:file',
+  postFile: "/api/file/upload",
+  getFile: "/api/file/download", // '/file/download/:file',
+
+  createNewChat: "messegner/new_private_chat", // { to_id: '123'}
+  getUserChats: "messegner/chats",
+  getUserMessages: "messegner/messages", // /:chat_id?pager={ count: 0, limit: 25, page: 0 }
+  postMessage: "messegner/messages", // /:chat_id { message: "message", attachments: "{}" }
 };
 export default api;
