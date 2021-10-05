@@ -86,6 +86,7 @@ const { mapState, mapActions } = createNamespacedHelpers("auth");
 const { mapActions: Actions_patients } = createNamespacedHelpers("patients");
 const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
 const { mapActions: Actions_events } = createNamespacedHelpers("events");
+const { mapActions: Chats_events } = createNamespacedHelpers("chats");
 const {
   mapState: State_lang,
   mapGetters: Getters_lang,
@@ -185,10 +186,12 @@ export default {
     ...Actions_patients(["fetchPatients"]),
     ...Actions_doctors(["fetchDoctors"]),
     ...Actions_events(["fetchEvents"]),
+    ...Chats_events(["fetchChats"]),
   },
   created() {
     this.fetchPatients();
     this.fetchDoctors();
+    this.fetchChats();
     const start = dayjs()
       .startOf("month")
       .format("YYYY-MM-DD");
