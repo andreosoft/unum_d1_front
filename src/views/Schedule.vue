@@ -3,8 +3,14 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
-            {{ getCommonTranslation("Today") }}
+          <v-btn
+            text
+            rounded
+            class="mr-4"
+            color="grey darken-2"
+            @click="setToday"
+          >
+            <v-icon>mdi-calendar-today</v-icon>
           </v-btn>
           <v-btn fab text small color="grey darken-2" @click="prev">
             <v-icon small> mdi-chevron-left </v-icon>
@@ -12,9 +18,6 @@
           <v-btn fab text small color="grey darken-2" @click="next">
             <v-icon small> mdi-chevron-right </v-icon>
           </v-btn>
-          <v-toolbar-title v-if="$refs.calendar">
-            {{ getDoctorTranslation("Schedule") }}
-          </v-toolbar-title>
           <v-spacer></v-spacer>
           <v-menu bottom right>
             <template v-slot:activator="{ on, attrs }">
@@ -25,16 +28,16 @@
             </template>
             <v-list>
               <v-list-item @click="type = 'day'">
-                <v-list-item-title>Day</v-list-item-title>
+                <v-list-item-title>D</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = 'week'">
-                <v-list-item-title>Week</v-list-item-title>
+                <v-list-item-title>W</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = 'month'">
-                <v-list-item-title>Month</v-list-item-title>
+                <v-list-item-title>M</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 days</v-list-item-title>
+                <v-list-item-title>4D</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -171,10 +174,10 @@
         </v-card>
       </v-dialog>
       <!-- создание диапазона посещений -->
-      <v-dialog v-model="visitTimeGap" width="350">
+      <v-dialog v-model="visitTimeGap" max-width="400">
         <v-card v-if="visitTimeGap" class="pa-3">
           <v-card-title class="pa-0">
-            {{ getDoctorTranslation("Working time on") }}&nbsp;
+            {{ getDoctorTranslation("Set your working time on") }}&nbsp;
             <span style="white-space: nowrap;">{{ getStartDate }}</span>
           </v-card-title>
           <v-card-text class="pa-0">
@@ -289,10 +292,10 @@ export default {
       focus: "",
       type: "month",
       typeToLabel: {
-        month: "Month",
-        week: "Week",
-        day: "Day",
-        "4day": "4 Days",
+        month: "M",
+        week: "W",
+        day: "W",
+        "4day": "4D",
       },
       eventsDate: {
         start: null,
