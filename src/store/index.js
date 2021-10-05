@@ -5,6 +5,7 @@ import patients from "./modules/patients";
 import doctors from "./modules/doctors";
 import lang from "./modules/lang";
 import events from "./modules/events";
+import chats from "./modules/chats";
 import alerts from "./modules/alerts";
 import debounce from "lodash/debounce";
 
@@ -39,6 +40,7 @@ const store = new Vuex.Store({
     doctors,
     lang,
     events,
+    chats,
     alerts,
   },
 });
