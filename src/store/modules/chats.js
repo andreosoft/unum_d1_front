@@ -3,6 +3,7 @@ import router from "./../../router";
 const state = {
   chats: [],
   messages: [],
+  messagesFetched: false,
   selectedChat: null,
 };
 const getters = {
@@ -24,6 +25,9 @@ const mutations = {
     });
     state.messages = messages;
   },
+  SET_MESSAGES_FETCHED(state, payload) {
+    state.messagesFetched = payload;
+  },
   SET_SELECTED_CHAT(state, chat) {
     state.selectedChat = chat;
   },
@@ -31,6 +35,7 @@ const mutations = {
 const actions = {
   fetchCurrentUserMessages({ commit }, chat_id) {
     // console.log("fetching messages", chat_id);
+    commit("SET_MESSAGES_FETCHED", false);
     return axios
       .get(api.getUserMessages + `/${chat_id}`, {
         params: {
@@ -40,6 +45,7 @@ const actions = {
       .then((res) => {
         commit("SET_MESSAGES", res.data.data);
         // console.log(res, "messages fetched");
+        commit("SET_MESSAGES_FETCHED", true);
       });
   },
   postMessage({ dispatch }, { message, chat_id }) {
