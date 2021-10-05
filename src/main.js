@@ -7,7 +7,9 @@ import Vuelidate from "vuelidate";
 import VuePhoneNumberInput from "vue-phone-number-input";
 import PortalVue from "portal-vue";
 import "vue-phone-number-input/dist/vue-phone-number-input.css";
+import VueChatScroll from "vue-chat-scroll";
 
+Vue.use(VueChatScroll);
 Vue.use(PortalVue);
 Vue.use(Vuelidate);
 Vue.config.productionTip = false;
