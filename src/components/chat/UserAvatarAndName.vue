@@ -1,11 +1,17 @@
 <template>
   <v-list-item @click="$emit('click')" :ripple="false" :disabled="disabled">
     <v-list-item-avatar :size="avatarSize">
-      <v-img style="background-color: red;"></v-img>
+      <v-img
+        :src="
+          avatarUrl
+            ? `${imageSrc(avatarUrl)}?width=100&height=100`
+            : '/images/doctor-placeholder.jpeg'
+        "
+      ></v-img>
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title class="text-truncate text-no-wrap">
-        Андрей Романов Андрей Романов Андрей Романов
+        {{ name }}
       </v-list-item-title>
       <slot name="subtitle"></slot>
     </v-list-item-content>
@@ -14,6 +20,8 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
+const { mapGetters } = createNamespacedHelpers("doctors");
 export default {
   name: "UserAvatarAndName",
   props: {
@@ -21,14 +29,25 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: "",
+    },
     avatarSize: {
       type: Number,
       default: 50,
+    },
+    avatarUrl: {
+      type: String,
+      default: "",
     },
     disabled: {
       type: Boolean,
       default: false,
     },
+  },
+  computed: {
+    ...mapGetters(["imageSrc"]),
   },
 };
 </script>

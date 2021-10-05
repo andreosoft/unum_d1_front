@@ -12,13 +12,7 @@
       </v-card-actions>
     </div>
     <v-list-item class="pa-0">
-      <UserAvatarAndName :avatarSize="65" :online="online" disabled>
-        <template #subtitle>
-          <v-list-item-subtitle :class="[online ? 'online' : 'offline']">
-            {{ online ? "Online" : "Offline" }}
-          </v-list-item-subtitle>
-        </template>
-      </UserAvatarAndName>
+      <UserAvatarAndName :avatarSize="65" :online="online" disabled />
     </v-list-item>
   </v-card>
 </template>

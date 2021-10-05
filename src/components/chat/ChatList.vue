@@ -1,16 +1,19 @@
 <template>
   <div>
     <ChatItem
-      v-for="(item, index) in chatItems"
+      v-for="(item, index) in chats"
       :key="index"
-      :active="activeItem === item.id"
-      @click.native="chooseChat(item.id)"
-      :notifications="item.notification"
+      :active="activeItem === item.chat_id"
+      @click.native="chooseChat(item.chat_id)"
+      :name="String(item.name)"
+      :avatarUrl="item.image && item.image"
     />
   </div>
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
+const { mapState, mapGetters, mapActions } = createNamespacedHelpers("chats");
 import ChatItem from "./ChatItem.vue";
 export default {
   name: "ChatList",
@@ -23,48 +26,61 @@ export default {
       chatItems: [
         {
           notification: 1,
-          id: 212313,
+          id: 1,
         },
         {
           notification: 323,
-          id: 124123,
+          id: 2,
         },
         {
           notification: 4,
-          id: 4123513,
+          id: 3,
         },
         {
           notification: 2,
-          id: 1241323,
+          id: 4,
         },
         {
           notification: 312312,
-          id: 1515123,
+          id: 5,
         },
       ],
     };
+  },
+  computed: {
+    ...mapState(["chats"]),
+    ...mapGetters(["getSelectChatById"]),
   },
   watch: {
     "$route.params.id": {
       immediate: true,
       handler(id) {
         if (id) {
-          this.chooseChat(Number(id));
+          const numID = Number(id);
+          this.chooseChat(numID);
+        }
+      },
+    },
+    chats: {
+      deep: true,
+      immediate: true,
+      handler(val) {
+        if (val.length) {
+          const selectedChat = this.getSelectChatById(
+            Number(this.$route.params.id)
+          );
+          this.setSelectedChat(selectedChat);
         }
       },
     },
   },
   methods: {
+    ...mapActions(["setSelectedChat"]),
     chooseChat(id) {
+      const selectedChat = this.getSelectChatById(id);
+      this.setSelectedChat(selectedChat);
       this.activeItem = id;
       this.$router.push({ name: "Chat", params: { id } }).catch(() => {});
-      setTimeout(() => {
-        this.chatItems.map((chat) => {
-          if (chat.id === id) {
-            chat.notification = 0;
-          }
-        });
-      }, 1000);
     },
   },
 };

@@ -3,14 +3,27 @@
     <Message
       v-for="(item, index) in messages"
       :key="item.id"
-      :messageObj="item"
-      :class="{ me: item.me, 'mb-5': index !== messages.length - 1 }"
+      :me="item.user_id === currentUserId"
+      :message="item.message"
+      :date="item.createdon"
+      :attachments="item.attachments"
+      :class="{ 'mb-2': index !== messages.length }"
       class="messages__item"
     >
+      <template v-if="item.showDate" #message-date="{ date }">
+        <div class="align-self-center my-4">
+          <v-chip>{{ date | formatDate }}</v-chip>
+        </div>
+      </template>
       <template #user-image>
         <v-avatar class="align-self-end mr-2">
           <v-img
-            v-if="item.showAvatar"
+            v-if="item.user_id !== currentUserId && item.showAvatar"
+            :src="
+              getSelectedChatImageId
+                ? `${imageSrc(getSelectedChatImageId)}?width=250&height=250`
+                : '/images/doctor-placeholder.jpeg'
+            "
             style="background-color: purple;"
           ></v-img>
         </v-avatar>
@@ -20,16 +33,32 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
+import dayjs from "dayjs";
+const { mapState } = createNamespacedHelpers("auth");
+const { mapState: State_chats } = createNamespacedHelpers("chats");
+const { mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
 import Message from "./Message.vue";
+
 export default {
   name: "MessagesList",
   components: {
     Message,
   },
-  props: {
-    messages: {
-      type: Array,
-      default: () => [],
+  filters: {
+    formatDate(v) {
+      return dayjs(v).format("YYYY MMM DD");
+    },
+  },
+  computed: {
+    ...mapState(["userProfile"]),
+    ...State_chats(["messages", "selectedChat"]),
+    ...Getters_doctors(["imageSrc"]),
+    currentUserId() {
+      return this.userProfile && this.userProfile.id;
+    },
+    getSelectedChatImageId() {
+      return this.selectedChat && this.selectedChat.image;
     },
   },
 };
@@ -37,9 +66,6 @@ export default {
 
 <style lang="scss" scoped>
 .messages__item {
-  max-width: 80%;
-}
-.me {
-  align-self: flex-end;
+  width: 100%;
 }
 </style>

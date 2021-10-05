@@ -8,13 +8,12 @@
       @click="$router.push({ name: 'Chats' })"
       >mdi-chevron-left</v-icon
     >
-    <UserAvatarAndName :online="online" @click="$emit('click')">
-      <template #subtitle>
-        <v-list-item-subtitle :class="[online ? 'online' : 'offline']">
-          {{ online ? "Online" : "Offline" }}
-        </v-list-item-subtitle>
-      </template>
-    </UserAvatarAndName>
+    <UserAvatarAndName
+      :name="selectedChat && selectedChat.name"
+      :avatarUrl="selectedChat && selectedChat.image"
+      :online="online"
+      @click="$emit('click')"
+    />
     <v-spacer></v-spacer>
     <v-toolbar-items class="align-items-center">
       <ChatWindowToolbarActions
@@ -28,6 +27,8 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
+const { mapState } = createNamespacedHelpers("chats");
 import UserAvatarAndName from "./UserAvatarAndName";
 import ChatWindowToolbarActions from "./ChatWindowToolbarActions";
 export default {
@@ -62,6 +63,9 @@ export default {
         },
       ],
     };
+  },
+  computed: {
+    ...mapState(["selectedChat"]),
   },
 };
 </script>

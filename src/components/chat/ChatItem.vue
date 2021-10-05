@@ -3,7 +3,7 @@
     class="cursor-pointer position-relative pa-0 d-flex align-items-center chat-item"
     :class="{ active: active }"
   >
-    <UserAvatarAndName>
+    <UserAvatarAndName :name="name" :avatarUrl="avatarUrl">
       <template #subtitle>
         <v-list-item-subtitle
           class="grey--text text-truncate"
@@ -42,6 +42,14 @@ export default {
     notifications: {
       type: Number,
       default: 0,
+    },
+    name: {
+      type: String,
+      default: "",
+    },
+    avatarUrl: {
+      type: String,
+      default: "",
     },
   },
   methods: {

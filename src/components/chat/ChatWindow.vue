@@ -2,7 +2,7 @@
   <div class="chat-window">
     <div class="chat-window__container">
       <ChatWindowToolbar @click="openCompanionDialog" :online="online" />
-      <div class="chat-window__messages pa-3">
+      <div class="chat-window__messages pa-3" id="window" v-chat-scroll>
         <MessagesList :messages="formattedMessages" class="messages__list" />
       </div>
       <UserInput
@@ -18,11 +18,15 @@
       :fullscreen="$vuetify.breakpoint.smAndDown"
     >
       <v-card color="#EEEEEE" tile :min-height="680">
-        <CompanionInfo @close="companionDialog = false" :online="online" />
+        <CompanionInfo @close="companionDialog = false" />
 
         <CompanionEducation />
 
-        <CompanionMedia />
+        <CompanionMedia
+          :photos="getPhotos"
+          :videos="getVideos"
+          :files="getFiles"
+        />
 
         <CompanionActions />
       </v-card>
@@ -31,6 +35,11 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
+import dayjs from "dayjs";
+const { mapState, mapActions } = createNamespacedHelpers("chats");
+const { mapState: State_auth } = createNamespacedHelpers("auth");
+const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
 import ChatWindowToolbar from "./ChatWindowToolbar";
 import MessagesList from "./MessagesList";
 import CompanionInfo from "./CompanionInfo";
@@ -38,6 +47,7 @@ import CompanionEducation from "./CompanionEducation";
 import CompanionMedia from "./CompanionMedia";
 import CompanionActions from "./CompanionActions";
 import UserInput from "./UserInput";
+import ImagePreview from "./ImagePreview";
 export default {
   name: "ChatWindow",
   components: {
@@ -48,130 +58,152 @@ export default {
     CompanionMedia,
     CompanionActions,
     UserInput,
-  },
-  props: {
-    online: {
-      type: Boolean,
-      default: false,
-    },
+    ImagePreview,
   },
   data() {
     return {
       companionDialog: false,
-      messages: [
-        {
-          id: 1,
-          me: true,
-          text:
-            "Возлеsd здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой. Но пришла группа примерно из 50 мужчин и оттеснила протестующих к проспекту Эркиндик. Неизвестные заявили, что против НПО и не хотят политизации этой проблемы.",
-        },
-        {
-          id: 2,
-          me: true,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-        {
-          id: 3,
-          me: false,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой. Но пришла группа примерно из 50 мужчин и оттеснила протестующих к проспекту Эркиндик. Неизвестные заявили, что против НПО и не хотят политизации этой проблемы.",
-        },
-        {
-          id: 5,
-          me: false,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-        {
-          id: 6,
-          me: true,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-        {
-          id: 7,
-          me: false,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-        {
-          id: 8,
-          me: true,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-        {
-          id: 10,
-          me: true,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-        {
-          id: 4,
-          me: false,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-        {
-          id: 9,
-          me: false,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-        {
-          id: 11,
-          me: true,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-        {
-          id: 12,
-          me: false,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-        {
-          id: 13,
-          me: false,
-          text:
-            "Возле здания МВД неспокойно. Там митинговали с требованием отправить в отставку министра внутренних дел из-за убийства Айзады Канатбековой.",
-        },
-      ],
+      online: false,
     };
   },
   computed: {
+    ...mapState(["messages"]),
+    ...State_auth(["userProfile"]),
     formattedMessages() {
       const messages = [...this.messages];
-      messages.map((m, index) => {
-        if (!m.me) {
-          m.showAvatar = messages[index - 1].me !== messages[index].me;
+      // console.clear();
+      const result = messages.reduce((prev, item, index, arr) => {
+        item.showDate = false;
+        if (arr[index + 1]) {
+          if (
+            dayjs(arr[index].createdon).format("YYYY-MM-DD") !==
+            dayjs(arr[index + 1].createdon).format("YYYY-MM-DD")
+          ) {
+            item.showDate = true;
+          }
+        }
+        if (item.user_id !== this.getUserId) {
+          item.showAvatar = true;
+          if (arr[index + 1] && arr[index + 1].user_id !== this.getUserId) {
+            arr[index + 1].show = true;
+            item.showAvatar = undefined;
+            // return;
+          }
+        }
+        prev.push(item);
+        return prev;
+      }, []);
+      return messages;
+    },
+    getUserId() {
+      return this.userProfile && this.userProfile.id;
+    },
+    getPhotos() {
+      const media = [];
+      this.messages.map((message) => {
+        if (
+          message.attachments.length &&
+          message.attachments[0].type === "image"
+        ) {
+          message.attachments[0].value =
+            "http://api.neomedy.com/api/image/download/" +
+            message.attachments[0].value;
+          media.push(message.attachments[0]);
         }
       });
-      messages.sort((a, b) => (a.id > b.id ? 1 : -1));
-      return messages.reverse();
+      return media;
+    },
+    getVideos() {
+      const media = [];
+      this.messages.map((message) => {
+        if (
+          message.attachments.length &&
+          message.attachments[0].type === "video"
+        ) {
+          // message.attachments[0].value =
+          //   "http://api.neomedy.com/api/file/download/" +
+          //   message.attachments[0].value;
+          media.push(message.attachments[0]);
+        }
+      });
+      return media;
+    },
+    getFiles() {
+      return this.messages.filter(
+        (message) =>
+          message.attachments.length && message.attachments[0].type === "file"
+      );
+    },
+  },
+  watch: {
+    formattedMessages: {
+      // immediate: true,
+      deep: true,
+      handler(val) {
+        console.log(val.length);
+        val.map((v, index) => {
+          // console.log(v.showDate, index);
+        });
+      },
     },
   },
   methods: {
-    clickAppend() {
-      console.log("append click");
-    },
+    ...mapActions([
+      "fetchCurrentUserMessages",
+      "postMessage",
+      "postImage",
+      "postFile",
+    ]),
+    ...Actions_alerts(["addAlert"]),
     openCompanionDialog() {
       this.companionDialog = true;
     },
-    sendMessage(message) {
-      this.messages.push({
-        id: Date.now(),
-        me: false,
-        text: message,
-      });
+    async sendMessage({ message, file }) {
+      let attachments = [];
+      if (file) {
+        if (file.type.includes("image/")) {
+          console.log("image");
+          const fileId = await this.postImage(file);
+          attachments.push({ type: "image", value: fileId, name: file.name });
+        } else if (file.type.includes("video/")) {
+          console.log("video");
+          const fileId = await this.postFile(file);
+          attachments.push({ type: "video", value: fileId, name: file.name });
+        } else if (file.type.includes("audio/")) {
+          console.log("audio");
+          const fileId = await this.postFile(file);
+          attachments.push({ type: "audio", value: fileId, name: file.name });
+        } else {
+          console.log("file");
+          const fileId = await this.postFile(file);
+          attachments.push({ type: "file", value: fileId, name: file.name });
+        }
+      }
+      const payload = {
+        message,
+        attachments: JSON.stringify(attachments),
+      };
+      this.postMessage({ message: payload, chat_id: this.$route.params.id });
+      // console.log("sending message", { payload });
     },
-    attachFile() {
+    attachFile(e) {
+      console.log(e);
       console.log("attaching file");
     },
     chooseEmoji() {
       console.log("choosing emoji");
     },
+  },
+  async mounted() {
+    // console.log(
+    //   dayjs("2021-10-05 06:07:09").format("YYYY-MM-DD") ===
+    //     dayjs("2021-10-05 06:09:09").format("YYYY-MM-DD")
+    // );
+    await this.fetchCurrentUserMessages(this.$route.params.id);
+    setInterval(() => {
+      this.online = !this.online;
+    }, 5000);
+    // console.log(this.formattedMessages, "formatted");
   },
 };
 </script>
