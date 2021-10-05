@@ -3,7 +3,12 @@
     <v-row no-gutters>
       <v-col cols="12">
         <DoctorProfileAvatar :avatarUrl="avatarUrl" class="mb-4" />
-        <ContactButtons :email="email" :phone="phone" />
+        <ContactButtons
+          @createChat="createChat"
+          :email="email"
+          :phone="phone"
+          :userId="userId"
+        />
         <div>
           <p class="mb-1 doctor-info__text">
             {{ lastName || getCommonTranslation("Surname") }}
@@ -27,6 +32,7 @@ import { createNamespacedHelpers } from "vuex";
 import DoctorProfileAvatar from "./DoctorProfileAvatar.vue";
 import ContactButtons from "./../ContactButtons.vue";
 const { mapGetters } = createNamespacedHelpers("lang");
+const { mapActions: Actions_chat } = createNamespacedHelpers("chats");
 export default {
   name: "DoctorBio",
   components: {
@@ -62,9 +68,18 @@ export default {
       type: String,
       default: "",
     },
+    userId: {
+      type: Number,
+    },
   },
   computed: {
     ...mapGetters(["getDoctorTranslation", "getCommonTranslation"]),
+  },
+  methods: {
+    ...Actions_chat(["createNewChat"]),
+    createChat() {
+      this.createNewChat(this.userId);
+    },
   },
 };
 </script>

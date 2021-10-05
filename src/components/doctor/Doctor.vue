@@ -14,6 +14,7 @@
           :email="getEmail"
           :phone="getPhone"
           :doctorSpecialty="getDoctorSpecialty"
+          :userId="getUserId"
         />
       </v-col>
       <v-divider vertical></v-divider>
@@ -45,6 +46,7 @@
         :middleName="getMiddleName"
         :doctorSpecialty="selectedDoctor && selectedDoctor.medical_specialty"
         class="mx-auto pt-3"
+        :userId="getUserId"
       />
     </v-navigation-drawer>
   </v-container>
@@ -78,6 +80,9 @@ export default {
     },
     getMiddleName() {
       return this.selectedDoctor && this.selectedDoctor.name.split(" ")[2];
+    },
+    getUserId() {
+      return this.selectedDoctor && this.selectedDoctor.user_id;
     },
     getFullName() {
       return this.selectedDoctor && this.selectedDoctor.name;
