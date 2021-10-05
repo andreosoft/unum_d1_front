@@ -1,8 +1,8 @@
 <template>
   <div class="chat-window">
     <div class="chat-window__container">
-      <ChatWindowToolbar @click="openCompanionDialog" :online="online" />
-      <div class="chat-window__messages pa-3" id="window" v-chat-scroll>
+      <ChatWindowToolbar @click="openCompanionDialog" />
+      <div class="chat-window__messages pa-3" ref="container">
         <MessagesList :messages="formattedMessages" class="messages__list" />
       </div>
       <UserInput
@@ -63,11 +63,10 @@ export default {
   data() {
     return {
       companionDialog: false,
-      online: false,
     };
   },
   computed: {
-    ...mapState(["messages"]),
+    ...mapState(["messages", "messagesFetched"]),
     ...State_auth(["userProfile"]),
     formattedMessages() {
       const messages = [...this.messages];
@@ -135,18 +134,6 @@ export default {
       );
     },
   },
-  watch: {
-    formattedMessages: {
-      // immediate: true,
-      deep: true,
-      handler(val) {
-        console.log(val.length);
-        val.map((v, index) => {
-          // console.log(v.showDate, index);
-        });
-      },
-    },
-  },
   methods: {
     ...mapActions([
       "fetchCurrentUserMessages",
@@ -193,17 +180,14 @@ export default {
     chooseEmoji() {
       console.log("choosing emoji");
     },
+    scrollDown() {
+      const content = this.$refs.container;
+      content.scrollTop = content.scrollHeight;
+    },
   },
   async mounted() {
-    // console.log(
-    //   dayjs("2021-10-05 06:07:09").format("YYYY-MM-DD") ===
-    //     dayjs("2021-10-05 06:09:09").format("YYYY-MM-DD")
-    // );
     await this.fetchCurrentUserMessages(this.$route.params.id);
-    setInterval(() => {
-      this.online = !this.online;
-    }, 5000);
-    // console.log(this.formattedMessages, "formatted");
+    this.scrollDown();
   },
 };
 </script>

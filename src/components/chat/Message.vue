@@ -18,7 +18,7 @@
         <!-- image -->
         <div
           v-if="attachments.length && attachments[0].type === 'image'"
-          style="background-color: cyan; max-width: 250px; max-height: 250px;"
+          style="max-width: 250px; max-height: 250px;"
         >
           <ImagePreview :mediaSrc="attachments[0].value" />
         </div>
@@ -27,10 +27,7 @@
           v-if="attachments.length && attachments[0].type === 'file'"
           style="max-width: 200px;"
         >
-          <a
-            :href="download(attachments[0].value)"
-            style="background-color: cyan;"
-          >
+          <a :href="download(attachments[0].value)">
             <div>
               <div
                 style="height: 100px; width: 100%; background-color: white;"
@@ -50,8 +47,8 @@
         >
           <ImagePreview video :mediaSrc="attachments[0].value" />
         </div>
-        <v-card-text class="pa-0">
-          {{ date | formatTime }}
+        <v-card-text class="pa-0 d-flex" style="justify-content: flex-end;">
+          <span style="font-style: italic;">{{ date | formatTime }}</span>
         </v-card-text>
       </v-card>
     </div>
