@@ -21,8 +21,8 @@ const api = {
   getLangItems: "/api/translations", // /translations/:lang/:item
 
   schedule: "/api/doctor/schedule", // get
-  addDoctorSchedule: "doctor/schedule", // post
-  deleteScheduleItem: "doctor/schedule", // delete doctor/schedule/:id
+  addDoctorSchedule: "/api/doctor/schedule", // post
+  deleteScheduleItem: "/api/doctor/schedule", // delete doctor/schedule/:id
 
   postImage: "/api/image/upload",
   getImage: "http://api.neomedy.com/api/image/download", // '/image/download/:id', width & height queries
