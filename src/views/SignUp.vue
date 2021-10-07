@@ -140,6 +140,12 @@
                   : ''
               "
             ></v-file-input> -->
+            <v-img
+              v-if="photoPreview.length"
+              :src="photoPreview"
+              style="width: 40%;"
+              class="mb-3 rounded-lg"
+            ></v-img>
             <v-file-input
               outlined
               dense
@@ -412,6 +418,7 @@ export default {
       surname: "",
       secondname: "",
       photo: "",
+      photoPreview: "",
       dateOfBirth: "",
       country: null,
       language: "",
@@ -668,6 +675,7 @@ export default {
       this.signUp(data);
     },
     onPhotoChange(v) {
+      this.photoPreview = URL.createObjectURL(v);
       const photo = v;
       let formData = new FormData();
       formData.append("file", photo);
