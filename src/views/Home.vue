@@ -10,7 +10,7 @@
     <v-divider></v-divider>
     <div v-if="events.length">
       <h2 class="mx-3">{{ getDoctorTranslation("My events") }}</h2>
-      <Events :events="getAppointments" />
+      <Events :events="getValidEvents" />
     </div>
     <div v-else>
       <h2 class="mx-3">{{ getDoctorTranslation("No events yet") }}</h2>
@@ -50,7 +50,7 @@ export default {
   computed: {
     ...mapState(["patients"]),
     ...State_events(["events"]),
-    ...Getters_events(["getAppointments"]),
+    ...Getters_events(["getValidEvents"]),
     ...Getters_lang(["getDoctorTranslation"]),
   },
 };

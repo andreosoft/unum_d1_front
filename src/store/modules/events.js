@@ -1,4 +1,5 @@
 import { axios, api } from "./../../config/index";
+import dayjs from "dayjs";
 
 const state = {
   events: [],
@@ -7,6 +8,11 @@ const state = {
 const getters = {
   getAppointments(state) {
     return state.events.filter((event) => event.type_id === 1);
+  },
+  getValidEvents(state) {
+    return state.events.filter(
+      (event) => dayjs().isBefore(event.start) && event.type_id === 1
+    );
   },
 };
 
