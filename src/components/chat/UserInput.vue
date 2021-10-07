@@ -83,15 +83,7 @@ export default {
     async onChange(e) {
       console.log(e);
       this.file = e;
-      console.log(URL.createObjectURL(e));
       this.previewUrl = URL.createObjectURL(e);
-      // this.file = e.target.files[0];
-      // const reader = new FileReader();
-      // reader.onload = function(e) {
-      //   this.previewUrl = e.target.result;
-      //   console.log(this.previewUrl);
-      // };
-      // reader.readAsDataURL(this.file);
     },
   },
 };
