@@ -124,6 +124,12 @@
               class="mb-2"
               :label="getCommonTranslation('Phone')"
             ></v-text-field>
+            <v-img
+              v-if="img.length"
+              style="width: 50%;"
+              class="mb-3 rounded-lg"
+              :src="img"
+            ></v-img>
             <v-file-input
               hide-details
               outlined
@@ -244,6 +250,7 @@ import { createNamespacedHelpers } from "vuex";
 import dayjs from "dayjs";
 const { mapState, mapMutations, mapActions } = createNamespacedHelpers("auth");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
+const { mapActions: Actions_alert } = createNamespacedHelpers("alerts");
 export default {
   data() {
     return {
@@ -316,7 +323,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["doctorProfile", "userProfile"]),
+    ...mapState(["doctorProfile", "userProfile", "isProfileUpdating"]),
     ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
     languagesList() {
       let english = this.getCommonTranslation("English"),
@@ -528,8 +535,16 @@ export default {
       },
     },
   },
+  watch: {
+    isProfileUpdating(val) {
+      if (!val) {
+        this.addAlert({ type: "success", text: "Profile updated" });
+      }
+    },
+  },
   methods: {
     ...mapActions(["updateDoctorProfile", "uploadDoctorImage"]),
+    ...Actions_alert(["addAlert"]),
     ...mapMutations([
       "SET_DOCTOR_NAME",
       "SET_DOCTOR_BIRTHDAY",
@@ -555,6 +570,8 @@ export default {
       this.profileData.selectedPhoto = e;
     },
     onPhotoChange(v) {
+      this.img = URL.createObjectURL(v);
+      console.log(this.img);
       this.file = v;
       let formData = new FormData();
       formData.append("file", this.file);
