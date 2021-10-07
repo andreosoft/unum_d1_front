@@ -370,6 +370,9 @@ export default {
       return interval.time;
     },
     createEventHandler(event) {
+      if (dayjs().isAfter(dayjs(event.date).add(1, "day"))) {
+        return;
+      }
       if (!event.time) {
         event.time = "10:00:00";
         this.startTime = "10:00:00";
