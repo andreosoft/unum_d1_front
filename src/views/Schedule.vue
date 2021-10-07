@@ -107,14 +107,13 @@
               :label="getCommonTranslation('Event name')"
               v-model="eventName"
             ></v-text-field>
-            <v-select
-              :items="patients"
+            <v-combobox
               v-model="selectedPatient"
+              :items="patients"
               item-text="name"
-              item-value="id"
               :label="getDoctorTranslation('Patients')"
               @change="onSelectedPatientChange"
-            ></v-select>
+            ></v-combobox>
             <v-input
               class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
             >
@@ -232,12 +231,7 @@
       >
         <v-list>
           <v-list-item-group active-class="">
-            <v-list-item
-              @click="
-                $router.push(`/patients/${eventDefaultData.patient_id}`);
-                eventMenu = false;
-              "
-            >
+            <v-list-item @click="pushToPatientCard">
               <v-list-item-title>
                 {{ getCommonTranslation("Patient card") }}
               </v-list-item-title>
@@ -477,6 +471,7 @@ export default {
         start: this.eventDefaultData.start,
         end: this.eventDefaultData.end,
         patient_id: this.eventDefaultData.patient_id,
+        patient: this.eventDefaultData.patient || null,
         type_id: 1,
       };
       if (!this.selectedPatient) {
@@ -509,10 +504,21 @@ export default {
     onColorChange(color) {
       this.eventDefaultData.color = color;
     },
-    onSelectedPatientChange(patientId) {
-      this.eventDefaultData.patient_id = patientId;
-      const patient = this.patients.find((p) => p.id === patientId);
-      this.selectedPatient = patientId;
+    onSelectedPatientChange(patient) {
+      if (patient.id) {
+        this.eventDefaultData.patient_id = patient.id;
+        return;
+      }
+      this.eventDefaultData.color = "#8100CC";
+      this.eventDefaultData.patient = patient;
+    },
+    pushToPatientCard() {
+      if (this.eventDefaultData.patient_id) {
+        this.$router.push(`/patients/${this.eventDefaultData.patient_id}`);
+        this.eventMenu = false;
+        return;
+      }
+      this.$router.push({ name: "New patient" });
     },
     visitStartTimeChange(time) {
       this.visitingStartTime = time;
