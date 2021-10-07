@@ -3,7 +3,7 @@
     <PatientsControls
       @sortByDate="sortPatientsBy('date')"
       @sortByName="sortPatientsBy('alphabet')"
-      @openNewPatientDialog="newPatientDialog = true"
+      @openNewPatientDialog="$router.push({ name: 'New patient' })"
       @openRequestAccessDialog="requestAccessDialog = true"
     />
 
@@ -14,10 +14,7 @@
       @close="requestAccessDialog = false"
     />
 
-    <NewPatientDialog
-      :dialog="newPatientDialog"
-      @close="newPatientDialog = false"
-    />
+    <router-view></router-view>
   </div>
 </template>
 
