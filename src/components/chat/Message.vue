@@ -47,6 +47,11 @@
         >
           <ImagePreview video :mediaSrc="attachments[0].value" />
         </div>
+        <!-- audio -->
+
+        <div v-if="attachments.length && attachments[0].type === 'audio'">
+          <audio :src="download(attachments[0].value)" controls></audio>
+        </div>
         <v-card-text class="pa-0 d-flex" style="justify-content: flex-end;">
           <span style="font-style: italic;">{{ date | formatTime }}</span>
         </v-card-text>
