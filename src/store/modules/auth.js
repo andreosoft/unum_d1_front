@@ -6,6 +6,7 @@ const state = {
   authStatus: false,
   userProfile: null,
   doctorProfile: null,
+  isProfileUpdating: false,
 };
 const mutations = {
   SET_AUTH_STATUS(state, payload) {
@@ -38,6 +39,9 @@ const mutations = {
       payload.info.doctor_specialty = "";
     }
     state.doctorProfile = payload;
+  },
+  SET_IS_PROFILE_UPDATING(state, value) {
+    state.isProfileUpdating = value;
   },
 
   SET_DOCTOR_NAME(state, payload) {
@@ -275,10 +279,12 @@ const actions = {
   },
   updateDoctorProfile({ commit, state }) {
     console.log("saving...");
+    commit("SET_IS_PROFILE_UPDATING", true);
     const profile = _.cloneDeep(state.doctorProfile);
     profile.info = JSON.stringify(profile.info);
     return axios.post(api.postDoctorProfile, profile).then((res) => {
       console.log("saved");
+      commit("SET_IS_PROFILE_UPDATING", false);
     });
   },
   uploadDoctorImage({ dispatch, commit }, data) {
