@@ -104,6 +104,14 @@ const routes = [
           requiresAuth: true,
           title: "Пациенты",
         },
+        children: [
+          {
+            path: "new-patient",
+            name: "New patient",
+            component: () =>
+              import("./../components/patient/NewPatientDialog.vue"),
+          },
+        ],
       },
       {
         path: "/patients/:id",

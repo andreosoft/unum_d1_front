@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="dialog" :max-width="600" @input="resetForm">
+  <v-dialog :value="dialog" :max-width="600" @click:outside="clickOutside">
     <v-card class="py-3 px-6">
       <v-card-title class="pa-0 pt-3">
         {{ getDoctorTranslation("New patient") }}
@@ -124,7 +124,7 @@ export default {
   props: {
     dialog: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   data() {
@@ -187,8 +187,10 @@ export default {
     numberInput(val) {
       this.newPatient.phone = val.formatInternational;
     },
+    clickOutside() {
+      this.$router.push({ name: "Patients" });
+    },
     resetForm() {
-      this.$emit("close");
       this.newPatient.name = "";
       this.newPatient.birthday = "";
       this.newPatient.phone = "";
@@ -196,6 +198,7 @@ export default {
       this.newPatient.surname = "";
       this.newPatient.middleName = "";
       this.phoneModel = "";
+      this.clickOutside();
     },
   },
 };

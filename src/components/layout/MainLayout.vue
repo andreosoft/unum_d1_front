@@ -169,6 +169,9 @@ export default {
         case "Profile":
           title = this.getCommonTranslation("My profile");
           break;
+        case "New patient":
+          title = this.getDoctorTranslation("New patient");
+          break;
       }
 
       return title;
