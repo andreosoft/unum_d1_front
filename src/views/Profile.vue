@@ -242,6 +242,13 @@
         </v-col>
       </v-row>
     </v-container>
+    <div v-if="isProfileUpdating" class="loader">
+      <v-progress-circular
+        indeterminate
+        width="3"
+        size="20"
+      ></v-progress-circular>
+    </div>
   </div>
 </template>
 
@@ -580,7 +587,13 @@ export default {
   },
 };
 </script>
-
+<style scoped>
+.loader {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+</style>
 <style lang="scss">
 .profile-inputs .v-input__control {
   min-height: unset !important;

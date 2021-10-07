@@ -284,7 +284,9 @@ const actions = {
     profile.info = JSON.stringify(profile.info);
     return axios.post(api.postDoctorProfile, profile).then((res) => {
       console.log("saved");
-      commit("SET_IS_PROFILE_UPDATING", false);
+      setTimeout(() => {
+        commit("SET_IS_PROFILE_UPDATING", false);
+      }, 2000);
     });
   },
   uploadDoctorImage({ dispatch, commit }, data) {
