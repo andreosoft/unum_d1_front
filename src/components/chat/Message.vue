@@ -3,30 +3,29 @@
     <slot name="message-date" :date="date"> </slot>
     <div class="d-flex message__body" :class="{ 'align-self-end': me }">
       <slot name="user-image"></slot>
-      <!--  -->
-      <!-- <span class="mr-2">{{ messageObj.id }}</span> -->
-      <!--  -->
       <v-card
-        class="pa-3 rounded-xl"
+        class="pa-3 rounded-xl emir"
         :class="[me ? 'rounded-br-0' : 'rounded-bl-0']"
         :color="me ? '#bed5ec' : ''"
-        :max-width="$vuetify.breakpoint.smAndDown ? 250 : 350"
+        :max-width="
+          $vuetify.breakpoint.smAndDown &&
+          attachments.length &&
+          attachments[0].type === 'audio'
+            ? 330
+            : $vuetify.breakpoint.smAndDown
+            ? 250
+            : 350
+        "
       >
         <v-card-text class="pa-0">
           {{ message }}
         </v-card-text>
         <!-- image -->
-        <div
-          v-if="attachments.length && attachments[0].type === 'image'"
-          style="max-width: 250px; max-height: 250px;"
-        >
+        <div v-if="attachments.length && attachments[0].type === 'image'">
           <ImagePreview :mediaSrc="attachments[0].value" />
         </div>
         <!-- file -->
-        <div
-          v-if="attachments.length && attachments[0].type === 'file'"
-          style="max-width: 200px;"
-        >
+        <div v-if="attachments.length && attachments[0].type === 'file'">
           <a :href="download(attachments[0].value)">
             <div>
               <div
