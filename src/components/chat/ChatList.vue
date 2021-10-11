@@ -3,10 +3,10 @@
     <ChatItem
       v-for="(item, index) in chats"
       :key="index"
-      :active="activeItem === item.chat_id"
-      @click.native="chooseChat(item.chat_id)"
-      :name="String(item.name)"
-      :avatarUrl="item.image && item.image"
+      :active="activeItem === item.id"
+      @click.native="chooseChat(item.id)"
+      :name="item.type === 1 ? String(item.user_name) : String(item.name)"
+      :avatarUrl="item.user_image && item.user_image"
     />
   </div>
 </template>
