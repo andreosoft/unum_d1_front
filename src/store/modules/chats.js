@@ -66,6 +66,27 @@ const actions = {
       router.push({ name: "Chat", params: { id: chat_id } });
     });
   },
+
+  createNewGroupChat({ commit }, { name, info = "{}" }) {
+    const type = "2";
+    const payload = {
+      type,
+      name,
+      info,
+    };
+    return axios.post(api.newGroupChat, payload).then((res) => {
+      return res.data.data.chat_id;
+    });
+  },
+  createNewConsiliumChat({ commit }) {
+    const type = "3";
+    // code is here
+  },
+  addUserToGroupChat({ commit }, payload) {
+    return axios.post(api.addUserToChat, payload).then((res) => {
+      //
+    });
+  },
   setSelectedChat({ commit }, chat) {
     commit("SET_SELECTED_CHAT", chat);
   },
