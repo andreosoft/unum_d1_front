@@ -34,5 +34,9 @@ const api = {
   getUserChats: "messegner/chats",
   getUserMessages: "messegner/messages", // /:chat_id?pager={ count: 0, limit: 25, page: 0 }
   postMessage: "messegner/messages", // /:chat_id { message: "message", attachments: "{}" }
+
+  addUserToChat: "messegner/add_user_to_chat", // { "chat_id": 13, to_id: 123 }
+  newConsiliumChat: "messegner/new_group_chat", // { type: "3", name: "Новый консилиум чат", info: "{}" }
+  newGroupChat: "messegner/new_group_chat", // { type: "2", name: "Новый групповой чат", info: "{}"}
 };
 export default api;
