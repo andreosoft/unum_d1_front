@@ -114,8 +114,8 @@ export default {
           icon: "mdi-message-text",
         },
         {
-          name: "Consillium",
-          title: this.getCommonTranslation("Consillium"),
+          name: "Consilliums",
+          title: this.getCommonTranslation("Consilliums"),
           icon: "mdi-forum",
         },
         {
@@ -150,6 +150,9 @@ export default {
           break;
         case "Consillium":
           title = this.getCommonTranslation("Consillium");
+          break;
+        case "Consilliums":
+          title = this.getCommonTranslation("Consilliums");
           break;
         case "Doctors":
           title = this.getCommonTranslation("Doctors");

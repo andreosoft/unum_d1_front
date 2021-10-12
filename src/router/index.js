@@ -80,12 +80,29 @@ const routes = [
       },
       {
         path: "/consillium",
-        name: "Consillium",
-        component: () => import("./../views/Consillium.vue"),
+        component: () => import("./../views/Chats.vue"),
         meta: {
           requiresAuth: true,
           title: "Консиллиум",
         },
+        children: [
+          {
+            path: "",
+            name: "Consilliums",
+            components: {
+              list: () => import("./../views/Consillium.vue"),
+              messages: () => import("./../components/chat/NoSelected.vue"),
+            },
+          },
+          {
+            path: ":id",
+            name: "Consillium",
+            components: {
+              list: () => import("./../views/Consillium.vue"),
+              messages: () => import("./../components/chat/ChatWindow.vue"),
+            },
+          },
+        ],
       },
       {
         path: "/profile",
