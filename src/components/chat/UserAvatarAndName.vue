@@ -1,13 +1,9 @@
 <template>
   <v-list-item @click="$emit('click')" :ripple="false" :disabled="disabled">
-    <v-list-item-avatar :size="avatarSize">
-      <v-img
-        :src="
-          avatarUrl
-            ? `${imageSrc(avatarUrl)}?width=100&height=100`
-            : '/images/doctor-placeholder.jpeg'
-        "
-      ></v-img>
+    <v-list-item-avatar :size="avatarSize" color="cyan">
+      <v-icon v-if="group" color="white">mdi-account-group</v-icon>
+      <v-icon v-else-if="consilium" color="white">mdi-doctor</v-icon>
+      <v-img v-else :src="avatarUrl"> </v-img>
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title class="text-truncate text-no-wrap">
@@ -42,6 +38,14 @@ export default {
       default: "",
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    consilium: {
+      type: Boolean,
+      default: false,
+    },
+    group: {
       type: Boolean,
       default: false,
     },

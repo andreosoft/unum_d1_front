@@ -1,9 +1,9 @@
 <template>
-  <v-list-item v-if="content" class="px-0">
+  <v-list-item v-if="content.length" class="px-0">
     <v-list-item-content>
       <v-list-item-subtitle> {{ title }}: </v-list-item-subtitle>
       <v-list-item-content>
-        {{ content }}
+        {{ typeof content === "string" ? content : content.join(", ") }}
       </v-list-item-content>
     </v-list-item-content>
   </v-list-item>
@@ -16,8 +16,7 @@ export default {
   name: "ConsilliumItemInfo",
   props: {
     content: {
-      type: String,
-      default: "",
+      type: [String, Array],
     },
     title: {
       type: String,

@@ -1,6 +1,11 @@
 <template>
   <v-expansion-panels accordion flat tile>
-    <ConsilliumItem v-for="(item, index) in items" :key="index" :item="item" />
+    <ConsilliumItem
+      v-for="(item, index) in items"
+      :key="index"
+      :item="item"
+      @goToChat="$emit('goToChat', $event)"
+    />
   </v-expansion-panels>
 </template>
 

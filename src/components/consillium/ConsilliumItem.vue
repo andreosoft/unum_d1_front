@@ -2,26 +2,21 @@
   <v-expansion-panel>
     <v-expansion-panel-header class="d-flex justify-content-between py-3">
       <div class="d-flex align-items-center">
-        <v-icon
-          v-show="item.notifications"
-          color="error"
-          size="20"
-          class="mr-2"
-        >
+        <v-icon v-show="item.status === 0" color="error" size="20" class="mr-2">
           mdi-alert
         </v-icon>
         <span>
           {{ $_lang_getDoctorTranslation("Consillium") }} № {{ item.id }}
         </span>
       </div>
-      <span v-if="item.status" class="d-flex flex-column align-items-end">
+      <span v-if="item.status === 1" class="d-flex flex-column align-items-end">
         <v-icon color="success">mdi-check-circle</v-icon>
       </span>
     </v-expansion-panel-header>
     <v-expansion-panel-content>
       <v-list>
         <ConsilliumItemInfo
-          v-for="(value, key, index) in item"
+          v-for="(value, key, index) in getConsilliumInfo"
           :key="index"
           :title="formatTitle(key)"
           :content="typeof value === 'string' ? value : ''"
@@ -35,6 +30,7 @@
           class="d-block mb-3"
           color="#406278"
           style="width: 100%;"
+          @click="$emit('goToChat', item.id)"
         >
           {{ $_lang_getCommonTranslation("Go to chat") }}
         </v-btn>
@@ -61,8 +57,10 @@
 
 <script>
 import { lang } from "./../../mixins/lang";
+import { createNamespacedHelpers } from "vuex";
 import ConsilliumItemInfo from "./ConsilliumItemInfo";
 import CloseConsilliumDialog from "./CloseConsilliumDialog";
+const { mapGetters } = createNamespacedHelpers("doctors");
 export default {
   mixins: [lang],
   name: "ConsilliumItem",
@@ -81,24 +79,49 @@ export default {
       closeConsilliumDialog: false,
     };
   },
+  computed: {
+    ...mapGetters(["getDoctorByUserId"]),
+    getConsilliumInfo() {
+      const { name, createdon } = this.item;
+      const {
+        provisionalDiagnosis,
+        problemDescription,
+        selectedPatient,
+        invitedPeople,
+        tags,
+      } = this.item.info;
+      return {
+        name,
+        createdon,
+        provisionalDiagnosis,
+        problemDescription,
+        selectedPatient,
+        invitedPeople,
+        tags,
+      };
+    },
+  },
   methods: {
     formatTitle(val) {
       let title = "";
       switch (val) {
-        case "createdDate":
+        case "name":
+          title = this.$_lang_getCommonTranslation("Consillium name");
+          break;
+        case "createdon":
           title = this.$_lang_getCommonTranslation("Created date");
           break;
-        case "diagnosis":
+        case "provisionalDiagnosis":
           title = this.$_lang_getDoctorTranslation("Provisional diagnosis");
           break;
-        case "problem":
+        case "problemDescription":
           title = this.$_lang_getDoctorTranslation("Problem description");
           break;
-        case "patient":
+        case "selectedPatient":
           title = this.$_lang_getCommonTranslation("Patient");
           break;
-        case "participants":
-          title = this.$_lang_getDoctorTranslation("Participants");
+        case "invitedPeople":
+          title = this.$_lang_getDoctorTranslation("Members");
           break;
         case "tags":
           title = this.$_lang_getCommonTranslation("Tags");

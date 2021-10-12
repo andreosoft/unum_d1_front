@@ -1,16 +1,19 @@
 <template>
   <div>
-    <div class="d-flex justify-content-between px-4">
+    <v-btn @click="createConsilliumDialog = true">{{
+      $_lang_getDoctorTranslation("Create consillium")
+    }}</v-btn>
+    <!-- <div class="d-flex justify-content-between px-4">
       <p>{{ $_lang_getCommonTranslation("Sort") }}</p>
       <p>{{ $_lang_getCommonTranslation("Filter") }}</p>
-    </div>
-    <ConsilliumList :items="mockupComputed" />
+    </div> -->
+    <ConsilliumList :items="getConsilliumChats" @goToChat="goToChat" />
 
     <portal to="toolbar-action">
       <v-icon @click="search">mdi-magnify</v-icon>
     </portal>
 
-    <v-fab-transition>
+    <!-- <v-fab-transition>
       <v-btn
         fab
         right
@@ -22,7 +25,7 @@
       >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
-    </v-fab-transition>
+    </v-fab-transition> -->
     <CreateConsilliumDialog
       :dialog="createConsilliumDialog"
       @close="createConsilliumDialog = false"
@@ -31,9 +34,11 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
 import { lang } from "../../mixins/lang";
 import ConsilliumList from "./ConsilliumList";
 import CreateConsilliumDialog from "./CreateConsilliumDialog";
+const { mapState, mapGetters, mapActions } = createNamespacedHelpers("chats");
 export default {
   mixins: [lang],
   name: "ConsilliumComponent",
@@ -109,18 +114,31 @@ export default {
     };
   },
   computed: {
-    mockupComputed() {
-      const data = [...this.mockup];
-      data.map((item) => {
-        item.participants = item.participants.join(", ");
-        item.tags = item.tags.join(", ");
-      });
-      return data;
+    ...mapState(["chats"]),
+    ...mapGetters(["getConsilliumChats", "getSelectChatById"]),
+  },
+  watch: {
+    chats: {
+      immediate: true,
+      handler(val) {
+        if (val.length) {
+          const selectedChat = this.getSelectChatById(
+            Number(this.$route.params.id)
+          );
+          this.setSelectedChat(selectedChat);
+        }
+      },
     },
   },
   methods: {
+    ...mapActions(["setSelectedChat"]),
     search() {
       console.log("search");
+    },
+    goToChat(id) {
+      this.$router.push({ name: "Consillium", params: { id } }).catch(() => {});
+      const selectedChat = this.getSelectChatById(id);
+      this.setSelectedChat(selectedChat);
     },
   },
 };

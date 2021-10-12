@@ -9,6 +9,15 @@
       </v-toolbar>
 
       <v-container fluid class="pa-5">
+        <v-textarea
+          hide-details
+          :label="$_lang_getDoctorTranslation('Consillium chat name')"
+          dense
+          auto-grow
+          :rows="1"
+          class="mt-0 mb-7"
+          v-model="consilliumName"
+        ></v-textarea>
         <v-row
           no-gutters
           :class="[
@@ -25,6 +34,7 @@
               dense
               class="mt-0"
               :class="{ 'mb-7': $vuetify.breakpoint.smAndDown }"
+              v-model="provisionalDiagnosis"
             ></v-text-field>
           </v-col>
           <v-col md="5">
@@ -33,6 +43,7 @@
               :label="$_lang_getDoctorTranslation('Select a patient')"
               dense
               class="mt-0"
+              v-model="selectedPatient"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -43,6 +54,7 @@
           auto-grow
           :rows="1"
           class="mt-0 mb-7"
+          v-model="problemDescription"
         ></v-textarea>
         <v-row no-gutters class="flex-column">
           <h3 class="ma-0 mb-4">
@@ -53,10 +65,10 @@
           <v-col md="5" class="mb-7">
             <v-autocomplete
               prepend-inner-icon="mdi-magnify"
-              :items="people"
-              v-model="choosenPeople"
+              :items="getDoctors"
+              v-model="invitedPeople"
               item-text="name"
-              item-value="name"
+              item-value="user_id"
               hide-details
               :label="$_lang_getCommonTranslation('By name')"
               multiple
@@ -73,13 +85,29 @@
                   @click:close="remove(data.item)"
                   color="#406278"
                   dark
+                  class="mb-2"
                 >
+                  <v-avatar left class="pa-0">
+                    <v-img
+                      :src="
+                        data.item.photo
+                          ? `${imageSrc(data.item.photo)}?width=100&height=100`
+                          : '/images/doctor-placeholder.jpeg'
+                      "
+                    ></v-img>
+                  </v-avatar>
                   {{ data.item.name }}
                 </v-chip>
               </template>
               <template #item="data">
                 <v-list-item-avatar>
-                  <v-img style="background-color: black;"></v-img>
+                  <v-img
+                    :src="
+                      data.item.photo
+                        ? `${imageSrc(data.item.photo)}?width=100&height=100`
+                        : '/images/doctor-placeholder.jpeg'
+                    "
+                  ></v-img>
                 </v-list-item-avatar>
                 <v-list-item-content>
                   {{ data.item.name }}
@@ -129,6 +157,7 @@
                 color="#406278"
                 :ripple="false"
                 hide-details
+                v-model="isConsilliumUrgent"
               ></v-switch>
             </span>
           </v-col>
@@ -140,6 +169,7 @@
               class="mt-0"
               hide-details
               :label="$_lang_getCommonTranslation('Tags')"
+              v-model="tags"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -151,14 +181,18 @@
               text
               color="#406278"
               @click="$emit('close')"
-              >{{ $_lang_getCommonTranslation("Cancel") }}</v-btn
             >
+              {{ $_lang_getCommonTranslation("Cancel") }}
+            </v-btn>
             <v-btn
               class="pa-0 px-5"
               :text="$vuetify.breakpoint.smAndDown"
               :color="$vuetify.breakpoint.smAndDown ? '#406278' : 'primary'"
-              >{{ $_lang_getCommonTranslation("Create") }}</v-btn
+              @click="createConsillium"
+              :disabled="!consilliumName.length || !invitedPeople.length"
             >
+              {{ $_lang_getCommonTranslation("Create") }}
+            </v-btn>
           </div>
         </v-card-actions>
       </v-container>
@@ -167,6 +201,14 @@
 </template>
 
 <script>
+import { createNamespacedHelpers } from "vuex";
+const { mapActions } = createNamespacedHelpers("chats");
+const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
+const {
+  mapState: State_doctors,
+  mapGetters: Getters_doctors,
+} = createNamespacedHelpers("doctors");
+const { mapState: State_auth } = createNamespacedHelpers("auth");
 import { lang } from "./../../mixins/lang";
 export default {
   mixins: [lang],
@@ -206,18 +248,61 @@ export default {
         },
       ],
       string: "",
-      choosenPeople: [],
+      invitedPeople: [],
+      consilliumName: "",
+      provisionalDiagnosis: "",
+      problemDescription: "",
+      selectedPatient: "",
+      tags: "",
+      isConsilliumUrgent: "",
     };
   },
+  computed: {
+    ...State_doctors(["doctors"]),
+    ...Getters_doctors(["imageSrc"]),
+    ...State_auth(["userProfile"]),
+    getDoctors() {
+      return (
+        this.doctors &&
+        this.doctors.filter((doc) => this.userProfile.id !== doc.user_id)
+      );
+    },
+  },
   methods: {
+    ...mapActions([
+      "createNewConsiliumChat",
+      "addUserToGroupChat",
+      "fetchChats",
+    ]),
+    ...Actions_alerts(["addAlert"]),
     change() {
-      this.choosenPeople.push(this.string);
+      this.invitedPeople.push(this.string);
       this.string = "";
-      console.log(this.string);
     },
     remove(item) {
-      const index = this.choosenPeople.indexOf(item.name);
-      if (index >= 0) this.choosenPeople.splice(index, 1);
+      const index = this.invitedPeople.indexOf(item.name);
+      if (index >= 0) this.invitedPeople.splice(index, 1);
+    },
+    async createConsillium() {
+      const name = this.consilliumName;
+      const data = {
+        invitedPeople: this.invitedPeople,
+        provisionalDiagnosis: this.provisionalDiagnosis,
+        problemDescription: this.problemDescription,
+        selectedPatient: this.selectedPatient,
+        tags: this.tags,
+        isConsilliumUrgent: this.isConsilliumUrgent,
+      };
+      const chat_id = await this.createNewConsiliumChat({ data, name });
+      for (let i = 0; i < this.invitedPeople.length; i++) {
+        await this.addUserToGroupChat({
+          chat_id,
+          to_id: this.invitedPeople[i],
+        });
+      }
+      this.fetchChats();
+      this.addAlert({ type: "success", text: "consillium has been created" });
+      this.$emit("close");
     },
   },
 };
