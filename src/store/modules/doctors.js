@@ -24,6 +24,9 @@ const getters = {
       return "";
     }
   },
+  getDoctorByUserId: (state) => (userId) => {
+    return state.doctors && state.doctors.find((doc) => doc.user_id === userId);
+  },
 };
 const mutations = {
   SET_DOCTORS(state, payload) {
