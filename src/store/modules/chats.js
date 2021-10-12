@@ -8,11 +8,24 @@ const state = {
 };
 const getters = {
   getSelectChatById: (state) => (id) => {
-    return state.chats && state.chats.find((chat) => chat.chat_id === id);
+    return state.chats && state.chats.find((chat) => chat.id === id);
+  },
+  getConsilliumChats(state) {
+    return state.chats.filter((chat) => chat.type === 3);
+  },
+  getChatsButConsilliums(state) {
+    return state.chats.filter((chat) => chat.type !== 3);
   },
 };
 const mutations = {
   SET_CHATS(state, chats) {
+    chats.map((chat) => {
+      try {
+        chat.info = JSON.parse(chat.info);
+      } catch {
+        chat.info = {};
+      }
+    });
     state.chats = chats;
   },
   SET_MESSAGES(state, messages) {
@@ -78,9 +91,16 @@ const actions = {
       return res.data.data.chat_id;
     });
   },
-  createNewConsiliumChat({ commit }) {
+  createNewConsiliumChat({ commit }, { data, name }) {
     const type = "3";
-    // code is here
+    const payload = {
+      type,
+      name,
+      info: JSON.stringify(data),
+    };
+    return axios.post(api.newConsiliumChat, payload).then((res) => {
+      return res.data.data.chat_id;
+    });
   },
   addUserToGroupChat({ commit }, payload) {
     return axios.post(api.addUserToChat, payload).then((res) => {
