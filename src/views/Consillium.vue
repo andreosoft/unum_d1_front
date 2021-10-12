@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="px-0">
     <v-row no-gutters>
-      <v-col cols="12" md="6" class="pa-0">
+      <v-col class="pa-0">
         <ConsilliumComponent />
       </v-col>
     </v-row>
