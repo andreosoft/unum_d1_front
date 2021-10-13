@@ -2,7 +2,7 @@
   <div>
     <v-btn
       style="width: 100%;"
-      class="mb-3"
+      class="my-3"
       color="#f9f8ff"
       @click="createGroupChatDialog = true"
     >
@@ -47,7 +47,6 @@
     </v-dialog>
     <v-text-field
       prepend-inner-icon="mdi-magnify"
-      append-icon="mdi-account-plus"
       dense
       solo
       flat
@@ -124,6 +123,9 @@ export default {
       }
       this.fetchChats();
       this.addAlert({ type: "success", text: "group has been created" });
+      this.createGroupChatDialog = false;
+      this.selectedGroupMembers = [];
+      this.groupName = "";
     },
     remove(item) {
       this.selectedGroupMembers = this.selectedGroupMembers.filter(

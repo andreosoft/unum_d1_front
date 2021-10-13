@@ -5,11 +5,17 @@
       :key="index"
       :active="activeItem === item.id"
       @click.native="chooseChat(item.id)"
-      :name="item.type === 1 ? String(item.user_name) : String(item.name)"
+      :name="
+        item.type === 1 && item.user_name
+          ? item.user_name
+          : item.type !== 1 && item.name
+          ? item.name
+          : 'Unknown contact'
+      "
       :avatarUrl="
         (item.user_image &&
           `${imageSrc(item.user_image)}?width=100&height=100`) ||
-          '/images/doctor-placeholder.jpeg'
+          '/images/patient-placeholder.jpeg'
       "
     />
   </div>

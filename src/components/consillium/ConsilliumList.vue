@@ -5,6 +5,7 @@
       :key="index"
       :item="item"
       @goToChat="$emit('goToChat', $event)"
+      :class="{ 'mb-2': index !== items.length }"
     />
   </v-expansion-panels>
 </template>

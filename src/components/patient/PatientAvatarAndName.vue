@@ -24,7 +24,11 @@
       </v-card-text>
     </div>
 
-    <ContactButtons :phone="getPatientPhone" :email="getPatientEmail" />
+    <ContactButtons
+      :phone="getPatientPhone"
+      :email="getPatientEmail"
+      @createChat="createChat"
+    />
 
     <slot></slot>
 
@@ -46,6 +50,7 @@ import { createNamespacedHelpers } from "vuex";
 import ContactButtons from "./../../components/ContactButtons.vue";
 const { mapState } = createNamespacedHelpers("patients");
 const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
+const { mapActions: Actions_chats } = createNamespacedHelpers("chats");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 
 export default {
@@ -86,6 +91,15 @@ export default {
       } catch (error) {
         return this.selectedPatient.phones;
       }
+    },
+  },
+  methods: {
+    ...Actions_chats(["createNewChat"]),
+
+    createChat() {
+      console.log("create chat with this patient");
+      console.log(this.selectedPatient.id);
+      this.createNewChat(this.selectedPatient.id);
     },
   },
 };

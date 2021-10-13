@@ -51,14 +51,18 @@ export default {
           this.selectedChat.user_name) ||
         (this.selectedChat &&
           this.selectedChat.type !== 1 &&
-          this.selectedChat.name)
+          this.selectedChat.name) ||
+        "Unknown contact"
       );
     },
     getChatAvatar() {
       return (
         (this.selectedChat &&
           this.selectedChat.type === 1 &&
-          `${imageSrc(this.selectedChat.user_image)}?width=100&height=100`) ||
+          this.selectedChat.user_image &&
+          `${this.imageSrc(
+            this.selectedChat.user_image
+          )}?width=100&height=100`) ||
         "/images/patient-placeholder.jpeg"
       );
     },

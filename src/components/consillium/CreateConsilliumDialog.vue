@@ -221,33 +221,6 @@ export default {
   },
   data() {
     return {
-      people: [
-        {
-          name: "emir dzhetybaev",
-          id: 1,
-        },
-        {
-          name: "aizada nurlanova",
-          id: 2,
-        },
-        {
-          name: "jack grealish",
-          id: 3,
-        },
-        {
-          name: "kevin de bryune",
-          id: 4,
-        },
-        {
-          name: "erling haaland",
-          id: 5,
-        },
-        {
-          name: "david silva",
-          id: 6,
-        },
-      ],
-      string: "",
       invitedPeople: [],
       consilliumName: "",
       provisionalDiagnosis: "",
@@ -275,10 +248,6 @@ export default {
       "fetchChats",
     ]),
     ...Actions_alerts(["addAlert"]),
-    change() {
-      this.invitedPeople.push(this.string);
-      this.string = "";
-    },
     remove(item) {
       const index = this.invitedPeople.indexOf(item.name);
       if (index >= 0) this.invitedPeople.splice(index, 1);
@@ -302,6 +271,13 @@ export default {
       }
       this.fetchChats();
       this.addAlert({ type: "success", text: "consillium has been created" });
+      this.invitedPeople = [];
+      this.consilliumName = "";
+      this.provisionalDiagnosis = "";
+      this.problemDescription = "";
+      this.selectedPatient = "";
+      this.tags = "";
+      this.isConsilliumUrgent = false;
       this.$emit("close");
     },
   },

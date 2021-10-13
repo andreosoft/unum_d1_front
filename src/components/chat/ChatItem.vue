@@ -3,27 +3,7 @@
     class="cursor-pointer position-relative pa-0 d-flex align-items-center chat-item"
     :class="{ active: active }"
   >
-    <UserAvatarAndName :name="name" :avatarUrl="avatarUrl">
-      <template #subtitle>
-        <v-list-item-subtitle
-          class="grey--text text-truncate"
-          :class="[active ? 'text--lighten-3' : 'text--darken-1']"
-        >
-          текст последнего сообщенияывфывфывфы
-        </v-list-item-subtitle>
-      </template>
-      <template #badge>
-        <div v-if="notifications" class="notifications">
-          <v-chip
-            class="rounded-xl pa-2"
-            small
-            :color="active ? 'white' : ''"
-            :light="active"
-            >{{ notifications }}</v-chip
-          >
-        </div>
-      </template>
-    </UserAvatarAndName>
+    <UserAvatarAndName :name="name" :avatarUrl="avatarUrl"> </UserAvatarAndName>
   </div>
 </template>
 

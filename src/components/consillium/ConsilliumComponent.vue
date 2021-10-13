@@ -1,8 +1,12 @@
 <template>
   <div>
-    <v-btn @click="createConsilliumDialog = true">{{
-      $_lang_getDoctorTranslation("Create consillium")
-    }}</v-btn>
+    <v-btn
+      style="width: 100%;"
+      color="#f9f8ff"
+      class="mb-3"
+      @click="createConsilliumDialog = true"
+      >{{ $_lang_getDoctorTranslation("Create consillium") }}</v-btn
+    >
     <!-- <div class="d-flex justify-content-between px-4">
       <p>{{ $_lang_getCommonTranslation("Sort") }}</p>
       <p>{{ $_lang_getCommonTranslation("Filter") }}</p>
@@ -13,19 +17,6 @@
       <v-icon @click="search">mdi-magnify</v-icon>
     </portal>
 
-    <!-- <v-fab-transition>
-      <v-btn
-        fab
-        right
-        dark
-        bottom
-        fixed
-        color="#406278"
-        @click="createConsilliumDialog = true"
-      >
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
-    </v-fab-transition> -->
     <CreateConsilliumDialog
       :dialog="createConsilliumDialog"
       @close="createConsilliumDialog = false"

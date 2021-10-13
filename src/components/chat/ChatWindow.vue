@@ -20,7 +20,7 @@
       <v-card color="#EEEEEE" tile :min-height="680">
         <CompanionInfo @close="companionDialog = false" />
 
-        <CompanionEducation />
+        <CompanionEducation v-if="selectedChat && selectedChat.type === 1" />
 
         <CompanionMedia
           :photos="getPhotos"
@@ -66,11 +66,10 @@ export default {
     };
   },
   computed: {
-    ...mapState(["messages", "messagesFetched"]),
+    ...mapState(["messages", "messagesFetched", "selectedChat"]),
     ...State_auth(["userProfile"]),
     formattedMessages() {
       const messages = [...this.messages];
-      // console.clear();
       const result = messages.reduce((prev, item, index, arr) => {
         item.showDate = false;
         if (arr[index + 1]) {
