@@ -3,12 +3,7 @@
     class="cursor-pointer position-relative pa-0 d-flex align-items-center chat-item"
     :class="{ active: active }"
   >
-    <UserAvatarAndName
-      :group="group"
-      :consilium="consilium"
-      :name="name"
-      :avatarUrl="avatarUrl"
-    >
+    <UserAvatarAndName :group="group" :name="name" :avatarUrl="avatarUrl">
     </UserAvatarAndName>
   </div>
 </template>
@@ -38,10 +33,6 @@ export default {
       default: "",
     },
     group: {
-      type: Boolean,
-      default: false,
-    },
-    consilium: {
       type: Boolean,
       default: false,
     },
