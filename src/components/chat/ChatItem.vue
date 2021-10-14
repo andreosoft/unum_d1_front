@@ -3,7 +3,13 @@
     class="cursor-pointer position-relative pa-0 d-flex align-items-center chat-item"
     :class="{ active: active }"
   >
-    <UserAvatarAndName :name="name" :avatarUrl="avatarUrl"> </UserAvatarAndName>
+    <UserAvatarAndName
+      :group="group"
+      :consilium="consilium"
+      :name="name"
+      :avatarUrl="avatarUrl"
+    >
+    </UserAvatarAndName>
   </div>
 </template>
 
@@ -30,6 +36,14 @@ export default {
     avatarUrl: {
       type: String,
       default: "",
+    },
+    group: {
+      type: Boolean,
+      default: false,
+    },
+    consilium: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

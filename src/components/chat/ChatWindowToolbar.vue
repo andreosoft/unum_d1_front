@@ -23,6 +23,7 @@
         :key="index"
         :class="{ 'mr-2': index !== actions.length - 1 }"
         :action="action"
+        @searchBtn="searchBtn"
       />
     </v-toolbar-items>
   </v-toolbar>
@@ -49,20 +50,21 @@ export default {
   data() {
     return {
       actions: [
-        {
-          icon: "mdi-phone",
-          bgColor: "#406278",
-          color: "white",
-        },
-        {
-          icon: "mdi-video-outline",
-          bgColor: "#406278",
-          color: "white",
-        },
+        // {
+        //   icon: "mdi-phone",
+        //   bgColor: "#406278",
+        //   color: "white",
+        // },
+        // {
+        //   icon: "mdi-video-outline",
+        //   bgColor: "#406278",
+        //   color: "white",
+        // },
         {
           icon: "mdi-magnify",
           bgColor: "transparent",
           color: "#406278",
+          action: "searchBtn",
         },
       ],
     };
@@ -91,6 +93,11 @@ export default {
           )}?width=100&height=100`) ||
         "/images/patient-placeholder.jpeg"
       );
+    },
+  },
+  methods: {
+    searchBtn() {
+      console.log("search");
     },
   },
   mounted() {

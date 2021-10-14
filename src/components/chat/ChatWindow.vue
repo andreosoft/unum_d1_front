@@ -20,7 +20,13 @@
       <v-card color="#EEEEEE" tile :min-height="680">
         <CompanionInfo @close="companionDialog = false" />
 
-        <CompanionEducation v-if="selectedChat && selectedChat.type === 1" />
+        <CompanionEducation
+          v-if="selectedChat && selectedChat.type === 1"
+          specialty="специальность врача"
+          country="страна врача"
+          lang="язык врача"
+          uni="универститет врача"
+        />
 
         <CompanionMedia
           :photos="getPhotos"
@@ -28,7 +34,10 @@
           :files="getFiles"
         />
 
-        <CompanionActions />
+        <CompanionActions
+          @removeChat="removeChat"
+          @clearHistory="clearHistory"
+        />
       </v-card>
     </v-dialog>
   </div>
@@ -132,6 +141,9 @@ export default {
           message.attachments.length && message.attachments[0].type === "file"
       );
     },
+    getChatId() {
+      return this.selectedChat && this.selectedChat.id;
+    },
   },
   methods: {
     ...mapActions([
@@ -139,6 +151,8 @@ export default {
       "postMessage",
       "postImage",
       "postFile",
+      "deleteChat",
+      "clearChatHistory",
     ]),
     ...Actions_alerts(["addAlert"]),
     openCompanionDialog() {
@@ -182,6 +196,17 @@ export default {
     scrollDown() {
       const content = this.$refs.container;
       content.scrollTop = content.scrollHeight;
+    },
+
+    removeChat() {
+      console.log("action delete");
+      this.deleteChat(this.getChatId);
+      this.companionDialog = false;
+    },
+    clearHistory() {
+      console.log("action clear");
+      this.clearChatHistory(this.getChatId);
+      this.companionDialog = false;
     },
   },
   async mounted() {

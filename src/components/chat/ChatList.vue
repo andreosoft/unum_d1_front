@@ -5,6 +5,7 @@
       :key="index"
       :active="activeItem === item.id"
       @click.native="chooseChat(item.id)"
+      :group="item.type === 2"
       :name="
         item.type === 1 && item.user_name
           ? item.user_name

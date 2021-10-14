@@ -38,5 +38,8 @@ const api = {
   addUserToChat: "messegner/add_user_to_chat", // { "chat_id": 13, to_id: 123 }
   newConsiliumChat: "messegner/new_group_chat", // { type: "3", name: "Новый консилиум чат", info: "{}" }
   newGroupChat: "messegner/new_group_chat", // { type: "2", name: "Новый групповой чат", info: "{}"}
+
+  deleteChat: "messegner/chat", // DEELETE /:id
+  clearChatHistory: "messegner/clear_chat_history", // /:id
 };
 export default api;

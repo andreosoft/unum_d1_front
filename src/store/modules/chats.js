@@ -131,6 +131,20 @@ const actions = {
         return res.data.data.file;
       });
   },
+
+  deleteChat({ dispatch }, chatId) {
+    console.log(chatId);
+    return axios.delete(api.deleteChat + `/${chatId}`).then(async () => {
+      await dispatch("fetchChats");
+      router.push({ name: "Chats" });
+    });
+  },
+  clearChatHistory({ dispatch }, chatId) {
+    return axios.delete(api.clearChatHistory + `/${chatId}`).then(() => {
+      console.log("chat history cleared");
+      dispatch("fetchCurrentUserMessages", chatId);
+    });
+  },
 };
 
 export default {
