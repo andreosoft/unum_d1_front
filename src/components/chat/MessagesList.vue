@@ -9,6 +9,12 @@
       :attachments="item.attachments"
       :class="{ 'mb-2': index !== messages.length }"
       class="messages__item"
+      :showMsgAuthor="
+        item.user_id !== currentUserId &&
+          selectedChat &&
+          selectedChat.type !== 1
+      "
+      :msgAuthor="item.user_name"
     >
       <template v-if="item.showDate" #message-date="{ date }">
         <div class="align-self-center my-4">
@@ -20,11 +26,10 @@
           <v-img
             v-if="item.user_id !== currentUserId && item.showAvatar"
             :src="
-              getSelectedChatImageId
-                ? `${imageSrc(getSelectedChatImageId)}?width=250&height=250`
-                : '/images/doctor-placeholder.jpeg'
+              item.user_image
+                ? `${imageSrc(item.user_image)}?width=250&height=250`
+                : '/images/patient-placeholder.jpeg'
             "
-            style="background-color: purple;"
           ></v-img>
         </v-avatar>
       </template>
@@ -58,7 +63,7 @@ export default {
       return this.userProfile && this.userProfile.id;
     },
     getSelectedChatImageId() {
-      return this.selectedChat && this.selectedChat.image;
+      return this.selectedChat && this.selectedChat.user_image;
     },
   },
 };

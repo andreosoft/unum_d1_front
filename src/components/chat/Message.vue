@@ -17,6 +17,11 @@
             : 350
         "
       >
+        <v-card-subtitle v-if="showMsgAuthor" class="pa-0">
+          <span style="font-weight: 800">
+            {{ msgAuthor }}
+          </span>
+        </v-card-subtitle>
         <v-card-text class="pa-0">
           {{ message }}
         </v-card-text>
@@ -84,6 +89,14 @@ export default {
     attachments: {
       type: Array,
       default: () => [],
+    },
+    showMsgAuthor: {
+      type: Boolean,
+      default: false,
+    },
+    msgAuthor: {
+      type: String,
+      default: "",
     },
   },
   filters: {

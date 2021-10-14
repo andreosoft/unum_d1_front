@@ -85,20 +85,22 @@ export default {
       const messages = [...this.messages];
       const result = messages.reduce((prev, item, index, arr) => {
         item.showDate = false;
-        if (arr[index + 1]) {
-          if (
-            dayjs(arr[index].createdon).format("YYYY-MM-DD") !==
-            dayjs(arr[index + 1].createdon).format("YYYY-MM-DD")
-          ) {
-            item.showDate = true;
-          }
-        }
+        // if (arr[index + 1]) {
+        //   if (
+        //     dayjs(arr[index].createdon).format("YYYY-MM-DD") !==
+        //     dayjs(arr[index + 1].createdon).format("YYYY-MM-DD")
+        //   ) {
+        //     item.showDate = true;
+        //   }
+        // }
         if (item.user_id !== this.getUserId) {
           item.showAvatar = true;
-          if (arr[index + 1] && arr[index + 1].user_id !== this.getUserId) {
-            arr[index + 1].show = true;
-            item.showAvatar = undefined;
-            // return;
+          if (this.selectedChat && this.selectedChat.type === 1) {
+            if (arr[index + 1] && arr[index + 1].user_id !== this.getUserId) {
+              arr[index + 1].show = true;
+              item.showAvatar = undefined;
+              // return;
+            }
           }
         }
         prev.push(item);
