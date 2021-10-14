@@ -18,7 +18,10 @@
       :fullscreen="$vuetify.breakpoint.smAndDown"
     >
       <v-card color="#EEEEEE" tile :min-height="680">
-        <CompanionInfo @close="companionDialog = false" />
+        <CompanionInfo
+          @close="companionDialog = false"
+          :showPhone="selectedChat && selectedChat.type === 1"
+        />
 
         <CompanionEducation
           v-if="selectedChat && selectedChat.type === 1"
@@ -37,6 +40,7 @@
         <CompanionActions
           @removeChat="removeChat"
           @clearHistory="clearHistory"
+          :consilium="selectedChat && selectedChat.type === 3"
         />
       </v-card>
     </v-dialog>
@@ -202,6 +206,11 @@ export default {
       console.log("action delete");
       this.deleteChat(this.getChatId);
       this.companionDialog = false;
+      if (this.selectedChat && this.selectedChat.type === 3) {
+        this.$router.push({ name: "Consilliums" });
+        return;
+      }
+      this.$router.push({ name: "Chats" });
     },
     clearHistory() {
       console.log("action clear");

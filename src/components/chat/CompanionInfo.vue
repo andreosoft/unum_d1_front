@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between">
       <v-card-title>Информация</v-card-title>
       <v-card-actions>
-        <v-icon class="mr-4">mdi-phone</v-icon>
+        <!-- <v-icon v-if="showPhone" class="mr-4">mdi-phone</v-icon> -->
         <v-icon @click="$emit('close')">mdi-close</v-icon>
       </v-card-actions>
     </div>
@@ -33,7 +33,7 @@ import UserAvatarAndName from "./UserAvatarAndName";
 export default {
   name: "CompanionInfo",
   props: {
-    online: {
+    showPhone: {
       type: Boolean,
       default: false,
     },
@@ -69,17 +69,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.online {
-  &:before {
-    content: "●";
-    color: #35d11b;
-  }
-}
-.offline {
-  &:before {
-    content: "●";
-  }
-}
-</style>

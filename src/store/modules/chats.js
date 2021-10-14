@@ -136,7 +136,6 @@ const actions = {
     console.log(chatId);
     return axios.delete(api.deleteChat + `/${chatId}`).then(async () => {
       await dispatch("fetchChats");
-      router.push({ name: "Chats" });
     });
   },
   clearChatHistory({ dispatch }, chatId) {

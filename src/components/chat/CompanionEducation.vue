@@ -59,28 +59,6 @@ export default {
       default: "",
     },
   },
-  data() {
-    return {
-      companionDialogMockup: [
-        {
-          title: "Стоматолог",
-          sub: "Должность",
-        },
-        {
-          title: "Россия",
-          sub: "Страна",
-        },
-        {
-          title: "русский",
-          sub: "Язык",
-        },
-        {
-          title: "Кыргызская Государственная Медицинская Академия",
-          sub: "Образование",
-        },
-      ],
-    };
-  },
 };
 </script>
 

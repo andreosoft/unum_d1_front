@@ -9,16 +9,17 @@
         <v-icon size="20">mdi-format-list-bulleted</v-icon>
       </div>
       <v-list class="pa-0">
-        <v-list-item
-          v-for="(item, index) in actions"
-          :key="index"
-          @click="item.action"
-          class="d-flex align-items-center"
-        >
-          <v-list-item-title :style="`color: ${item.color && item.color}`">
-            {{ item.title }}
-          </v-list-item-title>
-        </v-list-item>
+        <div v-for="(item, index) in actions" :key="index">
+          <v-list-item
+            v-if="item.show"
+            class="d-flex align-items-center"
+            @click="item.action"
+          >
+            <v-list-item-title :style="`color: ${item.color && item.color}`">
+              {{ item.title }}
+            </v-list-item-title>
+          </v-list-item>
+        </div>
       </v-list>
     </div>
   </v-card>
@@ -27,6 +28,12 @@
 <script>
 export default {
   name: "CompanionActions",
+  props: {
+    consilium: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       actions: [
@@ -39,14 +46,24 @@ export default {
         {
           title: "Удалить контакт",
           action: this.removeChat,
+          show: !this.consilium ? true : false,
         },
         {
           title: "Очистить историю",
           action: this.clearHistory,
+          show: true,
+        },
+        {
+          title: "Закрыть консилиум",
+          color: "#FF3636",
+          show: this.consilium ? true : false,
+          action: this.removeChat,
         },
         // {
         //   title: "Заблокировать",
         //   color: "#FF3636",
+        //   show: true,
+        //   action: this.removeChat,
         // },
       ],
     };

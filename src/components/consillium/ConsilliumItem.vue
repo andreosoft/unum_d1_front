@@ -34,17 +34,6 @@
         >
           {{ $_lang_getCommonTranslation("Go to chat") }}
         </v-btn>
-        <v-btn
-          dark
-          :ripple="false"
-          :elevation="0"
-          color="#FF3636"
-          class="d-block"
-          style="width: 100%;"
-          @click="closeConsilliumDialog = true"
-        >
-          {{ $_lang_getDoctorTranslation("Close consillium") }}
-        </v-btn>
       </div>
 
       <CloseConsilliumDialog
