@@ -97,9 +97,7 @@ export default {
     ...Actions_chats(["createNewChat"]),
 
     createChat() {
-      console.log("create chat with this patient");
-      console.log(this.selectedPatient.id);
-      this.createNewChat(this.selectedPatient.id);
+      this.createNewChat(this.selectedPatient.user_id);
     },
   },
 };
