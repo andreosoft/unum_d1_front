@@ -16,26 +16,57 @@
             v-model="groupName"
             :label="getDoctorTranslation('Your group title')"
           ></v-text-field>
-          <v-select
-            v-model="selectedGroupMembers"
+          <v-autocomplete
+            prepend-inner-icon="mdi-magnify"
             :items="getDoctors"
+            v-model="selectedGroupMembers"
             item-text="name"
             item-value="user_id"
-            chips
+            hide-details
+            :label="$_lang_getCommonTranslation('By name')"
             multiple
-            :label="getDoctorTranslation('Your group members')"
+            dense
+            class="mt-0"
+            autocomplete="off"
           >
-            <template v-slot:selection="data">
+            <template #selection="data">
               <v-chip
                 v-bind="data.attrs"
                 :input-value="data.selected"
                 close
+                @click="data.select"
                 @click:close="remove(data.item)"
+                color="#406278"
+                dark
+                class="mb-2"
               >
+                <v-avatar left class="pa-0">
+                  <v-img
+                    :src="
+                      data.item.photo
+                        ? `${imageSrc(data.item.photo)}?width=100&height=100`
+                        : '/images/doctor-placeholder.jpeg'
+                    "
+                  ></v-img>
+                </v-avatar>
                 {{ data.item.name }}
               </v-chip>
             </template>
-          </v-select>
+            <template #item="data">
+              <v-list-item-avatar>
+                <v-img
+                  :src="
+                    data.item.photo
+                      ? `${imageSrc(data.item.photo)}?width=100&height=100`
+                      : '/images/doctor-placeholder.jpeg'
+                  "
+                ></v-img>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                {{ data.item.name }}
+              </v-list-item-content>
+            </template>
+          </v-autocomplete>
           <v-btn
             :disabled="!selectedGroupMembers.length || !groupName.length"
             @click="createGroup"
@@ -63,9 +94,14 @@ const { mapGetters } = createNamespacedHelpers("lang");
 const { mapState: State_auth } = createNamespacedHelpers("auth");
 const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
 const { mapActions: Actions_chats } = createNamespacedHelpers("chats");
-const { mapState: State_doctors } = createNamespacedHelpers("doctors");
+const {
+  mapState: State_doctors,
+  mapGetters: Getters_doctors,
+} = createNamespacedHelpers("doctors");
 import ChatList from "./ChatList.vue";
+import { lang } from "./../../mixins/lang";
 export default {
+  mixins: [lang],
   name: "List",
   components: {
     ChatList,
@@ -98,6 +134,7 @@ export default {
   computed: {
     ...mapGetters(["getDoctorTranslation"]),
     ...State_doctors(["doctors"]),
+    ...Getters_doctors(["imageSrc"]),
     ...State_auth(["userProfile"]),
     getDoctors() {
       return (
