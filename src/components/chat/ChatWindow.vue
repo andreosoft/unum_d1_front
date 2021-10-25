@@ -115,6 +115,7 @@ export default {
       const media = [];
       this.messages.map((message) => {
         if (
+          message.attachments &&
           message.attachments.length &&
           message.attachments[0].type === "image"
         ) {
@@ -130,6 +131,7 @@ export default {
       const media = [];
       this.messages.map((message) => {
         if (
+          message.attachments &&
           message.attachments.length &&
           message.attachments[0].type === "video"
         ) {
@@ -144,7 +146,9 @@ export default {
     getFiles() {
       return this.messages.filter(
         (message) =>
-          message.attachments.length && message.attachments[0].type === "file"
+          message.attachments &&
+          message.attachments.length &&
+          message.attachments[0].type === "file"
       );
     },
     getChatId() {
