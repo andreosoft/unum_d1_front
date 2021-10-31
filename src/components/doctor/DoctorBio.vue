@@ -76,9 +76,12 @@ export default {
     ...mapGetters(["getDoctorTranslation", "getCommonTranslation"]),
   },
   methods: {
-    ...Actions_chat(["createNewChat"]),
-    createChat() {
-      this.createNewChat(this.userId);
+    ...Actions_chat(["createNewChat", "fetchChats"]),
+    async createChat() {
+      const chat_id = await this.createNewChat(this.userId);
+      this.fetchChats()
+      this.$router.push({name: "Chat", params: { chatId: chat_id }})
+
     },
   },
 };

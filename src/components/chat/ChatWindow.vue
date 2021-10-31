@@ -189,12 +189,19 @@ export default {
           attachments.push({ type: "file", value: fileId, name: file.name });
         }
       }
-      const payload = {
+      const params = {
+        chat_id: this.$route.params.chatId,
         message,
         attachments: JSON.stringify(attachments),
       };
-      this.postMessage({ message: payload, chat_id: this.$route.params.id });
-      // console.log("sending message", { payload });
+      this.$root.ws.send(
+        JSON.stringify({
+          e: "send_message",
+          params,
+        })
+      );
+      await this.fetchCurrentUserMessages(params.chat_id);
+      this.scrollDown();
     },
     attachFile(e) {
       console.log(e);
@@ -225,7 +232,7 @@ export default {
     },
   },
   async mounted() {
-    await this.fetchCurrentUserMessages(this.$route.params.id);
+    await this.fetchCurrentUserMessages(this.$route.params.chatId);
     this.scrollDown();
   },
 };

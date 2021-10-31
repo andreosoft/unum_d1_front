@@ -65,7 +65,7 @@ const routes = [
             },
           },
           {
-            path: ":id",
+            path: ":chatId",
             name: "Chat",
             components: {
               list: () => import("./../components/chat/List.vue"),

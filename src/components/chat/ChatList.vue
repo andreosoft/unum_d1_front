@@ -43,7 +43,7 @@ export default {
     ...Getters_doctors(["imageSrc"]),
   },
   watch: {
-    "$route.params.id": {
+    "$route.params.chatId": {
       immediate: true,
       handler(id) {
         if (id) {
@@ -58,7 +58,7 @@ export default {
       handler(val) {
         if (val.length) {
           const selectedChat = this.getSelectChatById(
-            Number(this.$route.params.id)
+            Number(this.$route.params.chatId)
           );
           this.setSelectedChat(selectedChat);
         }
@@ -71,7 +71,7 @@ export default {
       const selectedChat = this.getSelectChatById(id);
       this.setSelectedChat(selectedChat);
       this.activeItem = id;
-      this.$router.push({ name: "Chat", params: { id } }).catch(() => {});
+      this.$router.push({ name: "Chat", params: { chatId: id } }).catch(() => {});
     },
   },
 };
