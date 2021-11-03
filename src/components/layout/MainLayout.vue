@@ -60,10 +60,13 @@
           :exact="link.name === 'Dashboard'"
           class="nav-links__item"
         >
-          <v-list-item-icon>
+          <v-list-item-icon class="ml-0">
             <v-icon>{{ link.icon }}</v-icon>
           </v-list-item-icon>
-          <v-list-item-title>{{ link.title }}</v-list-item-title>
+          <v-badge v-if="link.notification">
+            <v-list-item-title>{{ link.title }}</v-list-item-title>
+          </v-badge>
+          <v-list-item-title v-else>{{ link.title }}</v-list-item-title>
         </v-list-item>
         <v-list-item>
           <v-list-item-action>
@@ -112,11 +115,13 @@ export default {
           name: "Chats",
           title: this.getCommonTranslation("Chats"),
           icon: "mdi-message-text",
+          notification: this.$root.chatsNotification,
         },
         {
           name: "Consilliums",
           title: this.getCommonTranslation("Consilliums"),
           icon: "mdi-forum",
+          notification: this.$root.consiliumNotification,
         },
         {
           name: "Doctors",
