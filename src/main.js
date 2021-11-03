@@ -8,7 +8,7 @@ import VuePhoneNumberInput from "vue-phone-number-input";
 import PortalVue from "portal-vue";
 import "vue-phone-number-input/dist/vue-phone-number-input.css";
 import VueChatScroll from "vue-chat-scroll";
-import { messaging } from './firebase'
+import { messaging, getToken } from './firebase'
 import { createNamespacedHelpers } from "vuex";
 const {
   mapState: State_chats,
@@ -54,18 +54,33 @@ new Vue({
       let socketUrl = "wss://api.neomedy.com/messages";
       if ("WebSocket" in window) {
         this.ws = new WebSocket(socketUrl);
-        const FCMToken = window.localStorage.getItem("FCM token")
+        // const FCMToken = window.localStorage.getItem("FCM token")
         let timer;
         this.ws.onopen = () => {
           this.ws.send(JSON.stringify({ e: "auth", d: usertoken }));
-          this.ws.send(
-            JSON.stringify({
-              e: "register_firebase",
-              params: {
-                token: FCMToken,
-              },
-            })
-          );
+          getToken(messaging, { vapidKey: "BLPcjvIYgCpYwdhZe-b9toT-BvwulE48yPwF2IbzEh0PzPoX3pU_KAurTKA76XOqtdrXP3eJAxssbgRH-Fgv9Vc" }).then((currentToken) => {
+            if (currentToken) {
+                console.log('currentToken ', currentToken);
+                this.ws.send(
+                  JSON.stringify({
+                    e: "register_firebase",
+                    params: {
+                      token: currentToken,
+                    },
+                  })
+                );
+                // window.localStorage.setItem('FCM token', currentToken)
+                // Send the token to your server and update the UI if necessary
+                // ...
+            } else {
+                // Show permission request UI
+                console.log('No registration token available. Request permission to generate one.');
+                // ...
+            }
+          }).catch((err) => {
+              console.log('An error occurred while retrieving token. ', err);
+              // ...
+          });
           timer = setInterval(() => {
             let d = { e: "h" };
             this.ws.send(JSON.stringify(d));
