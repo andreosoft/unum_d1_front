@@ -94,10 +94,12 @@ export default {
     },
   },
   methods: {
-    ...Actions_chats(["createNewChat"]),
+    ...Actions_chats(["createNewChat", "fetchChats"]),
 
-    createChat() {
-      this.createNewChat(this.selectedPatient.user_id);
+    async createChat() {
+      const chat_id = await this.createNewChat(this.selectedPatient.user_id);
+      this.fetchChats()
+      this.$router.push({ name: "Chat", params: { chatId: chat_id } })
     },
   },
 };
