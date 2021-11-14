@@ -21,6 +21,7 @@
         <CompanionInfo
           @close="companionDialog = false"
           :showPhone="selectedChat && selectedChat.type === 1"
+          @click="openUserProfile"
         />
 
         <CompanionEducation
@@ -53,6 +54,8 @@ import dayjs from "dayjs";
 const { mapState, mapActions } = createNamespacedHelpers("chats");
 const { mapState: State_auth } = createNamespacedHelpers("auth");
 const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
+const { mapState: State_patients } = createNamespacedHelpers("patients");
+const { mapState: State_doctors } = createNamespacedHelpers("doctors");
 import ChatWindowToolbar from "./ChatWindowToolbar";
 import MessagesList from "./MessagesList";
 import CompanionInfo from "./CompanionInfo";
@@ -81,6 +84,8 @@ export default {
   computed: {
     ...mapState(["messages", "messagesFetched", "selectedChat"]),
     ...State_auth(["userProfile"]),
+    ...State_patients(["patients"]),
+    ...State_doctors(["doctors"]),
     formattedMessages() {
       const messages = [...this.messages];
       const result = messages.reduce((prev, item, index, arr) => {
@@ -229,6 +234,18 @@ export default {
       console.log("action clear");
       this.clearChatHistory(this.getChatId);
       this.companionDialog = false;
+    },
+
+    openUserProfile() {
+      const user_id = this.selectedChat.user_id;
+      const users = [...this.patients, ...this.doctors];
+      const user = users.find((user) => user.user_id === user_id);
+      console.log(user?.doctor_id);
+      if (user.doctor_id === null) {
+        this.$router.push({ name: "Patient", params: { id: user.id } });
+        return;
+      }
+      this.$router.push({ name: "Doctor", params: { id: user.id } });
     },
   },
   async mounted() {
