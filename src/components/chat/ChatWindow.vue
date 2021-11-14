@@ -19,10 +19,37 @@
     >
       <v-card color="#EEEEEE" tile :min-height="680">
         <CompanionInfo
+          :disabled="selectedChat && selectedChat.type !== 1"
           @close="companionDialog = false"
           :showPhone="selectedChat && selectedChat.type === 1"
-          @click="openUserProfile"
+          @click="openUserProfile(getSelectedChatUserId)"
         />
+
+        <v-card
+          v-if="selectedChat && selectedChat.type !== 1"
+          tile
+          style="box-shadow: 0px 4px 8px rgba(186, 186, 186, 0.25);"
+          class="mb-3 pa-4"
+        >
+          <v-card-title class="pa-0">Участники</v-card-title>
+          <v-list-item
+            class="px-0"
+            v-for="member in getSelectedChatParticipants"
+            :key="member.user_id"
+            @click="openUserProfile(member.user_id)"
+          >
+            {{ member.user_name }}
+          </v-list-item>
+
+          <v-btn
+            v-show="selectedChatParticipantsShort"
+            text
+            small
+            class="pa-0"
+            @click="selectedChatParticipantsShort = false"
+            >{{ $_lang_getDoctorTranslation("Show all") }}</v-btn
+          >
+        </v-card>
 
         <CompanionEducation
           v-if="selectedChat && selectedChat.type === 1"
@@ -50,6 +77,7 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
+import { lang } from "./../../mixins/lang";
 import dayjs from "dayjs";
 const { mapState, mapActions } = createNamespacedHelpers("chats");
 const { mapState: State_auth } = createNamespacedHelpers("auth");
@@ -65,6 +93,7 @@ import CompanionActions from "./CompanionActions";
 import UserInput from "./UserInput";
 import ImagePreview from "./ImagePreview";
 export default {
+  mixins: [lang],
   name: "ChatWindow",
   components: {
     ChatWindowToolbar,
@@ -79,6 +108,7 @@ export default {
   data() {
     return {
       companionDialog: false,
+      selectedChatParticipantsShort: true,
     };
   },
   computed: {
@@ -159,6 +189,20 @@ export default {
     getChatId() {
       return this.selectedChat && this.selectedChat.id;
     },
+    getSelectedChatParticipants() {
+      if (this.selectedChatParticipantsShort) {
+        return this.selectedChat?.participants.slice(0, 1);
+      }
+      return this.selectedChat?.participants;
+    },
+    getSelectedChatUserId() {
+      return (
+        this.selectedChat &&
+        this.selectedChat.participants.find(
+          (member) => member.user_id !== this.userProfile.id
+        ).user_id
+      );
+    },
   },
   methods: {
     ...mapActions([
@@ -236,11 +280,9 @@ export default {
       this.companionDialog = false;
     },
 
-    openUserProfile() {
-      const user_id = this.selectedChat.user_id;
+    openUserProfile(user_id) {
       const users = [...this.patients, ...this.doctors];
       const user = users.find((user) => user.user_id === user_id);
-      console.log(user?.doctor_id);
       if (user.doctor_id === null) {
         this.$router.push({ name: "Patient", params: { id: user.id } });
         return;
