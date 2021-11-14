@@ -95,7 +95,7 @@ const routes = [
             },
           },
           {
-            path: ":id",
+            path: ":chatId",
             name: "Consillium",
             components: {
               list: () => import("./../views/Consillium.vue"),

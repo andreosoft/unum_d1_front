@@ -127,7 +127,9 @@ export default {
       console.log("search");
     },
     goToChat(id) {
-      this.$router.push({ name: "Consillium", params: { id } }).catch(() => {});
+      this.$router
+        .push({ name: "Consillium", params: { chatId: id } })
+        .catch(() => {});
       const selectedChat = this.getSelectChatById(id);
       this.setSelectedChat(selectedChat);
     },

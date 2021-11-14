@@ -50,7 +50,6 @@ const mutations = {
 };
 const actions = {
   fetchCurrentUserMessages({ commit }, chat_id) {
-    // console.log("fetching messages", chat_id);
     commit("SET_MESSAGES_FETCHED", false);
     return axios
       .get(api.getUserMessages + `/${chat_id}`, {
