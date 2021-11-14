@@ -6,18 +6,8 @@
       :active="activeItem === item.id"
       @click.native="chooseChat(item.id)"
       :group="item.type === 2"
-      :name="
-        item.type === 1 && item.user_name
-          ? item.user_name
-          : item.type !== 1 && item.name
-          ? item.name
-          : 'Unknown contact'
-      "
-      :avatarUrl="
-        (item.user_image &&
-          `${imageSrc(item.user_image)}?width=100&height=100`) ||
-          '/images/patient-placeholder.jpeg'
-      "
+      :name="getChatName(item)"
+      :avatarUrl="getChatUserImage(item)"
     />
   </div>
 </template>
@@ -25,6 +15,7 @@
 <script>
 import { createNamespacedHelpers } from "vuex";
 const { mapState, mapGetters, mapActions } = createNamespacedHelpers("chats");
+const { mapState: State_auth } = createNamespacedHelpers("auth");
 const { mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
 import ChatItem from "./ChatItem.vue";
 export default {
@@ -41,6 +32,7 @@ export default {
     ...mapState(["chats"]),
     ...mapGetters(["getSelectChatById", "getChatsButConsilliums"]),
     ...Getters_doctors(["imageSrc"]),
+    ...State_auth(["userProfile"]),
   },
   watch: {
     "$route.params.chatId": {
@@ -71,7 +63,37 @@ export default {
       const selectedChat = this.getSelectChatById(id);
       this.setSelectedChat(selectedChat);
       this.activeItem = id;
-      this.$router.push({ name: "Chat", params: { chatId: id } }).catch(() => {});
+      this.$router
+        .push({ name: "Chat", params: { chatId: id } })
+        .catch(() => {});
+    },
+    getChatName(item) {
+      if (item.type !== 1) {
+        return item.name;
+      }
+      for (let i = 0; i < item.participants.length; i++) {
+        if (item.participants[i].user_id !== this.userProfile.id) {
+          if (!item.participants[i].user_name) {
+            return "имя не указано";
+          }
+          return item.participants[i].user_name;
+        }
+      }
+    },
+    getChatUserImage(item) {
+      if (item.type !== 1) {
+        return;
+      }
+      for (let i = 0; i < item.participants.length; i++) {
+        if (item.participants[i].user_id !== this.userProfile.id) {
+          if (!item.participants[i].user_image) {
+            return "/images/patient-placeholder.jpeg";
+          }
+          return `${this.imageSrc(
+            item.participants[i].user_image
+          )}?width=100&height=100`;
+        }
+      }
     },
   },
 };
