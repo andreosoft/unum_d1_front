@@ -27,8 +27,8 @@ const api = {
   postImage: "/image/upload",
   getImage: "http://api.neomedy.com/api/image/download", // '/image/download/:id', width & height queries
 
-  postFile: "/file/upload",
-  getFile: "/file/download", // '/file/download/:file',
+  postFile: "file/upload",
+  getFile: "/api/file/download", // '/file/download/:file',
 
   createNewChat: "messegner/new_private_chat", // { to_id: '123'}
   getUserChats: "messegner/chats",
