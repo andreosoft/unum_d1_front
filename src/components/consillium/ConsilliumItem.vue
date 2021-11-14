@@ -6,7 +6,7 @@
           mdi-alert
         </v-icon>
         <span>
-          {{ $_lang_getDoctorTranslation("Consillium") }} № {{ item.id }}
+          {{ item.name }}
         </span>
       </div>
       <span v-if="item.status === 1" class="d-flex flex-column align-items-end">
