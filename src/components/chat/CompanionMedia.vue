@@ -89,12 +89,6 @@ export default {
     },
   },
   watch: {
-    items: {
-      immediate: true,
-      handler(val) {
-        console.log(val);
-      },
-    },
     dialog(val) {
       if (!val) {
         this.items = null;
