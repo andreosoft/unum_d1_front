@@ -44,18 +44,6 @@ export default {
         }
       },
     },
-    chats: {
-      deep: true,
-      immediate: true,
-      handler(val) {
-        if (val.length) {
-          const selectedChat = this.getSelectChatById(
-            Number(this.$route.params.chatId)
-          );
-          this.setSelectedChat(selectedChat);
-        }
-      },
-    },
   },
   methods: {
     ...mapActions(["setSelectedChat"]),

@@ -12,6 +12,7 @@ import { messaging, getToken } from './firebase'
 import { createNamespacedHelpers } from "vuex";
 const {
   mapState: State_chats,
+  mapGetters: Getters_chats,
   mapActions: Actions_chats,
 } = createNamespacedHelpers("chats");
 const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
@@ -35,6 +36,7 @@ new Vue({
   computed: {
     ...State_auth(["userProfile"]),
     ...State_chats(["chats"]),
+    ...Getters_chats(["getSelectChatById"]),
   },
   watch: {
     $route(val) {
@@ -45,9 +47,21 @@ new Vue({
         this.consiliumNotification = false;
       }
     },
+    chats: {
+      deep: true,
+      immediate: true,
+      handler(val) {
+        if (val.length) {
+          const selectedChat = this.getSelectChatById(
+            Number(this.$route.params.chatId)
+          );
+          this.setSelectedChat(selectedChat);
+        }
+      },
+    },
   },
   methods: {
-    ...Actions_chats(["addMessage", "fetchCurrentUserMessages", "fetchChats"]),
+    ...Actions_chats(["addMessage", "fetchCurrentUserMessages", "fetchChats", "setSelectedChat"]),
     ...Actions_alerts(["addAlert"]),
     webSocket() {
       let usertoken = JSON.parse(localStorage.getItem("neomedy")).token;
