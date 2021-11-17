@@ -69,8 +69,9 @@ const actions = {
     });
   },
 
-  addMessage({ commit }, message) {
+  addMessage({ commit, dispatch }, message) {
     commit("ADD_MESSAGE", message);
+    dispatch('fetchChats')
   },
 
   fetchChats({ commit }) {

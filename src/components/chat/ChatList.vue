@@ -1,7 +1,7 @@
 <template>
   <div>
     <ChatItem
-      v-for="(item, index) in getChatsButConsilliums"
+      v-for="(item, index) in sortedChats"
       :key="index"
       :active="activeItem === item.id"
       @click.native="chooseChat(item.id)"
@@ -33,6 +33,20 @@ export default {
     ...mapGetters(["getSelectChatById", "getChatsButConsilliums"]),
     ...Getters_doctors(["imageSrc"]),
     ...State_auth(["userProfile"]),
+    sortedChats() {
+      const copy = JSON.parse(JSON.stringify(this.getChatsButConsilliums))
+      const withLastMessage = []
+      const noLastMessage = []
+      copy.map((item, index) => {
+        if (item.last_message.length) {
+          withLastMessage.push(item)
+        } else {
+          noLastMessage.push(item)
+        }
+      })
+      withLastMessage.sort((a, b) => a.last_message[0].createdon < b.last_message[0].createdon ? 1 : -1)
+      return [...withLastMessage, ...noLastMessage]
+    },
   },
   watch: {
     "$route.params.chatId": {
