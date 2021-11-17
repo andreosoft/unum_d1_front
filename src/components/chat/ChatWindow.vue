@@ -52,7 +52,7 @@
         </v-card>
 
         <CompanionEducation
-          v-if="selectedChat && selectedChat.type === 1"
+          v-if="selectedChat && selectedChat.type === 1 && !isCompanionPatient"
           specialty="специальность врача"
           country="страна врача"
           lang="язык врача"
@@ -119,15 +119,15 @@ export default {
     formattedMessages() {
       const messages = [...this.messages];
       const result = messages.reduce((prev, item, index, arr) => {
-        item.showDate = false;
-        // if (arr[index + 1]) {
-        //   if (
-        //     dayjs(arr[index].createdon).format("YYYY-MM-DD") !==
-        //     dayjs(arr[index + 1].createdon).format("YYYY-MM-DD")
-        //   ) {
-        //     item.showDate = true;
-        //   }
-        // }
+        item.showDate = true
+        if (arr[index - 1]) {
+          if (
+            dayjs(arr[index - 1].createdon).format("YYYY-MM-DD") ===
+            dayjs(arr[index].createdon).format("YYYY-MM-DD")
+          ) {
+            item.showDate = false
+          }
+        }
         if (item.user_id !== this.getUserId) {
           item.showAvatar = true;
           if (this.selectedChat && this.selectedChat.type === 1) {
@@ -141,7 +141,7 @@ export default {
         prev.push(item);
         return prev;
       }, []);
-      return messages;
+      return result;
     },
     getUserId() {
       return this.userProfile && this.userProfile.id;
@@ -203,6 +203,14 @@ export default {
         ).user_id
       );
     },
+    isCompanionPatient() {
+      if (this.selectedChat && this.selectedChat.type === 1) {
+        const user_id = this.selectedChat.participants.find(item => item.user_id !== this.userProfile.id).user_id
+        const users = [...this.patients, ...this.doctors];
+        const user = users.find((user) => user.user_id === user_id);
+        return user.doctor_id === null
+      }
+    }
   },
   methods: {
     ...mapActions([
