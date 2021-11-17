@@ -4,6 +4,11 @@
     :class="{ active: active }"
   >
     <UserAvatarAndName :group="group" :name="name" :avatarUrl="avatarUrl">
+      <template #subtitle>
+        <v-list-item-subtitle>
+          {{ lastMessage }}
+        </v-list-item-subtitle>
+      </template>
     </UserAvatarAndName>
   </div>
 </template>
@@ -36,6 +41,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    lastMessage: {
+      type: String,
+      default: '',
+    },
   },
   methods: {
     chooseConversation() {
@@ -61,7 +70,7 @@ export default {
 
 .active {
   background-color: #4d6d81;
-  ::v-deep .v-list-item__title {
+  ::v-deep .v-list-item__title, .v-list-item__subtitle {
     color: #fff;
   }
 }

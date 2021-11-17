@@ -8,6 +8,7 @@
       :group="item.type === 2"
       :name="getChatName(item)"
       :avatarUrl="getChatUserImage(item)"
+      :lastMessage="item.last_message[0] && item.last_message[0].message"
     />
   </div>
 </template>
