@@ -50,6 +50,12 @@ export default {
   components: {
     Message,
   },
+  props: {
+    messages: {
+      type: Array,
+      default: () => [],
+    },
+  },
   filters: {
     formatDate(v) {
       return dayjs(v).format("YYYY MMM DD");
@@ -57,7 +63,7 @@ export default {
   },
   computed: {
     ...mapState(["userProfile"]),
-    ...State_chats(["messages", "selectedChat"]),
+    ...State_chats(["selectedChat"]),
     ...Getters_doctors(["imageSrc"]),
     currentUserId() {
       return this.userProfile && this.userProfile.id;
