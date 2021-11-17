@@ -74,7 +74,6 @@ new Vue({
           this.ws.send(JSON.stringify({ e: "auth", d: usertoken }));
           getToken(messaging, { vapidKey: "BLPcjvIYgCpYwdhZe-b9toT-BvwulE48yPwF2IbzEh0PzPoX3pU_KAurTKA76XOqtdrXP3eJAxssbgRH-Fgv9Vc" }).then((currentToken) => {
             if (currentToken) {
-                console.log('currentToken ', currentToken);
                 this.ws.send(
                   JSON.stringify({
                     e: "register_firebase",
