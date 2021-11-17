@@ -101,7 +101,7 @@ export default {
   },
   filters: {
     formatTime(v) {
-      return dayjs(v).format("HH:MM");
+      return `${dayjs(v).format("hh:mm")}`;
     },
   },
   components: {
