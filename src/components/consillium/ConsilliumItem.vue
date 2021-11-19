@@ -19,7 +19,13 @@
           v-for="(value, key, index) in getConsilliumInfo"
           :key="index"
           :title="formatTitle(key)"
-          :content="typeof value === 'string' ? value : ''"
+          :content="
+            typeof value === 'string'
+              ? value
+              : key === 'selectedPatient'
+              ? value.name
+              : ''
+          "
         />
       </v-list>
       <div>

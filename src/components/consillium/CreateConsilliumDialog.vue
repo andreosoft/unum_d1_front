@@ -38,13 +38,19 @@
             ></v-text-field>
           </v-col>
           <v-col md="5">
-            <v-text-field
+            <v-autocomplete
+              prepend-inner-icon="mdi-magnify"
+              :items="patients"
+              v-model="selectedPatientId"
+              item-text="name"
+              item-value="id"
               hide-details
               :label="$_lang_getDoctorTranslation('Select a patient')"
               dense
               class="mt-0"
-              v-model="selectedPatient"
-            ></v-text-field>
+              autocomplete="off"
+            >
+            </v-autocomplete>
           </v-col>
         </v-row>
         <v-textarea
@@ -204,6 +210,7 @@
 import { createNamespacedHelpers } from "vuex";
 const { mapActions } = createNamespacedHelpers("chats");
 const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
+const { mapState: State_patients } = createNamespacedHelpers("patients");
 const {
   mapState: State_doctors,
   mapGetters: Getters_doctors,
@@ -225,7 +232,7 @@ export default {
       consilliumName: "",
       provisionalDiagnosis: "",
       problemDescription: "",
-      selectedPatient: "",
+      selectedPatientId: null,
       tags: "",
       isConsilliumUrgent: "",
     };
@@ -234,10 +241,17 @@ export default {
     ...State_doctors(["doctors"]),
     ...Getters_doctors(["imageSrc"]),
     ...State_auth(["userProfile"]),
+    ...State_patients(["patients"]),
     getDoctors() {
       return (
         this.doctors &&
         this.doctors.filter((doc) => this.userProfile.id !== doc.user_id)
+      );
+    },
+    computeSelectedPatient() {
+      return (
+        this.patients &&
+        this.patients.find((p) => p.id === this.selectedPatientId)
       );
     },
   },
@@ -258,7 +272,7 @@ export default {
         invitedPeople: this.invitedPeople,
         provisionalDiagnosis: this.provisionalDiagnosis,
         problemDescription: this.problemDescription,
-        selectedPatient: this.selectedPatient,
+        selectedPatient: this.computeSelectedPatient,
         tags: this.tags,
         isConsilliumUrgent: this.isConsilliumUrgent,
       };
@@ -275,7 +289,7 @@ export default {
       this.consilliumName = "";
       this.provisionalDiagnosis = "";
       this.problemDescription = "";
-      this.selectedPatient = "";
+      this.selectedPatientId = null;
       this.tags = "";
       this.isConsilliumUrgent = false;
       this.$emit("close");
