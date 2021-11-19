@@ -1,3 +1,4 @@
+import * as plainAxios from "axios";
 import { axios, api } from "./../../config";
 import router from "./../../router/index";
 import _ from "lodash";
@@ -292,6 +293,11 @@ const actions = {
   uploadDoctorImage({ dispatch, commit }, data) {
     return axios.post(api.postImage, data).then((res) => {
       commit("SET_DOCTOR_PHOTO", res.data.data.file);
+    });
+  },
+  getCountryCode() {
+    return plainAxios.get("http://ip-api.com/json").then((res) => {
+      return res.data.countryCode;
     });
   },
 };

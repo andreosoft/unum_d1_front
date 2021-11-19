@@ -38,7 +38,7 @@
             </v-text-field>
             <vue-phone-number-input
               v-model="phone"
-              default-country-code="KG"
+              :default-country-code="countryCode"
               show-code-on-list
               :translations="{
                 countrySelectorLabel: getCommonTranslation('Country code'),
@@ -400,6 +400,8 @@ const {
 export default {
   data() {
     return {
+      countryCode: "KG",
+
       step: 0,
       showBirthdayPicker: false,
       currentDate: dayjs().format("YYYY-MM-DD"),
@@ -572,7 +574,7 @@ export default {
     ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
   },
   methods: {
-    ...mapActions(["signUp", "uploadDoctorImage"]),
+    ...mapActions(["signUp", "uploadDoctorImage", "getCountryCode"]),
     ...mapMutations([
       "SET_DOCTOR_MEDICAL_UNIVERSITY",
       "SET_DOCTOR_MEDICAL_SPECIALTY",
@@ -699,7 +701,7 @@ export default {
       this.fetchLangItems({ lang: choosenLang, type: "doctor" });
     },
   },
-  created() {
+  async created() {
     this.systemLanguages.map((lang) =>
       lang.title === this.$route.params.lang ? (lang.isActive = true) : ""
     );
@@ -712,6 +714,7 @@ export default {
       lang: this.$route.params.lang,
       type: "doctor",
     });
+    this.countryCode = await this.getCountryCode();
   },
 };
 </script>
