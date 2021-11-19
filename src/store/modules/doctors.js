@@ -55,6 +55,16 @@ const actions = {
       .get(api.getDoctorSpecialty + `/${string}`)
       .then((res) => res.data.data);
   },
+  fetchDiseaseByCodeOnInput(_, code) {
+    return axios.get(api.getDiseaseByCode + `/${code}`).then((res) => {
+      return res.data.data;
+    });
+  },
+  fetchDiseaseByNameOnInput(_, name) {
+    return axios.get(api.getDiseaseByName + `/${name}`).then((res) => {
+      return res.data.data;
+    });
+  },
 };
 
 export default {

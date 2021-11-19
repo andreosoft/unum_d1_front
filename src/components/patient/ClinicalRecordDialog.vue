@@ -27,19 +27,20 @@
           </v-toolbar-items>
         </v-toolbar>
 
-        <form
-          @submit.prevent="addClinicalRecordHandler"
-          class="pa-5"
-          enctype="multipart/form-data"
-        >
+        <form class="pa-5" enctype="multipart/form-data">
           <div class="mb-4">
             <p class="ma-0">{{ getCommonTranslation("Diagnosis") }} *</p>
-            <v-text-field
-              outlined
-              dense
-              hide-details
+            <v-autocomplete
               v-model="clinicalRecord.diagnos"
-            ></v-text-field>
+              :items="diagnosisItems"
+              item-text="name"
+              hide-details
+              dense
+              outlined
+              autocomplete="off"
+              @input.native="diagnosisOnInput"
+            >
+            </v-autocomplete>
           </div>
           <div class="mb-4">
             <p class="ma-0">{{ getCommonTranslation("Diagnosis comments") }}</p>
@@ -127,6 +128,7 @@
 import { createNamespacedHelpers } from "vuex";
 import dayjs from "dayjs";
 const { mapState, mapActions } = createNamespacedHelpers("patients");
+const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 
 export default {
@@ -139,6 +141,7 @@ export default {
   },
   data() {
     return {
+      diagnosisItems: [],
       clinicalRecord: {
         type_id: 1,
         diagnos: "",
@@ -194,6 +197,26 @@ export default {
   },
   methods: {
     ...mapActions(["addClinicalRecord", "uploadFile"]),
+    ...Actions_doctors([
+      "fetchDiseaseByNameOnInput",
+      "fetchDiseaseByCodeOnInput",
+    ]),
+
+    diagnosisOnInput(e) {
+      if (!e.target.value.length) {
+        this.diagnosisItems = [];
+        return;
+      }
+      this.fetchDiseaseByNameOnInput(e.target.value).then((res) => {
+        this.diagnosisItems = res;
+      });
+      // this.fetchDiseaseByCodeOnInput(e.target.value).then((res) => {
+      //   this.diagnosisItems = res;
+      //   console.log(this.diagnosisItems, "after each request");
+      // });
+      // A16.0
+    },
+
     async addClinicalRecordHandler() {
       const clinicalRecordData = {
         diagnos: this.clinicalRecord.diagnos,

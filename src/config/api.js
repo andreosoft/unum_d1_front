@@ -43,5 +43,8 @@ const api = {
   clearChatHistory: "messegner/clear_chat_history", // /:id
 
   getDoctorSpecialty: "doctor/speciality/name",
+
+  getDiseaseByCode: "doctor/mkb/code",
+  getDiseaseByName: "doctor/mkb/name",
 };
 export default api;
