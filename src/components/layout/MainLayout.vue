@@ -70,7 +70,7 @@
         </v-list-item>
         <v-list-item>
           <v-list-item-action>
-            <v-btn color="primary" @click="logout">
+            <v-btn color="primary" @click="logout('en')">
               {{ getCommonTranslation("Sign out") }}
             </v-btn>
           </v-list-item-action>
