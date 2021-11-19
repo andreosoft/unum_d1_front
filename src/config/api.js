@@ -41,5 +41,7 @@ const api = {
 
   deleteChat: "messegner/chat", // DEELETE /:id
   clearChatHistory: "messegner/clear_chat_history", // /:id
+
+  getDoctorSpecialty: "doctor/speciality/name",
 };
 export default api;

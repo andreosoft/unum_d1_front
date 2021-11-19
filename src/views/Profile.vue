@@ -100,14 +100,19 @@
               class="mb-2"
               :label="getDoctorTranslation('Medical specialty')"
             ></v-text-field>
-            <v-text-field
+            <v-autocomplete
               v-model="getSetDoctorSpecialty"
+              :items="specialtyItems"
+              item-text="name"
               hide-details
-              outlined
-              dense
-              class="mb-2"
               :label="getDoctorTranslation('Doctor specialty')"
-            ></v-text-field>
+              dense
+              outlined
+              class="mb-2"
+              autocomplete="off"
+              @input.native="docSpecialtyOnInput"
+            >
+            </v-autocomplete>
             <v-text-field
               v-model="getSetMedicalUniversity"
               hide-details
@@ -254,10 +259,12 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
+import { axios } from "./../config";
 import dayjs from "dayjs";
 const { mapState, mapMutations, mapActions } = createNamespacedHelpers("auth");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 const { mapActions: Actions_alert } = createNamespacedHelpers("alerts");
+const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
 export default {
   data() {
     return {
@@ -327,6 +334,7 @@ export default {
         "Япония",
       ],
       country: "",
+      specialtyItems: [],
     };
   },
   computed: {
@@ -548,10 +556,17 @@ export default {
         this.addAlert({ type: "success", text: "Profile updated" });
       }
     },
+    getSetDoctorSpecialty: {
+      immediate: true,
+      handler(val) {
+        this.specialtyItems.push(val);
+      },
+    },
   },
   methods: {
     ...mapActions(["updateDoctorProfile", "uploadDoctorImage"]),
     ...Actions_alert(["addAlert"]),
+    ...Actions_doctors(["fetchDocSpecialtiesOnInput"]),
     ...mapMutations([
       "SET_DOCTOR_NAME",
       "SET_DOCTOR_BIRTHDAY",
@@ -573,6 +588,17 @@ export default {
       "SET_FELLOW_STUDENT_SOCIAL_LINK",
       "SET_DOCTOR_TIME_INTERVAL",
     ]),
+
+    docSpecialtyOnInput(e) {
+      if (!e.target.value.length) {
+        this.specialtyItems = [];
+        return;
+      }
+      this.fetchDocSpecialtiesOnInput(e.target.value).then((res) => {
+        this.specialtyItems = res;
+      });
+    },
+
     photoAddHandle(e) {
       this.profileData.selectedPhoto = e;
     },

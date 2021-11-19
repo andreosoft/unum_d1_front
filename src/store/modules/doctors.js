@@ -50,6 +50,11 @@ const actions = {
       commit("SET_SELECTED_DOCTOR", res.data.data);
     });
   },
+  fetchDocSpecialtiesOnInput(_, string) {
+    return axios
+      .get(api.getDoctorSpecialty + `/${string}`)
+      .then((res) => res.data.data);
+  },
 };
 
 export default {
