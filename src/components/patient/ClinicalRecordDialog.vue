@@ -31,7 +31,9 @@
           <div class="mb-4">
             <p class="ma-0">{{ getCommonTranslation("Diagnosis") }} *</p>
             <v-autocomplete
-              v-model="clinicalRecord.diagnos"
+              v-if="byName"
+              :search-input.sync="diseaseSearch"
+              @change="(e) => (clinicalRecord.diagnos = e)"
               :items="diagnosisItems"
               item-text="name"
               hide-details
@@ -39,9 +41,36 @@
               outlined
               autocomplete="off"
               @input.native="diagnosisOnInput"
+              :placeholder="getDoctorTranslation('Disease name')"
+              @blur="diagnosisItems = []"
             >
             </v-autocomplete>
+            <v-autocomplete
+              v-else
+              :items="diagnosisItems"
+              item-text="code"
+              item-value="name"
+              hide-details
+              dense
+              outlined
+              autocomplete="off"
+              :search-input.sync="diseaseSearch"
+              @input.native="diagnosisOnInput"
+              @change="(e) => (clinicalRecord.diagnos = e)"
+              :placeholder="getDoctorTranslation('Disease code')"
+              @blur="diagnosisItems = []"
+            >
+              <template #item="data">
+                <span>{{ data.item.name }} ({{ data.item.code }})</span>
+              </template>
+            </v-autocomplete>
           </div>
+          <v-checkbox
+            :label="
+              getDoctorTranslation(`Search by ${byName ? 'name' : 'code'}`)
+            "
+            v-model="byName"
+          ></v-checkbox>
           <div class="mb-4">
             <p class="ma-0">{{ getCommonTranslation("Diagnosis comments") }}</p>
             <v-textarea
@@ -153,6 +182,9 @@ export default {
       attachedFile: null,
       treatmentFinished: false,
       clinicalRecordDialog: false,
+
+      diseaseSearch: "",
+      byName: true,
     };
   },
   computed: {
@@ -203,18 +235,19 @@ export default {
     ]),
 
     diagnosisOnInput(e) {
-      if (!e.target.value.length) {
+      if (!this.diseaseSearch.length) {
         this.diagnosisItems = [];
         return;
       }
-      this.fetchDiseaseByNameOnInput(e.target.value).then((res) => {
+      if (this.byName) {
+        this.fetchDiseaseByNameOnInput(this.diseaseSearch).then((res) => {
+          this.diagnosisItems = res;
+        });
+        return;
+      }
+      this.fetchDiseaseByCodeOnInput(this.diseaseSearch).then((res) => {
         this.diagnosisItems = res;
       });
-      // this.fetchDiseaseByCodeOnInput(e.target.value).then((res) => {
-      //   this.diagnosisItems = res;
-      //   console.log(this.diagnosisItems, "after each request");
-      // });
-      // A16.0
     },
 
     async addClinicalRecordHandler() {
