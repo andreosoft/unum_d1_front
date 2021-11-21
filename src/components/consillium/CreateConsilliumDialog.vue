@@ -28,14 +28,21 @@
           class="mb-7"
         >
           <v-col md="5">
-            <v-text-field
+            <v-autocomplete
+              :search-input.sync="diagnosisSearch"
+              @change="(e) => (provisionalDiagnosis = e)"
+              :items="diagnosisItems"
+              item-text="name"
               hide-details
-              :label="$_lang_getDoctorTranslation('Provisional diagnosis')"
               dense
+              autocomplete="off"
+              @input.native="diagnosisOnInput"
+              :label="$_lang_getDoctorTranslation('Provisional diagnosis')"
+              @blur="diagnosisItems = []"
               class="mt-0"
               :class="{ 'mb-7': $vuetify.breakpoint.smAndDown }"
-              v-model="provisionalDiagnosis"
-            ></v-text-field>
+            >
+            </v-autocomplete>
           </v-col>
           <v-col md="5">
             <v-autocomplete
@@ -210,6 +217,7 @@
 import { createNamespacedHelpers } from "vuex";
 const { mapActions } = createNamespacedHelpers("chats");
 const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
+const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
 const { mapState: State_patients } = createNamespacedHelpers("patients");
 const {
   mapState: State_doctors,
@@ -235,6 +243,8 @@ export default {
       selectedPatientId: null,
       tags: "",
       isConsilliumUrgent: "",
+      diagnosisSearch: "",
+      diagnosisItems: [],
     };
   },
   computed: {
@@ -262,6 +272,17 @@ export default {
       "fetchChats",
     ]),
     ...Actions_alerts(["addAlert"]),
+    ...Actions_doctors(["fetchDiseaseByNameOnInput"]),
+    diagnosisOnInput() {
+      if (!this.diagnosisSearch.length) {
+        this.diagnosisItems = [];
+        return;
+      }
+      this.fetchDiseaseByNameOnInput(this.diagnosisSearch).then((res) => {
+        this.diagnosisItems = res;
+      });
+      return;
+    },
     remove(item) {
       const index = this.invitedPeople.indexOf(item.name);
       if (index >= 0) this.invitedPeople.splice(index, 1);
