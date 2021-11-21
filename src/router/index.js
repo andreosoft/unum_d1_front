@@ -176,12 +176,12 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.matched.some((route) => route.meta.requiresAuth);
-  // if (
-  //   (to.name === "Login" || to.name === "Sign Up") &&
-  //   store.state.auth.authStatus
-  // ) {
-  //   return next({ name: "Dashboard" });
-  // }
+  if (
+    (to.name === "Login" || to.name === "Sign Up") &&
+    store.state.auth.authStatus
+  ) {
+    return next({ name: "Dashboard" });
+  }
   if (requiresAuth) {
     if (!store.state.auth.authStatus) {
       const localData = window.localStorage.getItem("neomedy");
