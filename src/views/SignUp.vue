@@ -413,7 +413,7 @@ export default {
       specialtyItems: [],
       univerItems: [],
 
-      step: 2,
+      step: 0,
       showBirthdayPicker: false,
       currentDate: dayjs().format("YYYY-MM-DD"),
 
