@@ -46,5 +46,7 @@ const api = {
 
   getDiseaseByCode: "doctor/mkb/code",
   getDiseaseByName: "doctor/mkb/name",
+
+  getUniversity: "doctor/institutions",
 };
 export default api;

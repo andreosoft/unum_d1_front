@@ -242,15 +242,19 @@
             <p class="form__title">
               {{ getCommonTranslation("Medical Education") }}
             </p>
-            <v-text-field
+            <v-autocomplete
               v-model="medUniversity"
+              :items="univerItems"
+              item-text="name"
+              hide-details
               :label="getCommonTranslation('Medical University')"
               dense
               outlined
-              hide-details
-              class="mb-1"
+              class="mb-2"
+              autocomplete="off"
+              @input.native="onMedUniversityInput"
             >
-            </v-text-field>
+            </v-autocomplete>
             <v-text-field
               v-model="yearsOfEducation"
               :label="getCommonTranslation('Years of education')"
@@ -269,15 +273,19 @@
               class="mb-1"
             >
             </v-text-field>
-            <v-text-field
+            <v-autocomplete
               v-model="docSpecialty"
-              :label="getCommonTranslation('Doctor specialty')"
+              :items="specialtyItems"
+              item-text="name"
+              hide-details
+              :label="getDoctorTranslation('Doctor specialty')"
               dense
               outlined
-              hide-details
-              class="mb-1"
+              class="mb-2"
+              autocomplete="off"
+              @input.native="docSpecialtyOnInput"
             >
-            </v-text-field>
+            </v-autocomplete>
             <v-text-field
               v-model="internship"
               :label="getCommonTranslation('Internship')"
@@ -392,6 +400,7 @@ import { required, minLength, sameAs } from "vuelidate/lib/validators";
 import { createNamespacedHelpers } from "vuex";
 import dayjs from "dayjs";
 const { mapActions, mapMutations } = createNamespacedHelpers("auth");
+const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
 const {
   mapState: State_lang,
   mapGetters: Getters_lang,
@@ -401,8 +410,10 @@ export default {
   data() {
     return {
       countryCode: "KG",
+      specialtyItems: [],
+      univerItems: [],
 
-      step: 0,
+      step: 2,
       showBirthdayPicker: false,
       currentDate: dayjs().format("YYYY-MM-DD"),
 
@@ -585,6 +596,17 @@ export default {
       "SET_AUTH_STATUS",
     ]),
     ...Actions_lang(["fetchLangItems"]),
+    ...Actions_doctors(["fetchDocSpecialtiesOnInput", "fetchUniversity"]),
+
+    onMedUniversityInput(e) {
+      if (!e.target.value.length) {
+        this.univerItems = [];
+        return;
+      }
+      this.fetchUniversity(e.target.value).then((res) => {
+        this.univerItems = res;
+      });
+    },
     validateStep() {
       if (this.step === 0) {
         const requiredFields = ["email", "password", "passwordConfirmation"];
@@ -699,6 +721,15 @@ export default {
 
       this.fetchLangItems({ lang: choosenLang, type: "common" });
       this.fetchLangItems({ lang: choosenLang, type: "doctor" });
+    },
+    docSpecialtyOnInput(e) {
+      if (!e.target.value.length) {
+        this.specialtyItems = [];
+        return;
+      }
+      this.fetchDocSpecialtiesOnInput(e.target.value).then((res) => {
+        this.specialtyItems = res;
+      });
     },
   },
   async created() {

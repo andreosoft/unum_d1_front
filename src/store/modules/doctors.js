@@ -65,6 +65,11 @@ const actions = {
       return res.data.data;
     });
   },
+  fetchUniversity(_, name) {
+    return axios.get(api.getUniversity + `/${name}`).then((res) => {
+      return res.data.data;
+    });
+  },
 };
 
 export default {
