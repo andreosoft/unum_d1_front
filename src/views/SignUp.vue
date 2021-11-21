@@ -253,6 +253,7 @@
               class="mb-2"
               autocomplete="off"
               @input.native="onMedUniversityInput"
+              @blur="univerItems = []"
             >
             </v-autocomplete>
             <v-text-field
@@ -284,6 +285,7 @@
               class="mb-2"
               autocomplete="off"
               @input.native="docSpecialtyOnInput"
+              @blur="specialtyItems = []"
             >
             </v-autocomplete>
             <v-text-field

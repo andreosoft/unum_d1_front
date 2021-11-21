@@ -111,16 +111,23 @@
               class="mb-2"
               autocomplete="off"
               @input.native="docSpecialtyOnInput"
+              @blur="specialtyItems = []"
             >
             </v-autocomplete>
-            <v-text-field
+            <v-autocomplete
               v-model="getSetMedicalUniversity"
+              :items="univerItems"
+              item-text="name"
               hide-details
-              outlined
+              :label="getCommonTranslation('Medical University')"
               dense
+              outlined
               class="mb-2"
-              :label="getDoctorTranslation('Medical University')"
-            ></v-text-field>
+              autocomplete="off"
+              @input.native="onMedUniversityInput"
+              @blur="univerItems = []"
+            >
+            </v-autocomplete>
             <v-text-field
               v-model="getSetPhone"
               hide-details
@@ -335,6 +342,7 @@ export default {
       ],
       country: "",
       specialtyItems: [],
+      univerItems: [],
     };
   },
   computed: {
@@ -562,11 +570,17 @@ export default {
         this.specialtyItems.push(val);
       },
     },
+    getSetMedicalUniversity: {
+      immediate: true,
+      handler(val) {
+        this.univerItems.push(val);
+      },
+    },
   },
   methods: {
     ...mapActions(["updateDoctorProfile", "uploadDoctorImage"]),
     ...Actions_alert(["addAlert"]),
-    ...Actions_doctors(["fetchDocSpecialtiesOnInput"]),
+    ...Actions_doctors(["fetchDocSpecialtiesOnInput", "fetchUniversity"]),
     ...mapMutations([
       "SET_DOCTOR_NAME",
       "SET_DOCTOR_BIRTHDAY",
@@ -588,6 +602,16 @@ export default {
       "SET_FELLOW_STUDENT_SOCIAL_LINK",
       "SET_DOCTOR_TIME_INTERVAL",
     ]),
+
+    onMedUniversityInput(e) {
+      if (!e.target.value.length) {
+        this.univerItems = [];
+        return;
+      }
+      this.fetchUniversity(e.target.value).then((res) => {
+        this.univerItems = res;
+      });
+    },
 
     docSpecialtyOnInput(e) {
       if (!e.target.value.length) {
