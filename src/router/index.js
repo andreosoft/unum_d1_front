@@ -101,6 +101,10 @@ const routes = [
               list: () => import("./../views/Consillium.vue"),
               messages: () => import("./../components/chat/ChatWindow.vue"),
             },
+            meta: {
+              hideMobileList: true,
+              hideMobileTopNavbar: true,
+            },
           },
         ],
       },
