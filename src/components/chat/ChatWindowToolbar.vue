@@ -5,7 +5,7 @@
   >
     <v-icon
       v-if="$vuetify.breakpoint.smAndDown"
-      @click="$router.push({ name: 'Chats' })"
+      @click="$router.go(-1)"
       >mdi-chevron-left</v-icon
     >
     <UserAvatarAndName
