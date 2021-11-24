@@ -51,16 +51,6 @@ export default {
   data() {
     return {
       actions: [
-        // {
-        //   icon: "mdi-phone",
-        //   bgColor: "#406278",
-        //   color: "white",
-        // },
-        // {
-        //   icon: "mdi-video-outline",
-        //   bgColor: "#406278",
-        //   color: "white",
-        // },
         {
           icon: "mdi-magnify",
           bgColor: "transparent",

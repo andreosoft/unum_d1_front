@@ -52,7 +52,7 @@ export default {
       handler(val) {
         if (val.length) {
           const selectedChat = this.getSelectChatById(
-            Number(this.$route.params.id)
+            Number(this.$route.params.chatId)
           );
           this.setSelectedChat(selectedChat);
         }
