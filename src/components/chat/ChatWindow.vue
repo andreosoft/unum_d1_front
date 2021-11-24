@@ -53,10 +53,8 @@
 
         <CompanionEducation
           v-if="selectedChat && selectedChat.type === 1 && !isCompanionPatient"
-          specialty="специальность врача"
-          country="страна врача"
-          lang="язык врача"
-          uni="универститет врача"
+          :specialty="getDoctorByUserId(getCompanionID).info.doctor_specialty"
+          :country="getDoctorByUserId(getCompanionID).country"
         />
 
         <CompanionMedia
@@ -83,7 +81,7 @@ const { mapState, mapActions } = createNamespacedHelpers("chats");
 const { mapState: State_auth } = createNamespacedHelpers("auth");
 const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
 const { mapState: State_patients } = createNamespacedHelpers("patients");
-const { mapState: State_doctors } = createNamespacedHelpers("doctors");
+const { mapState: State_doctors, mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
 import ChatWindowToolbar from "./ChatWindowToolbar";
 import MessagesList from "./MessagesList";
 import CompanionInfo from "./CompanionInfo";
@@ -116,6 +114,7 @@ export default {
     ...State_auth(["userProfile"]),
     ...State_patients(["patients"]),
     ...State_doctors(["doctors"]),
+    ...Getters_doctors(['getDoctorByUserId']),
     formattedMessages() {
       const messages = [...this.messages];
       const result = messages.reduce((prev, item, index, arr) => {
@@ -210,7 +209,11 @@ export default {
         const user = users.find((user) => user.user_id === user_id);
         return user.doctor_id === null
       }
-    }
+    },
+    getCompanionID() {
+      const notMe = this.selectedChat?.participants.find(i => i.user_id !== this.userProfile.user_id)
+      return notMe.user_id
+    },
   },
   methods: {
     ...mapActions([
