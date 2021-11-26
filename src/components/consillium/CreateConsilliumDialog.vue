@@ -140,12 +140,23 @@
           >
             <!-- 48 -->
             <v-col md="5" :class="{ 'mb-7': $vuetify.breakpoint.smAndDown }">
-              <v-select
-                dense
-                hide-details
+              <v-autocomplete
+                v-model="doctorsSpecialty"
+                :items="specialtyItems"
+                item-text="name"
                 :label="$_lang_getCommonTranslation('By specialty')"
-                class="mt-0"
-              ></v-select>
+                dense
+                :error-messages="noDoctorsBySpecialty ? $_lang_getCommonTranslation('No doctors with the specialty'): ''"
+                class="mb-2"
+                autocomplete="off"
+                @input.native="doctorsSpecialtyOnInput"
+                @blur="() => {
+                  specialtyItems = []
+                  noDoctorsBySpecialty = false
+                }"
+                @change="doctorsSpecialtyOnChange"
+              >
+            </v-autocomplete>
             </v-col>
 
             <!-- 48 -->
@@ -245,6 +256,9 @@ export default {
       isConsilliumUrgent: "",
       diagnosisSearch: "",
       diagnosisItems: [],
+      doctorsSpecialty: '',
+      specialtyItems: [],
+      noDoctorsBySpecialty: false
     };
   },
   computed: {
@@ -272,7 +286,7 @@ export default {
       "fetchChats",
     ]),
     ...Actions_alerts(["addAlert"]),
-    ...Actions_doctors(["fetchDiseaseByNameOnInput"]),
+    ...Actions_doctors(["fetchDiseaseByNameOnInput", "fetchDocSpecialtiesOnInput"]),
     diagnosisOnInput() {
       if (!this.diagnosisSearch.length) {
         this.diagnosisItems = [];
@@ -283,9 +297,33 @@ export default {
       });
       return;
     },
+    doctorsSpecialtyOnInput(e) {
+      if (!e.target.value.length) {
+        this.specialtyItems = [];
+        return;
+      }
+      this.fetchDocSpecialtiesOnInput(e.target.value).then((res) => {
+        this.specialtyItems = res;
+      });
+    },
+    doctorsSpecialtyOnChange() {
+      this.invitedPeople = []
+      this.noDoctorsBySpecialty = false
+      this.getDoctors.map(doc => {
+        if (doc.info.doctor_specialty === this.doctorsSpecialty) {
+          this.invitedPeople.push(doc.user_id)
+        }
+      })
+      if (!this.invitedPeople.length) {
+        this.noDoctorsBySpecialty = true
+      }
+    },
     remove(item) {
-      const index = this.invitedPeople.indexOf(item.name);
-      if (index >= 0) this.invitedPeople.splice(index, 1);
+      this.invitedPeople.map((p, index) => {
+        if (p === item.user_id) {
+          this.invitedPeople.splice(index, 1)
+        }
+      })
     },
     async createConsillium() {
       const name = this.consilliumName;
