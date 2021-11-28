@@ -19,6 +19,14 @@
             <v-icon small> mdi-chevron-right </v-icon>
           </v-btn>
           <v-spacer></v-spacer>
+          <v-btn
+            class="mr-3"
+            :elevation="0"
+            :ripple="false"
+            @click="visitTimeGap = true"
+          >
+            {{ getDoctorTranslation("Set working time") }}
+          </v-btn>
           <v-menu bottom right>
             <template v-slot:activator="{ on, attrs }">
               <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
@@ -48,7 +56,7 @@
           ref="calendar"
           v-model="focus"
           color="primary"
-          :events="getAppointments"
+          :events="getEvents"
           :event-color="getEventColor"
           :event-name="getEventName"
           :event-ripple="false"
@@ -63,6 +71,36 @@
           :first-interval="8"
         >
         </v-calendar>
+        <v-menu
+          v-model="selectedOpen"
+          :close-on-content-click="false"
+          :activator="selectedElement"
+          offset-x
+        >
+          <v-card color="grey lighten-4" min-width="350px" flat>
+            <v-toolbar :color="selectedEvent.color" dark dense>
+              <v-toolbar-title
+                >{{ selectedEvent.name }}
+                {{ selectedEvent.start | convertToDate }}</v-toolbar-title
+              >
+            </v-toolbar>
+            <v-card-text class="d-flex flex-column">
+              <span
+                >{{ getCommonTranslation("Start") }}
+                {{ selectedEvent.start | convertToTime }}</span
+              >
+              <span
+                >{{ getCommonTranslation("End") }}
+                {{ selectedEvent.end | convertToTime }}</span
+              >
+            </v-card-text>
+            <v-card-actions>
+              <v-btn text color="secondary" @click="selectedOpen = false">
+                {{ getCommonTranslation('Close') }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-menu>
       </v-sheet>
       <v-fab-transition>
         <v-btn
@@ -82,19 +120,6 @@
         </v-btn>
       </v-fab-transition>
 
-      <!-- выбор действия при нажатии на день -->
-      <v-dialog v-model="chooseAction" :max-width="500">
-        <v-card class="mx-auto d-flex justify-content-center">
-          <v-card-actions>
-            <v-btn @click="showEventForm = true">{{
-              getDoctorTranslation("Create event")
-            }}</v-btn>
-            <v-btn @click="visitTimeGap = true">{{
-              getDoctorTranslation("Set working time")
-            }}</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
       <!-- создание события -->
       <v-dialog v-model="showEventForm" :max-width="600">
         <v-card>
@@ -176,9 +201,29 @@
       <v-dialog v-model="visitTimeGap" max-width="400">
         <v-card v-if="visitTimeGap" class="pa-3">
           <v-card-title class="pa-0">
-            {{ getDoctorTranslation("Set your working time on") }}&nbsp;
-            <span style="white-space: nowrap;">{{ getStartDate }}</span>
+            {{ getDoctorTranslation("Set your working time") }}&nbsp;
           </v-card-title>
+          <v-card-text class="pa-0">
+            <v-menu ref="visitTimeMenu" :close-on-content-click="false">
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  :value="visitingDate"
+                  :label="getDoctorTranslation('Visiting date')"
+                  v-bind="attrs"
+                  v-on="on"
+                  readonly
+                >
+                </v-text-field>
+              </template>
+              <v-date-picker
+                v-model="visitingDate"
+                :min="currentDate"
+                @click:date="visitingClick"
+                close-on-content-click
+                @change="$refs.visitTimeMenu.save(visitingDate)"
+              ></v-date-picker>
+            </v-menu>
+          </v-card-text>
           <v-card-text class="pa-0">
             <v-input
               class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
@@ -274,6 +319,10 @@ export default {
   },
   data() {
     return {
+      selectedEvent: {},
+      selectedElement: null,
+      selectedOpen: false,
+
       eventName: "",
       chooseAction: false,
       showEventForm: false,
@@ -302,14 +351,53 @@ export default {
       currentDate: dayjs().format("YYYY-MM-DD"),
       visitingStartTime: "10:00",
       visitingEndTime: "11:00",
+      visitingDate: "",
+      visitingDatePicker: false,
+      myEvents: [
+        {
+          name: "emri event",
+          start: new Date(),
+          end: new Date(),
+          color: "yellow",
+          timed: false,
+        },
+      ],
     };
+  },
+  filters: {
+    convertToTime(val) {
+      const date = new Date(val);
+      const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+      const minutes =
+        date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+      return `${hours}:${minutes}`;
+    },
+    convertToDate(val) {
+      const date = new Date(val);
+      const day = date.getDay() < 10 ? `0${date.getDay()}` : date.getDay();
+      const month = date.getMonth();
+      const year = date.getFullYear();
+      return `${year}.${month}.${day}`;
+    },
   },
   computed: {
     ...mapState(["events"]),
-    ...mapGetters(["getAppointments"]),
     ...State_patients(["patients"]),
     ...State_auth(["doctorProfile"]),
     ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
+    getEvents() {
+      const events = _.cloneDeep(this.events);
+
+      if (events && events.length) {
+        events.map((event) => {
+          if (event.type_id === 2) {
+            event.start = new Date(event.start);
+            event.end = new Date(event.end);
+          }
+        });
+      }
+      return events;
+    },
     selectedDate() {
       return this.date;
     },
@@ -363,6 +451,12 @@ export default {
     intervalFormat(interval) {
       return interval.time;
     },
+    visitingClick(e) {
+      if (dayjs().isAfter(dayjs(e).add(1, "day"))) {
+        return;
+      }
+      this.visitingDate = e;
+    },
     createEventHandler(event) {
       if (dayjs().isAfter(dayjs(event.date).add(1, "day"))) {
         return;
@@ -395,7 +489,7 @@ export default {
       //
       this.startTime = getFormattedStartTime;
       this.endTime = getFormattedEndTime;
-      this.chooseAction = true;
+      this.showEventForm = true;
     },
     async deleteEventHandler() {
       await this.deleteEvent(this.eventDefaultData.id);
@@ -410,7 +504,7 @@ export default {
       return event.color;
     },
     getEventName(event) {
-      return event.input.patient;
+      return event.input.patient ? event.input.patient : event.input.name;
     },
     setToday() {
       this.focus = "";
@@ -422,6 +516,24 @@ export default {
       this.$refs.calendar.next();
     },
     showEvent({ nativeEvent, event }) {
+      if (event.type_id === 2) {
+        const open = () => {
+          this.selectedEvent = event;
+          this.selectedElement = nativeEvent.target;
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => (this.selectedOpen = true))
+          );
+        };
+
+        if (this.selectedOpen) {
+          this.selectedOpen = false;
+          requestAnimationFrame(() => requestAnimationFrame(() => open()));
+        } else {
+          open();
+        }
+        nativeEvent.stopPropagation();
+        return;
+      }
       this.eventDefaultData = event;
       this.showEventMenu(nativeEvent);
       console.log("ev: ", event);
@@ -529,18 +641,22 @@ export default {
     async saveVisitTimeGap() {
       const payload = {
         name: "Прием пациентов",
-        start: `${this.getStartDate} ${this.visitingStartTime}:00`,
-        end: `${this.getStartDate} ${this.visitingEndTime}:00`,
+        start: `${this.visitingDate} ${this.visitingStartTime}:00`,
+        end: `${this.visitingDate} ${this.visitingEndTime}:00`,
         type_id: "2",
       };
       this.showEventForm = false;
       this.visitTimeGap = false;
       this.chooseAction = false;
+      this.visitingDate = "";
+      this.visitingStartTime = "";
+      this.visitingEndTime = "";
       await this.createEvent(payload);
       this.addAlert({
         type: "success",
         text: this.getDoctorTranslation("Working time set"),
       });
+      this.fetchEvents(this.eventsDate);
     },
   },
 };
