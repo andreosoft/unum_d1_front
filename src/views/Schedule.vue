@@ -25,7 +25,8 @@
             :ripple="false"
             @click="visitTimeGap = true"
           >
-            {{ getDoctorTranslation("Set working time") }}
+            <!-- {{ getDoctorTranslation("Set working time") }} -->
+            <v-icon>mdi-calendar-plus</v-icon>
           </v-btn>
           <v-menu bottom right>
             <template v-slot:activator="{ on, attrs }">
