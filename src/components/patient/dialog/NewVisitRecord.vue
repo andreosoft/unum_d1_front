@@ -409,7 +409,7 @@ export default {
         });
         return false;
       }*/
-      if (1) {
+      if (0) {
         this.$root.addAlert({
           type: "error",
           text: "Не правильно заполнена форма",
