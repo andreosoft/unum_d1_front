@@ -149,7 +149,7 @@ export default {
     ...State_lang(["doctor", "common"]),
     ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
     isInvalid() {
-      if (this.newPatient.name === "" || this.newPatient.surname === "") {
+      if (this.newPatient.name === "" || this.newPatient.surname === "" || this.newPatient.birthday === "") {
         return true;
       }
       return false;
@@ -178,7 +178,8 @@ export default {
       this.createNewPatient(data);
       this.resetForm();
     },
-    capitalizeString(str) {
+    capitalizeString(str = '') {
+      if (!str.length) return ''
       return str[0].toUpperCase() + str.slice(1);
     },
     onChange() {
