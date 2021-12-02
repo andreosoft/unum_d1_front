@@ -49,7 +49,7 @@
 import { createNamespacedHelpers } from "vuex";
 import ContactButtons from "./../../components/ContactButtons.vue";
 const { mapState } = createNamespacedHelpers("patients");
-const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
+const { mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
 const { mapActions: Actions_chats } = createNamespacedHelpers("chats");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 
@@ -61,7 +61,7 @@ export default {
   computed: {
     ...mapState(["selectedPatient"]),
     ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
-    ...Actions_doctors(["imageSrc"]),
+    ...Getters_doctors(["imageSrc"]),
     patientActions() {
       const actions = [
         {
