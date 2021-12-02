@@ -1,19 +1,15 @@
 <template>
   <v-card class="patient__card" :elevation="hover ? 5 : 2">
-    <v-responsive :aspect-ratio="4 / 3">
-      <v-avatar tile class="patient__card-avatar">
-        <img
-          :src="
-            patient && patient.photo
-              ? imageSrc(patient.photo)
-              : '/images/patient-placeholder.jpeg'
-          "
-        />
-      </v-avatar>
-    </v-responsive>
-    <v-card-text>
-      {{ patient.name }}
-    </v-card-text>
+    <v-img
+      class="patient__card-vatar"
+      :aspect-ratio="3 / 4"
+      :src="
+        patient && patient.photo
+          ? imageSrc(patient.photo)
+          : '/images/patient-placeholder.jpeg'
+      "
+    />
+    <v-card-text> {{ patient.name }} </v-card-text>
   </v-card>
 </template>
 

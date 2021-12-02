@@ -1,4 +1,6 @@
-import { axios, api } from "./../../config";
+/** @format */
+
+import { axios, api } from './../../config';
 
 const state = {
   doctor: {},
@@ -6,7 +8,7 @@ const state = {
 };
 const getters = {
   getDoctorTranslation: (state) => (key) => {
-    return state.doctor[key] ? state.doctor[key] : `${key}`;
+    return state.doctor[key] ? state.doctor[key] : state.common[key] ? state.common[key] : `${key}`;
   },
   getCommonTranslation: (state) => (key) => {
     return state.common[key] ? state.common[key] : `${key}`;
@@ -19,9 +21,9 @@ const mutations = {
 };
 const actions = {
   fetchLangItems({ commit, state }, { lang, type }) {
-    if (lang === "") lang = "ru";
+    if (lang === '') lang = 'ru';
     return axios.get(api.getLangItems + `/${lang}/${type}`).then((res) => {
-      commit("SET_CURRENT_LANG_ITEMS", { data: res.data.data, type });
+      commit('SET_CURRENT_LANG_ITEMS', { data: res.data.data, type });
     });
   },
 };

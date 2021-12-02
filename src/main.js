@@ -3,6 +3,8 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
+import './libs/registerComponents';
+import './libs/translations';
 import Vuelidate from "vuelidate";
 import VuePhoneNumberInput from "vue-phone-number-input";
 import PortalVue from "portal-vue";

@@ -5,34 +5,16 @@
       class="mb-3 cursor-pointer"
       @click="drawer = true"
     >
-      <v-icon>
-        mdi-account-box
-      </v-icon>
-      {{ getCommonTranslation("Show patient info") }}
+      <v-icon> mdi-account-box </v-icon>
+      {{ $t("Show patient info") }}
     </div>
     <v-row>
       <v-col v-show="$vuetify.breakpoint.mdAndUp" cols="3">
         <PatientAvatarAndName />
-
-        <v-list class="patient-links__list pa-0">
-          <v-list-item
-            v-for="link in patientLinks"
-            :key="link.id"
-            :ripple="false"
-            :dark="link.active"
-            :class="[
-              {
-                active: link.active,
-                'd-flex justify-content-between': link.disabled,
-              },
-              'mb-1 patient-links__item',
-            ]"
-            @click="changeActiveView(link.id)"
-            :disabled="link.disabled"
-          >
-            {{ link.title }}
-          </v-list-item>
-        </v-list>
+        <PatientInfo
+          :patient="selectedPatient"
+          :records="selectedPatientClinicalRecords"
+        />
       </v-col>
 
       <v-navigation-drawer
@@ -40,253 +22,72 @@
         v-model="drawer"
         app
       >
-        <PatientAvatarAndName>
-          <v-list class="patient-links__list pa-0">
-            <v-list-item
-              v-for="link in patientLinks"
-              :key="link.id"
-              :ripple="false"
-              :dark="link.active"
-              :class="[{ active: link.active }, 'mb-1 patient-links__item']"
-              @click="changeActiveView(link.id)"
-              :disabled="link.disabled"
-            >
-              {{ link.title }}
-            </v-list-item>
-          </v-list>
-        </PatientAvatarAndName>
+        <PatientAvatarAndName />
+        <PatientInfo
+          :patient="selectedPatient"
+          :records="selectedPatientClinicalRecords"
+        />
       </v-navigation-drawer>
       <v-col cols="12" md="9">
         <v-card :elevation="0" rounded="0">
           <v-container>
-            <v-row>
-              <v-col v-show="getActiveLink === 1">
-                <h3>
-                  {{ getCommonTranslation("Anamnesis") }}
-                </h3>
-                <v-divider class="mt-1 mb-3"></v-divider>
-                <div v-for="(item, index) in anamnesisKeys" :key="index">
-                  <AnamnesisSection
-                    v-for="(value, key, index) in selectedPatient &&
-                      selectedPatient.anamnesis[item]"
-                    :key="index"
-                    :array="value"
-                    :title="key"
-                  />
-                </div>
-              </v-col>
-              <v-col v-show="getActiveLink === 2">
-                <h3>
-                  {{ getCommonTranslation("Clinical records") }}
-                </h3>
-                <v-divider class="mt-1 mb-3"></v-divider>
-                <div class="records__list">
-                  <v-expansion-panels v-model="panels">
-                    <v-expansion-panel
-                      v-for="(record, index) in formattedClinicalRecords"
-                      :key="record.id"
-                      :disabled="!record.second_appointments.length"
-                      style="position: relative;"
-                    >
-                      <div
-                        v-show="!record.second_appointments.length"
-                        @click="showVisitDialog(record)"
-                        class="cursor-pointer records__overlay"
-                      ></div>
-                      <v-expansion-panel-header
-                        >{{ JSON.parse(record.data).diagnos }} ({{
-                          record.data | getCreatedDate
-                        }}
-                        -
-                        {{ getDoctorSpecialty(record.doctor_id).toLowerCase() }}
-                        {{ getDoctorName(record.doctor_id) }})&nbsp;
-                        <span
-                          v-show="index === panels"
-                          @click="showVisitDialog(record)"
-                          class="grey--text"
-                          >(показать первичную запись)</span
-                        >
-                      </v-expansion-panel-header>
-                      <v-expansion-panel-content
-                        v-if="record.second_appointments.length"
-                      >
-                        <v-card>
-                          <v-hover
-                            v-for="(event, index) in record.second_appointments"
-                            :key="index"
-                          >
-                            <template v-slot="{ hover }">
-                              <div :class="{ record__card: hover }">
-                                <v-card-text @click="showVisitDialog(event)">
-                                  {{ JSON.parse(event.data).diagnos }} ({{
-                                    event.data | getCreatedDate
-                                  }}
-                                  -
-                                  {{
-                                    getDoctorSpecialty(
-                                      event.doctor_id
-                                    ).toLowerCase()
-                                  }}
-                                  {{ getDoctorName(record.doctor_id) }})
-                                </v-card-text>
-                              </div>
-                            </template>
-                          </v-hover>
-                        </v-card>
-                      </v-expansion-panel-content>
-                    </v-expansion-panel>
-                  </v-expansion-panels>
-                  <v-dialog
-                    v-if="selectedVisit"
-                    v-model="visitDialog"
-                    fullscreen
-                    content-class="clinical-record-view__dialog"
-                  >
-                    <v-toolbar dark color="primary">
-                      <v-toolbar-title>
-                        {{ getCommonTranslation("Clinical record view") }}
-                      </v-toolbar-title>
-                      <v-toolbar-items>
-                        <v-btn icon @click="visitDialog = false">
-                          <v-icon>mdi-close</v-icon>
-                        </v-btn>
-                      </v-toolbar-items>
-                    </v-toolbar>
-                    <v-card class="pa-4 rounded-0" :elevation="0">
-                      <v-simple-table>
-                        <template #default>
-                          <tbody>
-                            <tr>
-                              <td>{{ getCommonTranslation("Therapist") }}</td>
-                              <td>
-                                {{ getDoctorName(selectedVisit.doctor_id) }}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                {{
-                                  getCommonTranslation("Therapist specialty")
-                                }}
-                              </td>
-                              <td>
-                                {{
-                                  getDoctorSpecialty(selectedVisit.doctor_id)
-                                }}
-                              </td>
-                            </tr>
-                            <tr v-show="selectedVisitCreatedDate">
-                              <td>
-                                {{ getCommonTranslation("Created date") }}
-                              </td>
-                              <td>{{ selectedVisitCreatedDate }}</td>
-                            </tr>
-                            <tr>
-                              <td>{{ getCommonTranslation("Diagnosis") }}</td>
-                              <td>{{ selectedVisitDiagonsis }}</td>
-                            </tr>
-                            <tr v-show="selectedVisitDescription.length">
-                              <td>{{ getCommonTranslation("Description") }}</td>
-                              <td>{{ selectedVisitDescription }}</td>
-                            </tr>
-                            <tr v-show="selectedVisitRecommnedations.length">
-                              <td>
-                                {{ getCommonTranslation("Recommendations") }}
-                              </td>
-                              <td>{{ selectedVisitRecommnedations }}</td>
-                            </tr>
-                            <tr
-                              v-for="(file, index) in JSON.parse(
-                                selectedVisit.data
-                              ).files"
-                              :key="index"
-                            >
-                              <td>
-                                <a :href="download(file.file)" target="_blank">
-                                  {{
-                                    getCommonTranslation(
-                                      "Download attached file"
-                                    )
-                                  }}
-                                </a>
-                              </td>
-                              <td>{{ file.name }}</td>
-                            </tr>
-                          </tbody>
-                        </template>
-                      </v-simple-table>
-                    </v-card>
-                  </v-dialog>
-                </div>
-              </v-col>
-              <v-col v-show="getActiveLink === 3">
-                <h3>
-                  {{ getCommonTranslation("Documents") }}
-                </h3>
-              </v-col>
-              <v-col v-show="getActiveLink === 4">
-                <h3>
-                  {{ getCommonTranslation("Uploaded files") }}
-                </h3>
-              </v-col>
-            </v-row>
+            <v-tabs v-model="tab" center-active>
+              <v-tab v-for="tab in tabs" :key="tab.id" :disabled="tab.disabled">
+                {{ $t(tab.title) }}
+              </v-tab>
+            </v-tabs>
+            <v-layout
+              column
+              class="fill-height"
+              style="height: 82vh !important"
+            >
+              <v-flex class="flex overflow-auto">
+                <v-tabs-items v-model="tab">
+                  <v-tab-item>
+                    <v-card-text>
+                      <v-divider class="mt-1 mb-3"></v-divider>
+                      <PatientTabAnamnesis :formA="formAnamnesis" />
+                    </v-card-text>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-col>
+                      <v-divider class="mt-1 mb-3"></v-divider>
+                      <PatientTabClinicalRecords
+                        :records="formattedClinicalRecords2"
+                      />
+                    </v-col>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-col>
+                      <v-divider class="mt-1 mb-3"></v-divider>
+                    </v-col>
+                  </v-tab-item>
+                  <v-tab-item>
+                    <v-col> </v-col>
+                  </v-tab-item>
+                </v-tabs-items>
+              </v-flex>
+            </v-layout>
           </v-container>
         </v-card>
       </v-col>
-      <v-speed-dial
-        v-model="fab"
-        bottom
-        right
-        fixed
-        direction="left"
-        transition="scale-transition"
-      >
-        <template v-slot:activator>
-          <v-btn v-model="fab" color="blue darken-2" dark fab>
-            <v-icon v-if="fab">
-              mdi-close
-            </v-icon>
-            <v-icon v-else>
-              mdi-account-circle
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              v-on="on"
-              v-bind="attrs"
-              fab
-              dark
-              small
-              color="green"
-              @click="addClinicalRecordDialog = true"
-            >
-              <v-icon>mdi-clipboard</v-icon>
-            </v-btn>
-          </template>
-          <span>
-            {{ getDoctorTranslation("Add clinical record") }}
-          </span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              v-on="on"
-              v-bind="attrs"
-              fab
-              dark
-              small
-              color="indigo"
-              @click="addAnamnesisDialog = true"
-            >
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </template>
-          <span>
-            {{ getDoctorTranslation("Add anamnesis") }}
-          </span>
-        </v-tooltip>
-      </v-speed-dial>
+
+      <v-fab-transition>
+        <v-btn
+          fab
+          small
+          dark
+          color="green"
+          bottom
+          right
+          class="v-btn--example"
+          @click="NewVisitDialog = true"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </v-fab-transition>
+      <NewVisitRecord v-model="NewVisitDialog" :fAnamnesis="formAnamnesis" />
+
       <!-- add anamnesis dialog -->
       <AnamnesisDialog
         :dialog="addAnamnesisDialog"
@@ -304,93 +105,88 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-import dayjs from "dayjs";
-import { api } from "./../../config/index";
+//import dayjs from "dayjs";
+//import { api } from "./../../config/index";
 
 import AnamnesisDialog from "./AnamnesisDialog.vue";
 import ClinicalRecordDialog from "./ClinicalRecordDialog.vue";
-import AnamnesisSection from "./AnamnesisSection";
-import AnamnesisSectionItem from "./AnamnesisSectionItem";
+import PatientTabAnamnesis from "./tab/PatientTabAnamnesis";
+import PatientTabClinicalRecords from "./tab/PatientTabClinicalRecords";
 import PatientAvatarAndName from "./PatientAvatarAndName";
+import NewVisitRecord from "./dialog/NewVisitRecord";
+import { models, buildObjects } from "./mixings";
 const { mapState, mapActions } = createNamespacedHelpers("patients");
 const { mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
-const {
-  mapGetters: Getters_lang,
-  mapState: State_lang,
-} = createNamespacedHelpers("lang");
 export default {
+  mixins: [models, buildObjects],
   components: {
     AnamnesisDialog,
     ClinicalRecordDialog,
-    AnamnesisSection,
-    AnamnesisSectionItem,
+    PatientInfo: () => import("./PatientInfo.vue"),
+
+    NewVisitRecord,
+    PatientTabAnamnesis,
+
+    PatientTabClinicalRecords,
     PatientAvatarAndName,
   },
   data() {
     return {
+      tab: 0,
       panels: null,
-      patientLinks: [
+      tabs: [
         {
-          title: "",
+          name: "Anamnesis",
+          title: "Anamnesis",
           active: true,
           id: 1,
           disabled: false,
         },
         {
-          title: "",
+          name: "ClinicalRecords",
+          title: "Clinical records",
           active: false,
           id: 2,
           disabled: false,
         },
         {
-          title: "",
+          name: "Documents",
+          title: "Documents",
           active: false,
           id: 3,
           disabled: true,
         },
         {
-          title: "",
+          name: "Files",
+          title: "Uploaded files",
           active: false,
           id: 4,
           disabled: true,
         },
       ],
-
       drawer: false,
-
+      NewVisitDialog: false,
       addAnamnesisDialog: false,
       addClinicalRecordDialog: false,
 
       fab: false,
-
       showAllComplaints: false,
       showAllDrugsTaken: false,
       showAllAllergies: false,
-
-      visitDialog: false,
-      selectedVisit: null,
-
-      anamnesisKeys: [
-        "generalAnamnesis",
-        "lifeAnamnesis",
-        "allergicAnamnesis",
-        "objectiveAnamnesis",
-        "surveys",
-      ],
     };
   },
   computed: {
     ...mapState(["selectedPatient", "selectedPatientClinicalRecords"]),
     ...Getters_doctors(["getDoctorName", "getDoctorSpecialty"]),
-    ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
-    ...State_lang(["common"]),
+
     getActiveLink() {
-      const activeTab = this.patientLinks.find((link) => link.active);
+      const activeTab = this.tabs.find((tab) => tab.active);
       return activeTab.id;
     },
-    formattedClinicalRecords() {
+    formattedClinicalRecords2() {
       const first_appointments = [];
       const second_appointments = [];
+      const result_array = [];
       this.selectedPatientClinicalRecords &&
         this.selectedPatientClinicalRecords.map((event) => {
           if (event.type_id === 1) {
@@ -399,97 +195,57 @@ export default {
             second_appointments.push(event);
           }
         });
-      const result_array = [];
       first_appointments.map((event) => {
         event.second_appointments = [];
+        event.name = JSON.parse(event.data)?.diagnos || "";
+        event.children = [];
         second_appointments.map((event2) => {
-          if (event.id === JSON.parse(event2.data).initialVisitId) {
-            event.second_appointments.push(event2);
+          let parent_id = event2.parent_id;
+          let objDiagnos = JSON.parse(event2.data);
+          if (event.id === parent_id) {
+            event2.name = objDiagnos?.diagnos || event.name;
+            event.children.push(event2);
           }
         });
         result_array.push(event);
       });
       return result_array;
     },
-    selectedVisitDiagonsis() {
-      return this.selectedVisit && JSON.parse(this.selectedVisit.data).diagnos;
+    /*
+    formAnamnesis() {
+      console.log(this.selectedPatient);
+      return true;
     },
-    selectedVisitDescription() {
-      return (
-        this.selectedVisit && JSON.parse(this.selectedVisit.data).description
-      );
-    },
-    selectedVisitRecommnedations() {
-      return (
-        this.selectedVisit && JSON.parse(this.selectedVisit.data).recomendations
-      );
-    },
-    selectedVisitCreatedDate() {
-      return (
-        this.selectedVisit &&
-        JSON.parse(this.selectedVisit.data).createdAt &&
-        dayjs(JSON.parse(this.selectedVisit.data).createdAt).format(
-          "YYYY-DD-MM"
-        )
-      );
-    },
+*/
   },
-  filters: {
-    getCreatedDate(val) {
-      try {
-        const date = JSON.parse(val).createdAt;
-        return dayjs(date).format("DD.MM.YYYY");
-      } catch (err) {
-        return "";
-      }
-    },
-  },
+
   watch: {
     common: {
       immediate: true,
       handler(val) {
-        this.patientLinks.map((link) => {
-          switch (link.id) {
-            case 1:
-              link.title = this.getCommonTranslation("Anamnesis");
-              break;
-            case 2:
-              link.title = this.getCommonTranslation("Clinical records");
-              break;
-            case 3:
-              link.title = this.getCommonTranslation("Documents");
-              break;
-            case 4:
-              link.title = this.getCommonTranslation("Uploaded files");
-              break;
-          }
+        this.tabs.map((tab) => {
+          tab.title = this.$t(tab.title);
         });
       },
     },
   },
   methods: {
     ...mapActions(["fetchSelectedPatient", "fetchPatientClinicalRecordsById"]),
-    changeActiveView(id) {
-      this.patientLinks.map((link) => {
-        link.active = false;
-        if (link.id === id) {
-          link.active = true;
-        }
-      });
-      this.drawer = false;
-    },
-    showVisitDialog(event) {
-      this.visitDialog = true;
-      this.selectedVisit = event;
-    },
-    download(id) {
+    /*    download(id) {
       return `http://api.neomedy.com/api${api.getFile}/${id}`;
     },
+    */
   },
   created() {
-    this.fetchSelectedPatient(this.$route.params.id);
     this.fetchPatientClinicalRecordsById(this.$route.params.id);
+    this.fetchSelectedPatient(this.$route.params.id);
+    /*
+    this.$nextTick(() => {
+      this.buildAnamnesisForm();
+    });
+    */
   },
+  mounted() {},
 };
 </script>
 <style lang="scss">
@@ -500,6 +256,19 @@ export default {
     justify-content: space-between;
   }
 }
+.new-visit-record__dialog {
+  .v-toolbar__content {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+.v-btn--example {
+  bottom: 0;
+  position: fixed;
+  margin: 0 0 16px 16px;
+  right: 16px;
+}
 </style>
 <style lang="scss" scoped>
 .patient-container {
@@ -507,9 +276,10 @@ export default {
   height: 100%;
 }
 .records__list {
-  display: grid;
-  grid-gap: 20px;
+  //display: grid;
+  //  grid-gap: 20px;
 }
+
 .records__overlay {
   position: absolute;
   top: 0;
