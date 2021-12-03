@@ -150,7 +150,6 @@
               accept="image/*"
               :label="getCommonTranslation('Your photo')"
               @change="onPhotoChange"
-              placeholder="asdasdas"
             ></v-file-input>
             <v-text-field
               v-model="getSetResidency"

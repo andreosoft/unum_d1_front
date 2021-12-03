@@ -25,7 +25,8 @@
             :ripple="false"
             @click="visitTimeGap = true"
           >
-            {{ getDoctorTranslation("Set working time") }}
+            <!-- {{ getDoctorTranslation("Set working time") }} -->
+            <v-icon>mdi-calendar-plus</v-icon>
           </v-btn>
           <v-menu bottom right>
             <template v-slot:activator="{ on, attrs }">
@@ -96,7 +97,7 @@
             </v-card-text>
             <v-card-actions>
               <v-btn text color="secondary" @click="selectedOpen = false">
-                {{ getCommonTranslation('Close') }}
+                {{ getCommonTranslation("Close") }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -221,6 +222,9 @@
                 @click:date="visitingClick"
                 close-on-content-click
                 @change="$refs.visitTimeMenu.save(visitingDate)"
+                :allowed-dates="
+                  (val) => val >= new Date().toISOString().substr(0, 10)
+                "
               ></v-date-picker>
             </v-menu>
           </v-card-text>
@@ -367,7 +371,8 @@ export default {
   filters: {
     convertToTime(val) {
       const date = new Date(val);
-      const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
+      const hours =
+        date.getHours() < 10 ? `0${date.getHours()}` : date.getHours();
       const minutes =
         date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
       return `${hours}:${minutes}`;
@@ -446,7 +451,7 @@ export default {
     this.$refs.calendar.checkChange();
   },
   methods: {
-    ...mapActions(["createEvent", "fetchEvents", "deleteEvent"]),
+    ...mapActions(["createEvent", "fetchEvents", "deleteEvent", "updateVisitingTime"]),
     ...Actions_alerts(["addAlert"]),
     intervalFormat(interval) {
       return interval.time;
@@ -587,7 +592,6 @@ export default {
         type_id: 1,
       };
       if (!this.selectedPatient) {
-        alert("couldnt create appointment. Choose a patient");
         return;
       }
       if (this.editingEvent) {
@@ -649,8 +653,22 @@ export default {
       this.visitTimeGap = false;
       this.chooseAction = false;
       this.visitingDate = "";
-      this.visitingStartTime = "";
-      this.visitingEndTime = "";
+      this.visitingStartTime = "10:00";
+      this.visitingEndTime = "11:00";
+      for (let i = 0; i < this.events.length; i++) {
+        if (
+          dayjs(this.events[i].start).format("YYYY-MM-DD") ===
+          dayjs(payload.start).format("YYYY-MM-DD")
+        ) {
+          if (this.events[i].type_id === 2) {
+            this.addAlert({
+              type: "error",
+              text: this.getDoctorTranslation("Working time has already been set"),
+            });
+            return
+          }
+        }
+      }
       await this.createEvent(payload);
       this.addAlert({
         type: "success",
