@@ -22,7 +22,7 @@
                       <td class="table-title">
                         {{ getCommonTranslation("Event name") }}
                       </td>
-                      <td>{{ event.name }}</td>
+                      <td>{{ event.name === event.patient ? getDoctorTranslation('Patient reception'): event.name }}</td>
                     </tr>
                     <tr>
                       <td class="table-title">
@@ -82,8 +82,11 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getCommonTranslation"]),
+    ...mapGetters(["getCommonTranslation", "getDoctorTranslation"]),
   },
+  mounted() {
+    console.log(this.events)
+  }
 };
 </script>
 
