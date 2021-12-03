@@ -592,7 +592,6 @@ export default {
         type_id: 1,
       };
       if (!this.selectedPatient) {
-        alert("couldnt create appointment. Choose a patient");
         return;
       }
       if (this.editingEvent) {
