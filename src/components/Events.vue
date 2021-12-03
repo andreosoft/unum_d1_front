@@ -84,9 +84,6 @@ export default {
   computed: {
     ...mapGetters(["getCommonTranslation", "getDoctorTranslation"]),
   },
-  mounted() {
-    console.log(this.events)
-  }
 };
 </script>
 
