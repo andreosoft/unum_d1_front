@@ -1,7 +1,17 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <v-col v-for="patient in patients" :key="patient.id" cols="6" sm="4" lg="3">
+    <v-row :no-gutters="$vuetify.breakpoint.smAndDown">
+      <v-col
+        v-for="patient in patients"
+        :key="patient.id"
+        cols="6"
+        sm="3"
+        lg="2"
+        :class="{
+          'pa-1': $vuetify.breakpoint.smAndDown,
+          'pa-2': !$vuetify.breakpoint.smAndDown,
+        }"
+      >
         <v-hover>
           <template v-slot="{ hover }">
             <PatientCard

@@ -8,6 +8,7 @@
           {{ alert.text }}
         </v-alert>
       </div>
+      <portal-target name="v-main" />
     </v-main>
   </v-app>
 </template>

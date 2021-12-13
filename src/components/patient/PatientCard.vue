@@ -2,14 +2,16 @@
   <v-card class="patient__card" :elevation="hover ? 5 : 2">
     <v-img
       class="patient__card-vatar"
-      :aspect-ratio="3 / 4"
+      :aspect-ratio="1 / 1"
       :src="
         patient && patient.photo
           ? imageSrc(patient.photo)
           : '/images/patient-placeholder.jpeg'
       "
     />
-    <v-card-text> {{ patient.name }} </v-card-text>
+    <v-card-text style="height: 65px; overflow: hidden">
+      {{ patient.name }}
+    </v-card-text>
   </v-card>
 </template>
 

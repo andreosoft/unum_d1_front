@@ -8,14 +8,20 @@ const state = {
 };
 const getters = {
   getDoctorTranslation: (state) => (key) => {
-    return state.doctor[key] ? state.doctor[key] : state.common[key] ? state.common[key] : `${key}`;
+    let k = key.toLowerCase();
+    return state.doctor[k] ? state.doctor[k] : state.common[k] ? state.common[k] : `${key}`;
   },
   getCommonTranslation: (state) => (key) => {
-    return state.common[key] ? state.common[key] : `${key}`;
+    let k = key.toLowerCase();
+    return state.common[k] ? state.common[k] : `${key}`;
   },
 };
 const mutations = {
   SET_CURRENT_LANG_ITEMS(state, { data, type }) {
+    data = Object.entries(data).reduce((a, [key, value]) => {
+      a[key.toLowerCase()] = value;
+      return a;
+    }, {});
     state[type] = data;
   },
 };

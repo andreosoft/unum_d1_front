@@ -1,5 +1,7 @@
-import { axios, api } from "./../../config/index";
-import dayjs from "dayjs";
+/** @format */
+
+import { axios, api } from './../../config/index';
+import dayjs from 'dayjs';
 
 const state = {
   events: [],
@@ -10,9 +12,7 @@ const getters = {
     return state.events.filter((event) => event.type_id === 1);
   },
   getValidEvents(state) {
-    return state.events.filter(
-      (event) => dayjs().isBefore(event.start) && event.type_id === 1
-    );
+    return state.events.filter((event) => dayjs().isBefore(event.start) && event.type_id === 1);
   },
 };
 
@@ -27,10 +27,10 @@ const actions = {
     return axios.get(api.schedule, { params: { start, end } }).then((res) => {
       const events = res.data.data;
       events.map((event) => {
-        event.color ? "" : (event.color = "#CC0000");
-        event.name ? "" : (event.name = event.patient);
+        event.color ? '' : (event.color = '#CC0000');
+        event.name ? '' : (event.name = event.patient);
       });
-      commit("SET_EVENTS", res.data.data);
+      commit('SET_EVENTS', res.data.data);
     });
   },
   createEvent({ commit }, data) {
@@ -40,14 +40,14 @@ const actions = {
     });
   },
   deleteEvent({}, id) {
-    console.log("deleting...");
+    console.log('deleting...');
     return axios
       .delete(api.deleteScheduleItem + `/${id}`)
       .then(() => {
-        console.log("deleted");
+        console.log('deleted');
       })
       .catch((err) => {
-        console.log("could not delete the event");
+        console.log('could not delete the event');
         console.error(err);
       });
   },

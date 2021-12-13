@@ -2,7 +2,7 @@
   <v-row>
     <v-col>
       <div class="mb-4">
-        <p class="ma-0">{{ getDoctorTranslation("Поиск диагноза") }}</p>
+        <p class="ma-0">{{ $t("Поиск диагноза") }}</p>
         <v-text-field
           outlined
           dense
@@ -13,7 +13,7 @@
         ></v-text-field>
       </div>
       <div class="mb-4">
-        <p class="ma-0">{{ getDoctorTranslation("Diagnosis") }}</p>
+        <p class="ma-0">{{ $t("Diagnosis") }}</p>
         <v-text-field
           outlined
           dense
@@ -24,7 +24,7 @@
         ></v-text-field>
       </div>
       <div class="mb-4">
-        <p class="ma-0">{{ getDoctorTranslation("Diagnosis comments") }}</p>
+        <p class="ma-0">{{ $t("Diagnosis comments") }}</p>
         <v-textarea
           ref="diagnosComments"
           no-resize
@@ -32,9 +32,9 @@
           outlined
           rows="6"
           hide-details
-          v-model="data['diagnosis']['diagnosComments']"
+          v-model="data['diagnosis']['diagnos_comments']"
           @focus="choiseVariant = 2"
-          @input="onInput($event, 'diagnosComments')"
+          @input="onInput($event, 'diagnos_comments')"
         ></v-textarea>
       </div>
     </v-col>
@@ -63,7 +63,6 @@
 import { validate, validators, fillForm } from "./../../templates/mixings";
 import { createNamespacedHelpers } from "vuex";
 const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
-const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 
 export default {
   //mixins: [fillForm],
@@ -71,7 +70,7 @@ export default {
   name: "DiagnosisForm",
   props: {
     value: Object,
-
+    tabName: "",
     model: Array,
   },
   data() {
@@ -89,7 +88,7 @@ export default {
       diagnosis: "",
       parentEl: { tab: "diagnosis", name: "diagnos" },
       diagnos: "",
-      diagnosComments: "",
+      //diagnosComments: "",
       errors: {},
       validators: {},
     };
@@ -102,6 +101,7 @@ export default {
     ]),
     fillForm() {
       this.data = Object.assign({}, this.data, this.value);
+      console.log("diagnosForm", this.data);
     },
     fillVariantInsert(txt) {
       let src = this.$refs.diagnosComments;
@@ -114,12 +114,13 @@ export default {
         (value ? value.substring(cursorPos) : "");
       cursorPos += txt.length;
       //      console.log(out, this.data["diagnosis"]["diagnosComments"]);
-      this.data["diagnosis"]["diagnosComments"] = out;
+      this.data["diagnosis"]["diagnos_comments"] = out;
       //      this.$emit("change", out);
       this.$nextTick(() => el.setSelectionRange(cursorPos, cursorPos));
       el.focus();
     },
     diagnosisOnInput(e) {
+      let list = [];
       if (!e.target.value.length || e.target.value.length < 1) {
         this.diagnosisItems = [];
         return;
@@ -127,10 +128,8 @@ export default {
       this.fetchDiseaseByNameOnInput(e.target.value).then((res) => {
         this.diagnosisItems = res;
       });
-      //      console.log(this.diagnosisItems, "after each request");
       this.fetchDiseaseByCodeOnInput(e.target.value).then((res) => {
-        this.diagnosisItems = res;
-        console.log(this.diagnosisItems, "after each request");
+        this.diagnosisItems = this.diagnosisItems.concat(res);
       });
       // A16.0
     },
@@ -149,10 +148,8 @@ export default {
     this.fillForm();
   },
   computed: {
-    ...Getters_lang(["getDoctorTranslation"]),
     data: {
       set(v) {
-        console.log("model emit input", v);
         this.$emit("input", v);
       },
       get() {

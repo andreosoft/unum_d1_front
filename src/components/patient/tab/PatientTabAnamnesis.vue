@@ -6,7 +6,7 @@
           v-for="(value, key, index) in formA && formA.anamnesis[item]"
           :key="index"
           :array="value"
-          :title="key"
+          :title="getTitle(key)"
         />
       </div>
     </v-flex>
@@ -14,11 +14,8 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from "vuex";
 //import AnamnesisSectionItem from "./../AnamnesisSectionItem";
 import AnamnesisSection from "./AnamnesisSection";
-
-const { mapGetters } = createNamespacedHelpers("lang");
 
 export default {
   name: "PatientTabAnamnesis",
@@ -31,7 +28,7 @@ export default {
       type: String,
       default: "",
     },
-
+    titleArray: [],
     formA: {
       type: Object,
       default: () => {},
@@ -41,17 +38,25 @@ export default {
     return {
       anamnesisKeys: [
         "Complaints",
-        "generalAnamnesis",
-        "lifeAnamnesis",
-        "allergicAnamnesis",
+        "general_anamnesis",
+        "life_anamnesis",
+        "allergic_anamnesis",
         "other",
         //     "objectiveAnamnesis",
         //     "surveys",
       ],
     };
   },
-  computed: {
+  methods: {
+    getTitle(title) {
+      return (
+        this.titleArray.find((el) => {
+          return el.name.toLowerCase() === title.toLowerCase();
+        })?.title || title
+      );
+    },
   },
+  computed: {},
   mounted() {},
 };
 </script>

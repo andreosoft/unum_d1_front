@@ -9,7 +9,14 @@
       :disabled="disabled"
       type="file"
       @change="onChange"
-    ></v-file-input>
+      :multiple="config.multiple ? config.multiple : false"
+    >
+      <template v-slot:selection="{ text }">
+        <v-chip small label color="primary">
+          {{ text }}
+        </v-chip>
+      </template></v-file-input
+    >
     <v-dialog v-model="loading" hide-overlay persistent width="300">
       <v-card color="primary" dark>
         <v-card-text>
@@ -28,12 +35,13 @@
 <script>
 export default {
   props: {
-    value: [String],
+    value: [],
     model: Object,
     disabled: {
       type: Boolean,
       default: false,
     },
+    config: Object,
     error: {
       type: String,
       default: "",
@@ -48,9 +56,18 @@ export default {
   },
 
   methods: {
-    onChange(file) {
-      if (file) this.uploadFile(file);
-      else this.$emit("input", null);
+    async onChange(file) {
+      if (file) {
+        //this.uploadFile(file);
+        let filesArray = [];
+        for (let i = 0; i < file.length; i++) {
+          let loadedfile = await this.uploadFile(file[i]);
+          filesArray.push(loadedfile);
+        }
+        if (filesArray) {
+          this.$emit("input", filesArray);
+        }
+      } else this.$emit("input", null);
     },
     uploadFile(file) {
       this.loading = true;
@@ -58,7 +75,7 @@ export default {
       let formData = new FormData();
       formData.append("file", file);
       formData.append("name", file.name);
-      this.$axios
+      return this.$axios
         .post("/file/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -71,13 +88,16 @@ export default {
         })
         .then((response) => {
           this.loading = false;
-          let data = response.data.data.file;
-          this.$emit("input", data);
+          //          let data = response.data.data.file;
+          let data = response.data.data;
+          //          this.$emit("input", data);
+          return data;
         })
         .catch(function (error) {
           this.$root.$emit("show-info", {
             text: "Error: " + error,
           });
+          return false;
         });
     },
   },

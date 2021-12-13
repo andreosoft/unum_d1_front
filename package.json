@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build  "
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -15,9 +15,12 @@
     "portal-vue": "^2.1.7",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
+    "vue-autoextra": "^0.2.0",
     "vue-chat-scroll": "^2.0.0-alpha.4",
+    "vue-ctk-tooltip": "^1.0.7",
     "vue-phone-number-input": "^1.1.10",
     "vue-router": "^3.2.0",
+    "vue-youtube": "^1.4.0",
     "vuelidate": "^0.7.6",
     "vuetify": "^2.4.0",
     "vuex": "^3.4.0"

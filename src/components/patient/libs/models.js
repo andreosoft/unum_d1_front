@@ -10,11 +10,11 @@ export default {
           fields: [],
         },
         {
-          name: 'lifeAnamnesis',
+          name: 'life_anamnesis',
           title: 'Life anamnesis',
           fields: [
             {
-              name: 'ChronicDiseases',
+              name: 'Chronic_diseases',
               title: 'Chronic diseases',
               validator: ['req'],
               type: 'string',
@@ -34,33 +34,33 @@ export default {
           ],
         },
         {
-          name: 'allergicAnamnesis',
+          name: 'allergic_anamnesis',
           title: 'Allergic anamnesis',
           fields: [
             {
-              name: 'Allergies to medicinal substances',
+              name: 'Allergies_medicinal',
               title: 'Allergies to medicinal substances',
               validator: ['req'],
               type: 'string',
             },
             {
-              name: 'Food allergy',
+              name: 'Food_allergy',
               title: 'Food allergy',
               validator: ['req'],
               type: 'string',
             },
             {
-              name: 'Household allergies',
+              name: 'Household_allergies',
               title: 'Household allergies',
               validator: ['req'],
               type: 'string',
             },
           ],
         },
-        { name: 'expertAnamnesis', title: 'expert Anamnesis', fields: [] },
-        { name: 'objectiveHistory', title: 'objective history', fields: [] },
-        { name: 'generalHistory', title: 'general history', fields: [] },
-        { name: 'localhistory', title: 'local history', fields: [] },
+        { name: 'expert_anamnesis', title: 'expert Anamnesis', fields: [] },
+        { name: 'objective_history', title: 'objective history', fields: [] },
+        { name: 'general_history', title: 'general history', fields: [] },
+        { name: 'local_history', title: 'local history', fields: [] },
       ],
       modelDiagnosis: [
         {
@@ -80,7 +80,7 @@ export default {
               type: 'string',
             },
             {
-              name: 'diagnosComments',
+              name: 'diagnos_comments',
               title: 'Diagnosis comments',
               validator: ['req'],
               type: 'string',
@@ -92,12 +92,28 @@ export default {
         {
           name: 'Laboratory_surveys',
           title: 'Laboratory surveys',
-          fields: [],
+          fields: [
+            {
+              name: 'Laboratory_surveys_file',
+              title: 'Прикрепленный файл',
+              validator: [],
+              type: 'filegroup',
+              config: { multiple: true },
+            },
+          ],
         },
         {
-          name: 'Hardware and instrumental surveys',
+          name: 'Hardware_surveys',
           title: 'Hardware and instrumental surveys',
-          fields: [],
+          fields: [
+            {
+              name: 'Hardware_surveys_file',
+              title: 'Прикрепленный файл',
+              validator: [],
+              type: 'file',
+              config: { multiple: true },
+            },
+          ],
         },
       ],
 

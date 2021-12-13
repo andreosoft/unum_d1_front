@@ -57,6 +57,7 @@
           ref="calendar"
           v-model="focus"
           color="primary"
+          :weekdays="[1, 2, 3, 4, 5, 6, 0]"
           :events="getEvents"
           :event-color="getEventColor"
           :event-name="getEventName"
@@ -97,7 +98,7 @@
             </v-card-text>
             <v-card-actions>
               <v-btn text color="secondary" @click="selectedOpen = false">
-                {{ getCommonTranslation("Close") }}
+                {{ $t("Close") }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -125,27 +126,30 @@
       <v-dialog v-model="showEventForm" :max-width="600">
         <v-card>
           <v-card-title>
-            {{ getCommonTranslation("New event") }}
+            {{ $t("New event") }}
           </v-card-title>
           <v-card-text>
             <v-text-field
               dense
-              :label="getCommonTranslation('Event name')"
+              :label="$t('Event name')"
               v-model="eventName"
             ></v-text-field>
             <v-combobox
               v-model="selectedPatient"
               :items="patients"
               item-text="name"
-              :label="getDoctorTranslation('Patients')"
+              :label="$t('Patients')"
               @change="onSelectedPatientChange"
             ></v-combobox>
             <v-input
-              class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
+              class="
+                v-input--is-label-active v-input--is-dirty
+                v-text-field v-text-field--is-booted
+              "
             >
               <template v-slot:default>
                 <v-label :value="true" :absolute="true">
-                  {{ getCommonTranslation("Start") }}
+                  {{ $t("Start") }}
                 </v-label>
                 <DatePicker
                   @change="onStartDateChange"
@@ -158,11 +162,14 @@
               </template>
             </v-input>
             <v-input
-              class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
+              class="
+                v-input--is-label-active v-input--is-dirty
+                v-text-field v-text-field--is-booted
+              "
             >
               <template v-slot:default>
                 <v-label :value="true" :absolute="true">
-                  {{ getCommonTranslation("End") }}
+                  {{ $t("End") }}
                 </v-label>
                 <DatePicker
                   @change="onEndDateChange"
@@ -175,11 +182,14 @@
               </template>
             </v-input>
             <v-input
-              class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
+              class="
+                v-input--is-label-active v-input--is-dirty
+                v-text-field v-text-field--is-booted
+              "
             >
               <template v-slot:default>
                 <v-label :value="true" :absolute="true">
-                  {{ getCommonTranslation("Color") }}
+                  {{ $t("Color") }}
                 </v-label>
                 <v-icon>mdi-palette</v-icon>
                 <ColorPicker @change="onColorChange" />
@@ -188,12 +198,10 @@
           </v-card-text>
           <v-card-actions>
             <v-btn text color="blue darken-1" @click="showEventForm = false">
-              {{ getCommonTranslation("Close") }}
+              {{ $t("Close") }}
             </v-btn>
             <v-btn text color="blue darken-1" @click="saveEvent">{{
-              editingEvent
-                ? getCommonTranslation("Edit")
-                : getCommonTranslation("Create")
+              editingEvent ? $t("Edit") : $t("Create")
             }}</v-btn>
           </v-card-actions>
         </v-card>
@@ -230,7 +238,10 @@
           </v-card-text>
           <v-card-text class="pa-0">
             <v-input
-              class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
+              class="
+                v-input--is-label-active v-input--is-dirty
+                v-text-field v-text-field--is-booted
+              "
             >
               <template v-slot:default>
                 <v-label :value="true" :absolute="true">
@@ -246,7 +257,10 @@
           </v-card-text>
           <v-card-text class="pa-0">
             <v-input
-              class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
+              class="
+                v-input--is-label-active v-input--is-dirty
+                v-text-field v-text-field--is-booted
+              "
             >
               <template v-slot:default>
                 <v-label :value="true" :absolute="true">
@@ -282,23 +296,49 @@
           <v-list-item-group active-class="">
             <v-list-item @click="pushToPatientCard">
               <v-list-item-title>
-                {{ getCommonTranslation("Patient card") }}
+                {{ $t("Patient card") }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item @click="eventEdit">
               <v-list-item-title>
-                {{ getCommonTranslation("Edit event") }}
+                {{ $t("Edit event") }}
               </v-list-item-title>
             </v-list-item>
             <v-list-item>
               <v-list-item-title @click="deleteEventHandler">
-                {{ getCommonTranslation("Delete event") }}
+                {{ $t("Delete event") }}
               </v-list-item-title>
             </v-list-item>
           </v-list-item-group>
         </v-list>
       </v-menu>
     </v-col>
+    <portal portal to="toolbar-action">
+      <v-menu
+        bottom
+        offset-y
+        transition="scale-transition"
+        origin="center center"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon large v-bind="attrs" v-on="on">mdi-school-outline</v-icon>
+        </template>
+        <v-list>
+          <v-list-item v-for="el in videoList">
+            <v-list-item-title @click="showVideo(el)">
+              {{ el.title }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </portal>
+    <portal to="v-main">
+      <video-dialog
+        v-if="showVideoDialog"
+        v-model="showVideoDialog"
+        :id="idVideo"
+      ></video-dialog>
+    </portal>
   </v-row>
 </template>
 
@@ -313,16 +353,23 @@ const { mapState: State_auth } = createNamespacedHelpers("auth");
 import DatePicker from "./../components/schedule/DatePicker";
 import TimePicker from "./../components/schedule/TimePicker";
 import ColorPicker from "./../components/schedule/ColorPicker";
-
+import VideoDialog from "@/components/video/videoDialog.vue";
 export default {
   name: "Schedule",
   components: {
     DatePicker,
     TimePicker,
     ColorPicker,
+    VideoDialog,
   },
   data() {
     return {
+      idVideo: "",
+      videoList: [
+        { title: "Длительность приема.", video: "NZQcTe493LU" },
+        { title: "Рабочее расписание.", video: "5M9H-q8QuQg" },
+      ],
+      showVideoDialog: false,
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
@@ -392,7 +439,7 @@ export default {
     ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
     getEvents() {
       const events = _.cloneDeep(this.events);
-
+      this.$log("events", this.events);
       if (events && events.length) {
         events.map((event) => {
           if (event.type_id === 2) {
@@ -451,7 +498,20 @@ export default {
     this.$refs.calendar.checkChange();
   },
   methods: {
-    ...mapActions(["createEvent", "fetchEvents", "deleteEvent", "updateVisitingTime"]),
+    showVideo(el) {
+      this.idVideo = el.video;
+      this.showVideoDialog = true;
+    },
+    ...mapActions([
+      "createEvent",
+      "fetchEvents",
+      "deleteEvent",
+      "updateVisitingTime",
+    ]),
+    myDayFormat(d) {
+      //if you look at d.weekday, it's a number 0 to 6, and you could hard code
+      //values for each, like if its 0, return "XXX", where XXX is Sunday for Spanish
+    },
     ...Actions_alerts(["addAlert"]),
     intervalFormat(interval) {
       return interval.time;
@@ -663,9 +723,11 @@ export default {
           if (this.events[i].type_id === 2) {
             this.addAlert({
               type: "error",
-              text: this.getDoctorTranslation("Working time has already been set"),
+              text: this.getDoctorTranslation(
+                "Working time has already been set"
+              ),
             });
-            return
+            return;
           }
         }
       }

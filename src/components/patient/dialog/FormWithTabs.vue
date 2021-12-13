@@ -8,7 +8,7 @@
         <v-tab-item v-for="(el, i) in model" :key="i">
           <v-row>
             <v-col :cols="history[el.name] ? 8 : 0">
-              <a-form-model
+              <a-form-model2
                 v-model="data[el.name]"
                 :model="el.fields"
                 :parentEl="{ name: el.name, tab: tabName }"
@@ -34,13 +34,15 @@
 
 <script>
 import { validate, validators } from "./../../templates/mixings";
+import { createNamespacedHelpers } from "vuex";
+const { mapActions } = createNamespacedHelpers("patients");
 
 export default {
   mixins: [validate, validators],
   name: "FormWithTabs",
   props: {
     value: Object,
-    valueData: Object,
+    //valueData: Object,
     tabName: "",
     model: Array,
     history: {},
@@ -54,6 +56,8 @@ export default {
   },
 
   methods: {
+    // ...mapActions(["addClinicalRecord", "uploadFile"]),
+
     fillForm() {
       //      console.log(this.tabName + " Form Fill Form");
       this.data = Object.assign({}, this.data, this.value);

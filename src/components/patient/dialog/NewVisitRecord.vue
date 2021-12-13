@@ -49,7 +49,11 @@
                 v-model="data['anamnesis']"
                 :model="anamnesis"
                 :tabName="'anamnesis'"
-                :history="fAnamnesis['anamnesis']"
+                :history="
+                  fAnamnesis && fAnamnesis['anamnesis']
+                    ? fAnamnesis['anamnesis']
+                    : {}
+                "
                 @validate="validate"
               />
             </v-col>
@@ -61,7 +65,11 @@
                 v-model="data['surveys']"
                 :model="surveys"
                 :tabName="'surveys'"
-                :history="fAnamnesis['surveys'] ? fAnamnesis['surveys'] : {}"
+                :history="
+                  fAnamnesis && fAnamnesis['surveys']
+                    ? fAnamnesis['surveys']
+                    : {}
+                "
                 @validate="validate"
               />
             </v-col>
@@ -71,6 +79,7 @@
               <diagnosisForm
                 v-model="data['diagnosis']"
                 :model="diagnosis"
+                :tabName="'diagnosis'"
                 @validate="validate"
               />
             </v-col>
@@ -105,7 +114,7 @@
       </v-card>
     </v-dialog>
 
-    <!-- выбор вторичного посещения для первичного -->
+    <!-- выбор типа посещения  -->
     <v-dialog
       v-model="initialVisitDialog"
       :max-width="600"
@@ -119,15 +128,16 @@
         <v-card-text>
           <v-radio-group v-model="type_id" row>
             <v-radio
-              v-for="i in 2"
-              :key="i"
-              :label="i === 1 ? $t('Initial visit') : $t('Secondary visit')"
+              v-for="type in visitType"
+              :key="type.id"
+              :label="$t(type.name)"
               @click="
                 () => {
-                  if (i == 1) initialVisitDialog = false;
+                  if (type.id == 1) initialVisitDialog = false;
                 }
               "
-              :value="i"
+              :value="type.id"
+              :disabled="type.disabled"
             ></v-radio>
           </v-radio-group>
           <v-list v-show="type_id === 2">
@@ -160,7 +170,8 @@ import { createNamespacedHelpers } from "vuex";
 //import AnamnesisForm from "./AnamnesisForm.vue";
 import dayjs from "dayjs";
 import { getForm, submitForm, fillForm } from "./../../templates/mixings";
-import { modelAnamnesis, buildObjects } from "./../mixings";
+import { buildObjects } from "./../mixings";
+import { api } from "@/config";
 const { mapState, mapActions } = createNamespacedHelpers("patients");
 
 export default {
@@ -172,7 +183,7 @@ export default {
     FormWithTabs: () => import("./FormWithTabs.vue"),
     FormWithoutTabs: () => import("./FormWithoutTabs.vue"),
   },
-  name: "PatientNewVisitRecord",
+  name: "NewVisitRecord",
   props: {
     value: Boolean,
     fAnamnesis: {},
@@ -180,7 +191,14 @@ export default {
   data() {
     return {
       data: {},
+      idVideo: "",
       type_id: 0,
+      visitType: [
+        { id: 1, name: "Initial visit", disabled: false },
+        { id: 2, name: "Secondary visit", disabled: false },
+        { id: 3, name: "Arhive", disabled: true },
+      ],
+      attachedfiles: null,
       initialVisitId: null,
       initialVisitData: null,
       initialVisitDialog: false,
@@ -237,14 +255,16 @@ export default {
     initialVisitId: { required: requiredIf((prop) => prop.type_id == 2) },
   },*/
   created() {},
-  mounted() {},
+  mounted() {
+    this.initialVisitDialog = true;
+  },
   filters: {
     formatDate(val) {
       const date = JSON.parse(val).createdAt;
       return dayjs(date).format("DD.MM.YYYY");
     },
     getDiagnos(val) {
-      const diagnos = JSON.parse(val).diagnos;
+      const diagnos = JSON.parse(val)?.diagnosis?.diagnos;
       return diagnos;
     },
   },
@@ -253,7 +273,11 @@ export default {
     value() {
       if (this.value) {
         this.$nextTick(() => {
-          this.initialVisitDialog = true;
+          if (this.initialVisits.length) {
+            this.initialVisitDialog = true;
+          } else {
+            this.type_id = 1;
+          }
         });
       } else {
         this.resetFrom();
@@ -289,43 +313,16 @@ export default {
         )
       );
     },
-
-    anamnesis() {
-      let res = this.fillModelFields("anamnesis");
-      return res;
-    },
-    surveys() {
-      let res = this.fillModelFields("surveys");
-      return res;
-    },
-    diagnosis() {
-      let res = this.fillModelFields("diagnosis");
-      return res;
-    },
-    info() {
-      let res = this.fillModelFields("info");
-      return res;
-    },
-
-    appointments() {
-      let res = this.fillModelFields("appointments");
-      return res;
-    },
-    recomendations() {
-      let res = this.fillModelFields("recomendations");
-      return res;
-    },
   },
 
   methods: {
     ...mapActions(["addClinicalRecord", "uploadFile"]),
     validateOnSubmit() {
-      console.log(this.type_id, this.data.diagnosis.diagnosis.code);
       if (this.type_id !== 1 && this.type_id !== 2)
         return "Не выбран тип приема";
       else if (this.type_id == 1 && !this.data.diagnosis.diagnosis.code)
         return "Не указан диагноз";
-      else return "1";
+      else return "";
     },
 
     recursiveReset(obj) {
@@ -347,12 +344,14 @@ export default {
       this.recursiveReset(this.data);
     },
 
-    fillObject(obj) {
+    trimObject(obj) {
+      /* пока нигде не использую */
       let res = {};
+      console.log("retrim", obj);
       for (let key in obj) {
         if (obj[key] === Object(obj[key])) {
           if (obj[key] && obj[key] !== null && obj[key] !== undefined) {
-            let d = this.fillObject(obj[key]);
+            let d = this.trimObject(obj[key]);
             if (Object.keys(d).length !== 0) {
               res = Object.assign({}, res, { [key]: d });
             }
@@ -366,13 +365,78 @@ export default {
       return res;
     },
 
+    trimObjectFiles(obj = []) {
+      let arr = [];
+      if (!obj[0].hasOwnProperty("group_name")) {
+        arr["group_name"] = null;
+        arr["files"] = obj;
+        obj = [{ group_name: "", files: obj }];
+      }
+      console.log("trim", obj);
+      arr = [];
+      obj.forEach((group) => {
+        if (group.files) {
+          let name;
+          let idx;
+          name = group.group_name ? group.group_name.trim() : (name = "");
+          idx = arr.findIndex((el) => {
+            return el.group_name === name;
+          });
+          if (idx >= 0) {
+            arr[idx].files = group.files.concat(arr[idx].files);
+          } else {
+            arr.push({ group_name: group.group_name, files: group.files });
+          }
+        }
+      });
+      return arr;
+    },
+
+    trimFlatObject(obj) {
+      let res = {};
+      const fnParseObject = (obj) => {
+        for (let key in obj) {
+          if (obj[key] === Object(obj[key])) {
+            if (key.length > 5 && key.substring(key.length - 5) === "_file") {
+              //res=this.trimObject(obj[key])
+              let k = key.toLowerCase();
+              console.log("files object", obj[key]);
+              let files = this.trimObjectFiles(
+                JSON.parse(JSON.stringify(obj[key]))
+              );
+              if (files) {
+                res = Object.assign({}, res, { [k]: true });
+              }
+              this.attachedFiles = Object.assign({}, this.attachedFiles, {
+                [k]: files,
+              });
+            } else {
+              if (obj[key] && obj[key] !== null && obj[key] !== undefined) {
+                fnParseObject(obj[key]);
+              }
+            }
+          } else {
+            if (obj[key] && obj[key].length && obj[key] !== undefined) {
+              let k = key.toLowerCase();
+              res = Object.assign({}, res, { [k]: obj[key].trim() });
+            }
+          }
+        }
+      };
+      fnParseObject(obj);
+
+      return res;
+    },
+
     async submit() {
       let err = this.validateOnSubmit();
       if (!err) {
-        await this.post();
-        return true;
+        if (await this.post()) {
+          this.resetFrom();
+          return true;
+        }
+        return false;
       }
-      console.log("error", err);
       this.$root.addAlert({
         type: "error",
         text: err,
@@ -382,33 +446,59 @@ export default {
     },
     async post() {
       this.loading = true;
-      let makeDiagnosis = this.fillObject(
-        JSON.parse(JSON.stringify(this.data.diagnosis))
-      ).diagnosis;
-      let makeAnamnesis = this.fillObject(
+      let makeDiagnosis = this.trimFlatObject(
+        JSON.parse(JSON.stringify(this.data.diagnosis.diagnosis))
+      );
+      let makeAnamnesis = this.trimFlatObject(
         JSON.parse(JSON.stringify(this.data.anamnesis))
       );
+      let makeSurveys = this.trimFlatObject(
+        JSON.parse(JSON.stringify(this.data.surveys))
+      );
+      let makeRecomendations = this.trimFlatObject(
+        JSON.parse(JSON.stringify(this.data.recomendations))
+      );
+      let makeAppointments = this.trimFlatObject(
+        JSON.parse(JSON.stringify(this.data.appointments))
+      );
+      //console.log("attachedFiles", this.attachedFiles);
+      //return false;
+      if (
+        !(
+          (makeDiagnosis && Object.keys(makeDiagnosis).length !== 0) ||
+          (makeSurveys && Object.keys(makeSurveys).length !== 0) ||
+          (makeRecomendations && Object.keys(makeSurveys).length !== 0) ||
+          (makeAppointments && Object.keys(makeSurveys).length !== 0) ||
+          (makeAnamnesis && Object.keys(makeAnamnesis).length !== 0)
+        )
+      ) {
+        this.$root.addAlert({
+          type: "error",
+          text: "Нет данных для сохранения",
+        });
+        return false;
+      }
+      let patient_id = Number(this.$route.params.id);
       const payload = {
-        patient_id: Number(this.$route.params.id),
+        patient_id: patient_id,
         type_id: this.type_id,
         parent_id: this.initialVisitId,
         status_id: 1,
-        data: JSON.stringify(makeDiagnosis),
+        files: this.attachedFiles ? JSON.stringify(this.attachedFiles) : null,
+        data: JSON.stringify({
+          diagnosis: makeDiagnosis,
+          surveys: makeSurveys,
+          appointments: makeAppointments,
+          recomendations: makeRecomendations,
+        }),
         anamnesis: JSON.stringify(makeAnamnesis),
         //        treatmentFinished: this.treatmentFinished,
       };
-      console.log("payload", makeDiagnosis, makeAnamnesis, payload);
-      /*      this.$v.$touch(); //it will validate all fields
-      console.log(this.$v);
-      console.log(this.validators);
-      if (!this.$v.$invalid) {
-        //invalid, becomes true when a validations return false
-        this.$root.addAlert({
-          type: "error",
-          text: this.$v.$error,
-        });
-        return false;
-      }*/
+      let makeInfo = this.trimFlatObject(
+        JSON.parse(JSON.stringify(this.data.info))
+      );
+
+      //console.log(this.data.info.Info, makeInfo);
       if (0) {
         this.$root.addAlert({
           type: "error",
@@ -416,6 +506,18 @@ export default {
         });
         return false;
       }
+      this.$axios
+        .post(api.updatePatient, {
+          id: patient_id,
+          info: JSON.stringify(makeInfo),
+        })
+        .then(() => {
+          this.$root.addAlert({
+            type: "info",
+            text: "Данные о пациенте обновлены",
+          });
+        });
+
       this.addClinicalRecord(payload);
       this.loading = false;
       this.$emit("input");

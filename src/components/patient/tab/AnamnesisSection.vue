@@ -1,6 +1,6 @@
 <template>
   <div v-if="array && array.length" class="pb-3">
-    <h4>{{ getDoctorTranslation(title) }}</h4>
+    <h4>{{ $t(title) }}</h4>
     <ul class="mb-3">
       <AnamnesisSectionItem
         v-for="(item, index) in array"
@@ -14,10 +14,7 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from "vuex";
 import AnamnesisSectionItem from "./AnamnesisSectionItem";
-
-const { mapGetters } = createNamespacedHelpers("lang");
 
 export default {
   name: "AnamnesisSection",
@@ -29,19 +26,10 @@ export default {
       type: String,
       default: "",
     },
-    array1: {
-      type: Array,
-      default: () => [],
-    },
-    array2: {
-      type: Object,
-      default: () => {},
-    },
     array: null,
   },
-  computed: {
-    ...mapGetters(["getDoctorTranslation"]),
-  },
+  computed: {},
+  methods: {},
 };
 </script>
 

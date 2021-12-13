@@ -1,16 +1,24 @@
 /** @format */
 
 import Vue from 'vue';
-import App from './App.vue';
+import App from '@/App.vue';
 import router from './router';
-import store from './store';
+import store from './store/index';
+
 import vuetify from './plugins/vuetify';
 import './libs/registerComponents';
 import './libs/translations';
+import dateFilter from '@/filters/date.filter';
+import nameFilter from '@/filters/name.filter';
+import CtkTooltip from 'vue-ctk-tooltip';
+import 'vue-ctk-tooltip/ctk-tooltip.css';
+
 import Vuelidate from 'vuelidate';
+import VueYoutube from 'vue-youtube';
+//import Autoextra from 'vue-autoextra';
 import VuePhoneNumberInput from 'vue-phone-number-input';
-import PortalVue from 'portal-vue';
 import 'vue-phone-number-input/dist/vue-phone-number-input.css';
+import PortalVue from 'portal-vue';
 import VueChatScroll from 'vue-chat-scroll';
 import { messaging, getToken } from './firebase';
 import { createNamespacedHelpers } from 'vuex';
@@ -22,10 +30,18 @@ const { mapGetters: lang } = createNamespacedHelpers('lang');
 Vue.use(VueChatScroll);
 Vue.use(PortalVue);
 Vue.use(Vuelidate);
+Vue.use(CtkTooltip);
+Vue.use(VueYoutube);
+//Vue.use(Autoextra);
+Vue.filter('date', dateFilter);
+Vue.filter('shortname', nameFilter);
 Vue.config.productionTip = false;
 Vue.component('vue-phone-number-input', VuePhoneNumberInput);
 
 new Vue({
+  router,
+  store,
+  vuetify,
   data() {
     return {
       msg: 'message',
@@ -168,8 +184,5 @@ new Vue({
   created() {
     this.webSocket();
   },
-  router,
-  store,
-  vuetify,
   render: (h) => h(App),
 }).$mount('#app');

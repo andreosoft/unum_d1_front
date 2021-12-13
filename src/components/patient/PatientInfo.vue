@@ -1,19 +1,22 @@
 <template>
-  <v-card @click="buildAnamnesisForm()">
+  <v-card @click="testClick">
     <ul>
-      <li v-for="el of info">{{ el.title }}:{{ el.value }}</li>
+      <li
+        v-for="el of infoModel"
+        v-ctk-tooltip="el.data ? el.data : ''"
+        v-if="el['value']"
+      >
+        {{ el.title }}: {{ $t(el.value) }}
+      </li>
     </ul>
   </v-card>
 </template>
 
 <script>
-
-import { createNamespacedHelpers } from "vuex";
-
-const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
+import { buildObjects } from "./mixings";
 
 export default {
-  //  mixins: [validate, validators, fillForm],
+  //mixins: [buildObjects],
   name: "PatientInfo",
   props: {
     value: Object,
@@ -22,6 +25,7 @@ export default {
       default: false,
     },
     model: Array,
+    fAnamnesis: {},
     patient: {
       type: Object,
       default: () => {},
@@ -34,7 +38,7 @@ export default {
   data() {
     return {
       data: {},
-      info: [
+      infoModel: [
         {
           name: "sex",
           title: "пол",
@@ -55,44 +59,86 @@ export default {
           name: "allergy",
           title: "аллергия",
         },
+
         {
-          name: "xz",
+          name: "chronicDiseases",
           title: "ХЗ",
         },
         {
-          name: "pressure",
+          //          name: "pressure",
+          name: "ad",
           title: "АД",
         },
         {
-          name: "heartRate",
+          //          name: "heartRate",
+          name: "hr",
           title: "ЧСС",
         },
       ],
     };
   },
   computed: {
-    ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
     indexInfo() {
       let res = [];
-      this.info.forEach((el, i) => {
+      this.infoModel.forEach((el, i) => {
         res[el.name] = i;
       });
 
       return res;
     },
-    allergy() {
-      return "yes";
+  },
+  methods: {
+    testClick() {
+      let res = this.$store.getters["patients/patient"];
     },
-    sex() {
-      return "yes";
+
+    fillInfoPanel() {
+      //      this.$log("selectedPatient", this.$store.getters.selectedPatient);
+      let info = JSON.parse(this.patient.info);
+      this.infoModel.forEach((el) => {
+        el.value = info?.[el.name];
+      });
+      function getKeyByValue(object, k = "", res = []) {
+        object &&
+          Object.keys(object).forEach(function (key) {
+            if (
+              typeof object[key] === "object" &&
+              !Array.isArray(object[key]) &&
+              object[key] !== null
+            ) {
+              return getKeyByValue(object[key], k, res);
+            }
+            if (object[key] !== null && (!k || k == key.toLowerCase())) {
+              //console.log("kk ", k, object[key]);
+              res.unshift(object[key]);
+            }
+
+            //return Object.keys(object).find((key) => object[key] !== null);
+          });
+        return res;
+      }
+      //this.$log("use AnamnesisForm in patient info");
+      let elData;
+
+      this.infoModel[this.indexInfo["sex"]].value = "male";
+      elData = getKeyByValue(this.fAnamnesis.anamnesis.allergic_anamnesis);
+      let elt = elData.map((el) => {
+        return el[0].body + " <br> ";
+      });
+      this.infoModel[this.indexInfo["allergy"]].data = elt;
+      this.infoModel[this.indexInfo["allergy"]].value =
+        elData && elData.length ? `есть (${elData.length})` : "???";
+      elData = getKeyByValue(this.fAnamnesis, "chronic_diseases");
+      elt = elData.map((el) => {
+        return el[0].body + " <br> ";
+      });
+      this.infoModel[this.indexInfo["chronicDiseases"]].data = elt;
+      this.infoModel[this.indexInfo["chronicDiseases"]].value =
+        elData && elData.length ? `есть (${elData.length})` : "???";
     },
   },
   created() {
-    this.info[this.indexInfo["sex"]].value = "male";
-    this.info[this.indexInfo["allergy"]].value = "male";
-    //console.log(this.indexInfo);
-  },
-  methods: {
+    this.fillInfoPanel();
   },
 };
 </script>

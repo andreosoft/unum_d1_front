@@ -6,7 +6,7 @@
   >
     <v-toolbar dark color="primary">
       <v-toolbar-title>
-        {{ getCommonTranslation("Clinical record view") }}
+        {{ $t("Clinical record view") }}
       </v-toolbar-title>
       <v-toolbar-items>
         <v-btn icon @click.stop="show = false">
@@ -19,14 +19,14 @@
         <template #default>
           <tbody>
             <tr>
-              <td>{{ getCommonTranslation("Therapist") }}</td>
+              <td>{{ $t("Therapist") }}</td>
               <td>
                 {{ getDoctorName(record.doctor_id) }}
               </td>
             </tr>
             <tr>
               <td>
-                {{ getCommonTranslation("Therapist specialty") }}
+                {{ $t("Therapist specialty") }}
               </td>
               <td>
                 {{ getDoctorSpecialty(record.doctor_id) }}
@@ -34,21 +34,30 @@
             </tr>
             <tr v-show="selectedVisitCreatedDate">
               <td>
-                {{ getCommonTranslation("Created date") }}
+                {{ $t("Created date") }}
               </td>
               <td>{{ selectedVisitCreatedDate }}</td>
             </tr>
             <tr>
-              <td>{{ getCommonTranslation("Diagnosis") }}</td>
+              <td>{{ $t("Diagnosis") }}</td>
               <td>{{ selectedVisitDiagonsis }}</td>
             </tr>
-            <tr v-show="selectedVisitDescription.length">
-              <td>{{ getCommonTranslation("Description") }}</td>
+            <tr
+              v-show="
+                selectedVisitDescription && selectedVisitDescription.length
+              "
+            >
+              <td>{{ $t("Description") }}</td>
               <td>{{ selectedVisitDescription }}</td>
             </tr>
-            <tr v-show="selectedVisitRecommnedations.length">
+            <tr
+              v-show="
+                selectedVisitRecommnedations &&
+                selectedVisitRecommnedations.length
+              "
+            >
               <td>
-                {{ getCommonTranslation("Recommendations") }}
+                {{ $t("Recommendations") }}
               </td>
               <td>{{ selectedVisitRecommnedations }}</td>
             </tr>
@@ -58,7 +67,7 @@
             >
               <td>
                 <a :href="download(file.file)" target="_blank">
-                  {{ getCommonTranslation("Download attached file") }}
+                  {{ $t("Download attached file") }}
                 </a>
               </td>
               <td>{{ file.name }}</td>
@@ -74,8 +83,6 @@
 import { createNamespacedHelpers } from "vuex";
 import dayjs from "dayjs";
 import { api } from "./../../../config/index";
-const { mapGetters: Getters_lang, mapState: State_lang } =
-  createNamespacedHelpers("lang");
 const { mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
 
 export default {
@@ -85,7 +92,7 @@ export default {
     record: {
       type: Object,
       default: () => {},
-    },
+    },titleArray: [],
   },
   /*computed: {
     ...mapState(["selectedPatient", "selectedPatientClinicalRecords"]),
@@ -103,9 +110,13 @@ export default {
     },
   },
   computed: {
-    ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
     ...Getters_doctors(["getDoctorName", "getDoctorSpecialty"]),
-
+    diagnosis() {
+      let data = JSON.parse(this.record.data);
+      
+      if (data && data.diagnosis) return data.diagnosis;
+      return data.diagnos;
+    },
     show: {
       get() {
         return this.value;
@@ -115,19 +126,19 @@ export default {
       },
     },
     selectedVisitDiagonsis() {
-      return this.record && JSON.parse(this.record.data).diagnos;
+      return this.diagnosis.diagnos;
     },
     selectedVisitDescription() {
-      return this.record && JSON.parse(this.record.data).description;
+      return this.diagnosis && this.diagnosis.description;
     },
     selectedVisitRecommnedations() {
-      return this.record && JSON.parse(this.record.data).recomendations;
+      return this.diagnosis && this.diagnosis.recomendations;
     },
     selectedVisitCreatedDate() {
       return (
-        this.record &&
-        JSON.parse(this.record.data).createdAt &&
-        dayjs(JSON.parse(this.record.data).createdAt).format("YYYY-DD-MM")
+        this.diagnosis &&
+        this.diagnosis.createdAt &&
+        dayjs(this.diagnosis.createdAt).format("YYYY-DD-MM")
       );
     },
   },

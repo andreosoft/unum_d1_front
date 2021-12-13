@@ -20,11 +20,9 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text color="blue darken-1" @click="showPicker = false">
-            {{ getCommonTranslation("Cancel") }}
+            {{ getCommonTranslation("Cancel") }}1
           </v-btn>
-          <v-btn text color="blue darken-1" @click="onChange">
-            ок
-          </v-btn>
+          <v-btn text color="blue darken-1" @click="onChange"> ок </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

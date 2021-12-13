@@ -1,7 +1,7 @@
 <template>
   <li>
     {{ section.body }}
-    <span style="white-space: nowrap;"> ({{ section.created }} - </span>
+    <span style="white-space: nowrap"> ({{ section.created }} - </span>
     <span>
       {{ showDoctorSpecialty(section.doctor_id).toLowerCase() }}
       <span
@@ -9,7 +9,7 @@
           $router.push({ name: 'Doctor', params: { id: section.doctor_id } })
         "
         class="link"
-        >{{ section.doctor }}</span
+        >{{ getDoctorName(section.doctor_id) | shortname }}</span
       >)
     </span>
   </li>
@@ -18,7 +18,7 @@
 <script>
 import { createNamespacedHelpers } from "vuex";
 const { mapGetters } = createNamespacedHelpers("doctors");
-const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
+
 export default {
   name: "AnamnesisSectionItem",
   props: {
@@ -28,8 +28,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["getDoctorSpecialty"]),
-    ...Getters_lang(["getCommonTranslation"]),
+    ...mapGetters(["getDoctorSpecialty", "getDoctorName"]),
   },
   methods: {
     showDoctorSpecialty(id) {

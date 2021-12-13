@@ -30,7 +30,7 @@
       <v-list class="d-flex pa-4">
         <v-list-item
           class="pa-0 rounded-lg"
-          style="overflow: hidden;"
+          style="overflow: hidden"
           link
           :to="{ name: 'Profile' }"
         >
@@ -90,10 +90,8 @@ const { mapActions: Actions_patients } = createNamespacedHelpers("patients");
 const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
 const { mapActions: Actions_events } = createNamespacedHelpers("events");
 const { mapActions: Chats_events } = createNamespacedHelpers("chats");
-const {
-  mapState: State_lang,
-  mapGetters: Getters_lang,
-} = createNamespacedHelpers("lang");
+const { mapState: State_lang, mapGetters: Getters_lang } =
+  createNamespacedHelpers("lang");
 export default {
   data() {
     return {
@@ -203,12 +201,8 @@ export default {
     this.fetchPatients();
     this.fetchDoctors();
     this.fetchChats();
-    const start = dayjs()
-      .startOf("month")
-      .format("YYYY-MM-DD");
-    const end = dayjs()
-      .endOf("month")
-      .format("YYYY-MM-DD");
+    const start = dayjs().startOf("month").format("YYYY-MM-DD");
+    const end = dayjs().endOf("month").format("YYYY-MM-DD");
     this.fetchEvents({ start, end });
   },
 };

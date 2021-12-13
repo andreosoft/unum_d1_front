@@ -12,9 +12,28 @@
       <v-col v-show="$vuetify.breakpoint.mdAndUp" cols="3">
         <PatientAvatarAndName />
         <PatientInfo
-          :patient="selectedPatient"
-          :records="selectedPatientClinicalRecords"
+          v-if="!loading"
+          :patient="patient"
+          :records="records"
+          :fAnamnesis="formAnamnesis"
         />
+        <portal portal to="toolbar-action">
+          <v-menu
+            bottom
+            offset-y
+            transition="scale-transition"
+            origin="center center"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon large v-bind="attrs" v-on="on">mdi-school-outline</v-icon>
+            </template>
+            <v-list>
+              <v-list-item v-for="el in videoList">
+                <v-list-item-title> {{ el }} </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </portal>
       </v-col>
 
       <v-navigation-drawer
@@ -24,9 +43,12 @@
       >
         <PatientAvatarAndName />
         <PatientInfo
-          :patient="selectedPatient"
-          :records="selectedPatientClinicalRecords"
+          v-if="!loading"
+          :patient="patient"
+          :records="records"
+          :fAnamnesis="formAnamnesis"
         />
+        <v-btn @click="testClick">video</v-btn>
       </v-navigation-drawer>
       <v-col cols="12" md="9">
         <v-card :elevation="0" rounded="0">
@@ -46,7 +68,10 @@
                   <v-tab-item>
                     <v-card-text>
                       <v-divider class="mt-1 mb-3"></v-divider>
-                      <PatientTabAnamnesis :formA="formAnamnesis" />
+                      <PatientTabAnamnesis
+                        :formA="formAnamnesis"
+                        :titleArray="titleArray"
+                      />
                     </v-card-text>
                   </v-tab-item>
                   <v-tab-item>
@@ -54,6 +79,7 @@
                       <v-divider class="mt-1 mb-3"></v-divider>
                       <PatientTabClinicalRecords
                         :records="formattedClinicalRecords2"
+                        :titleArray="titleArray"
                       />
                     </v-col>
                   </v-tab-item>
@@ -74,6 +100,7 @@
 
       <v-fab-transition>
         <v-btn
+          v-if="!$vuetify.breakpoint.smAndDown"
           fab
           small
           dark
@@ -86,53 +113,58 @@
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </v-fab-transition>
-      <NewVisitRecord v-model="NewVisitDialog" :fAnamnesis="formAnamnesis" />
-
-      <!-- add anamnesis dialog -->
-      <AnamnesisDialog
-        :dialog="addAnamnesisDialog"
-        @anamnesisReset="addAnamnesisDialog = false"
+      <NewVisitRecord
+        v-model="NewVisitDialog"
+        v-if="NewVisitDialog"
+        :fAnamnesis="formAnamnesis"
       />
-
-      <!-- add clinical record dialog -->
-      <ClinicalRecordDialog
-        :dialog="addClinicalRecordDialog"
-        @clinicalRecordReset="addClinicalRecordDialog = false"
-      />
+      <portal to="v-main">
+        <video-dialog
+          v-if="showVideoDialog"
+          v-model="showVideoDialog"
+          :Id="idVideo"
+        ></video-dialog>
+      </portal>
     </v-row>
   </v-container>
 </template>
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-//import dayjs from "dayjs";
-//import { api } from "./../../config/index";
 
-import AnamnesisDialog from "./AnamnesisDialog.vue";
 import ClinicalRecordDialog from "./ClinicalRecordDialog.vue";
 import PatientTabAnamnesis from "./tab/PatientTabAnamnesis";
 import PatientTabClinicalRecords from "./tab/PatientTabClinicalRecords";
 import PatientAvatarAndName from "./PatientAvatarAndName";
 import NewVisitRecord from "./dialog/NewVisitRecord";
 import { models, buildObjects } from "./mixings";
+import VideoDialog from "../video/videoDialog.vue";
 const { mapState, mapActions } = createNamespacedHelpers("patients");
 const { mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
 export default {
   mixins: [models, buildObjects],
+  name: "Patient",
   components: {
-    AnamnesisDialog,
     ClinicalRecordDialog,
     PatientInfo: () => import("./PatientInfo.vue"),
-
     NewVisitRecord,
     PatientTabAnamnesis,
-
     PatientTabClinicalRecords,
     PatientAvatarAndName,
+    VideoDialog,
   },
   data() {
     return {
+      showVideoDialog: false,
+      videoList: [
+        "Обучающее видео 1",
+        "Обучающее видео 2",
+        "Обучающее видео 3",
+      ],
+      idVideo: "",
       tab: 0,
+      x: 0,
+      y: 0,
       panels: null,
       tabs: [
         {
@@ -173,6 +205,7 @@ export default {
       showAllComplaints: false,
       showAllDrugsTaken: false,
       showAllAllergies: false,
+      loading: true,
     };
   },
   computed: {
@@ -183,12 +216,18 @@ export default {
       const activeTab = this.tabs.find((tab) => tab.active);
       return activeTab.id;
     },
+    patient() {
+      return this.selectedPatient;
+    },
+    records() {
+      return this.selectedPatientClinicalRecords;
+    },
     formattedClinicalRecords2() {
       const first_appointments = [];
       const second_appointments = [];
       const result_array = [];
-      this.selectedPatientClinicalRecords &&
-        this.selectedPatientClinicalRecords.map((event) => {
+      this.records &&
+        this.records.map((event) => {
           if (event.type_id === 1) {
             first_appointments.push(event);
           } else if (event.type_id === 2) {
@@ -197,13 +236,19 @@ export default {
         });
       first_appointments.map((event) => {
         event.second_appointments = [];
-        event.name = JSON.parse(event.data)?.diagnos || "";
+        event.name =
+          JSON.parse(event.data)?.diagnosis?.diagnos ||
+          JSON.parse(event.data)?.diagnos ||
+          "";
         event.children = [];
         second_appointments.map((event2) => {
           let parent_id = event2.parent_id;
           let objDiagnos = JSON.parse(event2.data);
           if (event.id === parent_id) {
-            event2.name = objDiagnos?.diagnos || event.name;
+            event2.name =
+              objDiagnos?.diagnosis?.diagnos ||
+              objDiagnos?.diagnos ||
+              event.name;
             event.children.push(event2);
           }
         });
@@ -231,19 +276,22 @@ export default {
   },
   methods: {
     ...mapActions(["fetchSelectedPatient", "fetchPatientClinicalRecordsById"]),
+    testClick(e) {
+      //this.$log("showVideoDialog = true", this.showVideoDialog);
+      //      this.showVideoDialog = true;
+    },
+
     /*    download(id) {
       return `http://api.neomedy.com/api${api.getFile}/${id}`;
     },
     */
   },
   created() {
+    console.log("created patient");
+    this.loading = true;
+
     this.fetchPatientClinicalRecordsById(this.$route.params.id);
     this.fetchSelectedPatient(this.$route.params.id);
-    /*
-    this.$nextTick(() => {
-      this.buildAnamnesisForm();
-    });
-    */
   },
   mounted() {},
 };

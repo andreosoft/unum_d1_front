@@ -1,5 +1,6 @@
 /** @format */
 
+import dateFilter from '@/filters/date.filter';
 import upperFirst from 'lodash/upperFirst';
 import models from './models';
 export default {
@@ -8,11 +9,67 @@ export default {
     return {};
   },
   computed: {
+    anamnesis() {
+      let res = this.fillModelFields('anamnesis');
+      return res;
+    },
+    surveys() {
+      let res = this.fillModelFields('surveys');
+      return res;
+    },
+    diagnosis() {
+      let res = this.fillModelFields('diagnosis');
+      return res;
+    },
+    info() {
+      let res = this.fillModelFields('info');
+      return res;
+    },
+
+    appointments() {
+      let res = this.fillModelFields('appointments');
+      return res;
+    },
+    recomendations() {
+      let res = this.fillModelFields('recomendations');
+      return res;
+    },
     formAnamnesis() {
-      return { ['anamnesis']: this.buildAnamnesisForm() };
+      let res = this.createFormAnamnesis();
+      return res;
+    },
+
+    titleArray() {
+      let res = [];
+      const genTitleArray = (obj) => {
+        if (obj.hasOwnProperty('name') && obj.hasOwnProperty('title')) {
+          res.unshift({ title: obj.title, name: obj.name });
+        }
+        Object.keys(obj).forEach(function(k) {
+          if (typeof obj[k] === 'object' && obj[k] !== null) {
+            genTitleArray(obj[k]);
+          }
+        });
+      };
+      genTitleArray([this.anamnesis, this.diagnosis, this.surveys]);
+      return res;
     },
   },
+  created() {
+    //this.$log('created from buildObjects');
+  },
   methods: {
+    getTitle(title) {
+      return (
+        this.titleArray.find((el) => {
+          return el.name === title;
+        })?.title || title
+      );
+    },
+    createFormAnamnesis() {
+      let res = this.buildAnamnesisForm();
+      return { ['anamnesis']: res };
+    },
     fillModelFields(m) {
       //console.log("fillModelFields", m);
       let res = this['model' + upperFirst(m)];
@@ -21,8 +78,8 @@ export default {
           let arr = el.fields;
           let def = [
             {
-              //name: el.name,
-              name: el.title,
+              name: el.name,
+              //name: el.title,
               parent: el.name,
               title: this.$t(el.title),
               //title: el.title,
@@ -34,7 +91,7 @@ export default {
             arr.forEach((a) => {
               a.title = this.$t(a.title);
             });
-            if (arr.find((a) => a.name === el.title)) {
+            if (arr.find((a) => a.name === el.name)) {
               def = arr;
             } else {
               def = def.concat(arr);
@@ -61,9 +118,19 @@ export default {
       return d2;
     },
     buildAnamnesisForm() {
-      let anamnesis = this.fillModelFields('anamnesis');
-      let objA = this.createObjectFormFromModel(anamnesis, []);
+      //    let anamnesis = this.fillModelFields('anamnesis');
+      if (!this.records && !this.patient) {
+        console.log('buildAnamnesisForm empty1');
+        return false;
+      }
+      console.log('buildAnamnesisForm start');
+      let anamnesis = this.anamnesis;
+      let objA = {};
+      objA = JSON.parse(JSON.stringify(this.createObjectFormFromModel(anamnesis, [])));
+      //      if (!this.selectedPatientClinicalRecords && !this.selectedPatient) {
+      //console.log('buildAnamnesisForm objA', objA, anamnesis);
 
+      /**  создать связи name=>title основываясь на настройках модели*/
       let src;
       let keys = Object.create(null);
       function getMap(o, path = '') {
@@ -71,7 +138,8 @@ export default {
           if (typeof o[k] === 'object' && !Array.isArray(o[k]) && o[k] !== null) {
             return getMap(o[k], path ? `${path}.["${k}"]` : `["${k}"]`);
           }
-          keys[k] = path ? `${path}.["${k}"]` : `["${k}"]`;
+          let lowerKey = k.toLowerCase();
+          keys[lowerKey] = path ? `${path}.["${k}"]` : `["${k}"]`;
         });
       }
       getMap(objA);
@@ -112,8 +180,8 @@ export default {
           }
         });
       }
-      let records = this.selectedPatientClinicalRecords;
-      let patient = this.selectedPatient;
+      let records = this.records;
+      let patient = this.patient;
       let recordData = {};
       function getAllval2(o) {
         Object.keys(o).forEach(function(k) {
@@ -125,7 +193,7 @@ export default {
               id: recordData.id,
               body: o[k],
               doctor_id: recordData.doctor_id,
-              created: recordData.createdon,
+              created: dateFilter(recordData.createdon),
             },
           };
           if (o[k].length) {
@@ -133,18 +201,17 @@ export default {
           }
         });
       }
-
-      patient && getAllval(patient.anamnesis);
+      //patient?.anamnesis && getAllval(JSON.parse(patient.anamnesis));
 
       records &&
         records.forEach(function(record) {
           if (record.anamnesis) {
-            recordData = record;
-
+            recordData = JSON.parse(JSON.stringify(record));
             getAllval2(JSON.parse(record.anamnesis));
           }
         });
-      console.log(objA);
+      //  console.log(objA);
+      this.loading = false;
       return objA;
     },
     fillFormData(src, dst) {

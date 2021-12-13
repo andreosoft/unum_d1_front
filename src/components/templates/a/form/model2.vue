@@ -26,7 +26,6 @@ export default {
   computed: {
     data: {
       set(v) {
-        console.log("model emit input", v);
         this.$emit("input", v);
       },
       get() {
@@ -40,20 +39,8 @@ export default {
         parent: this.parentEl.name,
         tab: this.parentEl.tab,
       });
-      //      let ee = { [el.parent]: { [el.name]: e } };
-      //      console.log("onInput", this.parent, el, e, this.data);
-      if (typeof e === "object" && e !== null) {
-        Object.assign(this.data, e);
-      } else {
-        this.data[el.name] = e;
-      }
-      /*if (el.parent) {
-        this.data[el.tab][el.parent][el.name] = e;
-      } else {
-        this.data[el.tab][el.name] = e;
-      }
-*/
-      //      this.$emit("validate", { e, el });
+
+      this.data[el.name] = e;
       this.$emit("validate", e);
     },
   },
