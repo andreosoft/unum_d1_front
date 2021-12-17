@@ -453,7 +453,7 @@ export default {
         ) {
           this.$root.addAlert({
             type: "error",
-            text: "твоя запись",
+            text: "Нельзя редактировать чужую запись",
           });
           return false;
         }
