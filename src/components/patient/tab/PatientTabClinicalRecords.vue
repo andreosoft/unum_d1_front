@@ -23,19 +23,21 @@
       v-model="visitDialog"
       :record="selectedVisit"
       :titleArray="titleArray"
+      :key="componentKey"
+      @forceRerender="forceRerender"
     />
   </div>
 </template>
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-
+import ClinicalRecordView from "./../dialog/ClinicalRecordView.vue";
 const { mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
 
 export default {
   name: "PatientTabClinicalRecords",
   components: {
-    ClinicalRecordView: () => import("./../dialog/ClinicalRecordView2"),
+    ClinicalRecordView,
   },
   props: {
     records: {
@@ -49,6 +51,7 @@ export default {
       openRecord: [],
       visitDialog: false,
       selectedVisit: null,
+      componentKey: 0,
     };
   },
 
@@ -56,6 +59,10 @@ export default {
     ...Getters_doctors(["getDoctorName", "getDoctorSpecialty"]),
   },
   methods: {
+    forceRerender() {
+      console.log("forceRerender", this.componentKey);
+      this.componentKey += 1;
+    },
     clickOnNode(item) {
       if (item.children) {
         if (this.openRecord.includes(item.id)) {

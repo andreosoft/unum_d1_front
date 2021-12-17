@@ -71,7 +71,6 @@ export default {
       return { ['anamnesis']: res };
     },
     fillModelFields(m) {
-      //console.log("fillModelFields", m);
       let res = this['model' + upperFirst(m)];
       for (let [i, el] of res.entries()) {
         if (el.fields) {
@@ -100,18 +99,36 @@ export default {
           res[i].fields = def;
         }
       }
+      //console.log('fillModelFields', m, res);
       return res;
     },
-    createObjectFormFromModel(model, val = null) {
+    createObjectFormFromModel(model, val = null, data = null) {
       let d2 = {};
+      //console.log('data for fill model', data);
+      let v;
+
       for (let el of model) {
         if (el.hasOwnProperty('fields')) {
           d2 = Object.assign({}, d2, {
-            [el.name]: this.createObjectFormFromModel(el.fields, null),
+            [el.name]: this.createObjectFormFromModel(el.fields, null, data),
           });
         } else {
           if (!d2[el.name]) {
-            d2 = Object.assign({}, d2, { [el.name]: null });
+            let jsonData;
+            if (data) {
+              jsonData = JSON.parse(data);
+            }
+            v = jsonData?.[el.name.toLowerCase()] ? jsonData[el.name.toLowerCase()] : null;
+            //if (jsonData) console.log('fill', el.name, jsonData?.[el.name.toLowerCase()]);
+            if (el.name.toLowerCase().substring(el.name.toLowerCase().length - 5) === '_file' && typeof v === 'boolean') {
+              if (this?.record?.attachedFiles) {
+                console.log('files',this?.record?.attachedFiles);
+                v = JSON.parse(this.record.attachedFiles)[el.name.toLowerCase()];
+              } else {
+                v = null;
+              }
+            }
+            d2 = Object.assign({}, d2, { [el.name]: v });
           }
         }
       }

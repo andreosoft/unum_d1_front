@@ -132,7 +132,7 @@
 <script>
 import { createNamespacedHelpers } from "vuex";
 
-import ClinicalRecordDialog from "./ClinicalRecordDialog.vue";
+//import ClinicalRecordDialog from "./ClinicalRecordDialog.vue";
 import PatientTabAnamnesis from "./tab/PatientTabAnamnesis";
 import PatientTabClinicalRecords from "./tab/PatientTabClinicalRecords";
 import PatientAvatarAndName from "./PatientAvatarAndName";
@@ -145,7 +145,7 @@ export default {
   mixins: [models, buildObjects],
   name: "Patient",
   components: {
-    ClinicalRecordDialog,
+   // ClinicalRecordDialog,
     PatientInfo: () => import("./PatientInfo.vue"),
     NewVisitRecord,
     PatientTabAnamnesis,

@@ -1,6 +1,5 @@
 <template>
   <v-row>
-  
     <v-col :cols="8">
       <a-form-model
         v-model="data[model[0].name]"
@@ -21,7 +20,7 @@ export default {
   name: "FormWithoutTabs",
   props: {
     value: Object,
-    valueData: Object,
+    //valueData: Object,
     tabName: "",
     model: Array,
     history: {},
@@ -36,7 +35,7 @@ export default {
 
   methods: {
     fillForm() {
-      //      console.log(this.tabName + " Form Fill Form");
+      console.log(this.tabName + " Form Fill Form", this.value);
       this.data = Object.assign({}, this.data, this.value);
     },
   },

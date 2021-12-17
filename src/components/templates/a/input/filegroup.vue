@@ -38,10 +38,26 @@
         ></component>
       </v-col>
     </v-row>
+    <div v-for="group in attachedFiles" v-if="attachedFiles.length">
+      <div>
+        {{ group.group_name ? group.group_name : $t("other") }}
+        <v-chip-group column>
+          <v-chip
+            outlined
+            v-for="file in group.files"
+            :href="download(file.file)"
+            target="_blank"
+          >
+            {{ file.name }}
+          </v-chip>
+        </v-chip-group>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { api } from "@/config/index";
 export default {
   props: {
     value: [],
@@ -62,7 +78,14 @@ export default {
       status: 0,
       color: null,
       group: [{ group_name: "", files: null }],
+      attachedFiles: [],
     };
+  },
+  mounted() {
+    console.log(" mounted   ooooh, ", this.value);
+    if (this.value && this.value.length) {
+      this.attachedFiles = this.value;
+    }
   },
   computed: {
     canDelete(params) {
@@ -89,7 +112,12 @@ export default {
     },
     async onInput(e, el) {
       el.files = e;
-      this.$emit("input", this.group);
+      let res;
+      res = this.group.concat(this.attachedFiles);
+      this.$emit("input", res);
+    },
+    download(id) {
+      return `http://api.neomedy.com${api.getFile}/${id}`;
     },
   },
 };

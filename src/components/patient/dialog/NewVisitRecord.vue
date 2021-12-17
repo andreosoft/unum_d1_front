@@ -12,7 +12,6 @@
           <v-btn icon @click="$emit('input')">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-
           <v-toolbar-title @click="initialVisitDialog = true">
             {{ title }}
           </v-toolbar-title>
@@ -24,7 +23,7 @@
           </v-toolbar-items>
         </v-toolbar>
         <v-tabs v-model="newRecordTab" align-with-title>
-          <v-tab v-for="tab in tabs">
+          <v-tab v-for="tab in tabs" :disabled="tab.disabled">
             {{ $t(tab.title) }}
           </v-tab>
         </v-tabs>
@@ -187,6 +186,11 @@ export default {
   props: {
     value: Boolean,
     fAnamnesis: {},
+    recordId: 0,
+    record: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -210,7 +214,7 @@ export default {
           name: "PatientInfo",
           title: "Patient Info",
           active: false,
-          disabled: true,
+          disabled: this.recordId ? true : false,
           history: false,
         },
         {
@@ -256,7 +260,11 @@ export default {
   },*/
   created() {},
   mounted() {
-    this.initialVisitDialog = true;
+    if (!this.recordId) {
+      this.initialVisitDialog = true;
+    } else {
+      this.type_id = this.record.record.type_id;
+    }
   },
   filters: {
     formatDate(val) {
@@ -271,7 +279,7 @@ export default {
 
   watch: {
     value() {
-      if (this.value) {
+      if (this.value && !this.recordId) {
         this.$nextTick(() => {
           if (this.initialVisits.length) {
             this.initialVisitDialog = true;
@@ -293,7 +301,13 @@ export default {
   },
   computed: {
     ...mapState(["selectedPatientClinicalRecords"]),
+    doctorProfile() {
+      return this.$store.state?.auth?.doctorProfile;
+    },
     title() {
+      if (this.recordId) {
+        return this.$t("Edit clinical record") + "  #" + this.recordId;
+      }
       let title = this.$t("Add clinical record ");
       if (this.type_id) {
         title =
@@ -302,6 +316,7 @@ export default {
             : `Повторный прием по диагнозу
               ( ${this.initialVisitData ? this.initialVisitData : ""} )`;
       }
+
       return title;
     },
     initialVisits() {
@@ -429,6 +444,29 @@ export default {
     },
 
     async submit() {
+      if (this.recordId) {
+        if (
+          !(
+            this.doctorProfile &&
+            this.doctorProfile.id == this.record?.record?.doctor_id
+          )
+        ) {
+          this.$root.addAlert({
+            type: "error",
+            text: "твоя запись",
+          });
+          return false;
+        }
+      }
+      if (this.recordId && 10 == 1) {
+        {
+          this.$root.addAlert({
+            type: "error",
+            text: "Еще нельзя изменять данные",
+          });
+          return false;
+        }
+      }
       let err = this.validateOnSubmit();
       if (!err) {
         if (await this.post()) {
@@ -446,6 +484,7 @@ export default {
     },
     async post() {
       this.loading = true;
+
       let makeDiagnosis = this.trimFlatObject(
         JSON.parse(JSON.stringify(this.data.diagnosis.diagnosis))
       );
@@ -480,6 +519,7 @@ export default {
       }
       let patient_id = Number(this.$route.params.id);
       const payload = {
+        id: this.recordId,
         patient_id: patient_id,
         type_id: this.type_id,
         parent_id: this.initialVisitId,
@@ -497,7 +537,7 @@ export default {
       let makeInfo = this.trimFlatObject(
         JSON.parse(JSON.stringify(this.data.info))
       );
-
+      //console.log("payload", payload);
       //console.log(this.data.info.Info, makeInfo);
       if (0) {
         this.$root.addAlert({
@@ -506,20 +546,30 @@ export default {
         });
         return false;
       }
-      this.$axios
-        .post(api.updatePatient, {
-          id: patient_id,
-          info: JSON.stringify(makeInfo),
-        })
-        .then(() => {
-          this.$root.addAlert({
-            type: "info",
-            text: "Данные о пациенте обновлены",
+      if (makeInfo && makeInfo.length) {
+        //console.log(makeInfo);
+        this.$axios
+          .post(api.updatePatient, {
+            id: patient_id,
+            info: JSON.stringify(makeInfo),
+          })
+          .then(() => {
+            this.$root.addAlert({
+              type: "info",
+              text: "Данные о пациенте обновлены",
+            });
           });
-        });
+      }
 
       this.addClinicalRecord(payload);
       this.loading = false;
+      this.$root.addAlert({
+        type: "info",
+        text: "Данные сохранены",
+      });
+      if (this.recordId) {
+        this.$emit("forceRerender");
+      }
       this.$emit("input");
       //      this.afterSave(this.data, status);
     },
@@ -535,19 +585,39 @@ export default {
         ["info"]: this.createObjectFormFromModel(this.info),
       });
       this.data = Object.assign({}, this.data, {
-        ["anamnesis"]: this.createObjectFormFromModel(this.anamnesis),
+        ["anamnesis"]: this.createObjectFormFromModel(
+          this.anamnesis,
+          null,
+          this.record?.anamnesis
+        ),
       });
       this.data = Object.assign({}, this.data, {
-        ["surveys"]: this.createObjectFormFromModel(this.surveys),
+        ["surveys"]: this.createObjectFormFromModel(
+          this.surveys,
+          null,
+          this.record?.surveys
+        ),
       });
       this.data = Object.assign({}, this.data, {
-        ["diagnosis"]: this.createObjectFormFromModel(this.diagnosis),
+        ["diagnosis"]: this.createObjectFormFromModel(
+          this.diagnosis,
+          null,
+          this.record?.diagnosis
+        ),
       });
       this.data = Object.assign({}, this.data, {
-        ["recomendations"]: this.createObjectFormFromModel(this.recomendations),
+        ["recomendations"]: this.createObjectFormFromModel(
+          this.recomendations,
+          null,
+          this.record?.recomendations
+        ),
       });
       this.data = Object.assign({}, this.data, {
-        ["appointments"]: this.createObjectFormFromModel(this.appointments),
+        ["appointments"]: this.createObjectFormFromModel(
+          this.appointments,
+          null,
+          this.record?.appointments
+        ),
       });
       //      this.data = Object.assign({}, this.data, {        ["anamnesis"]: this.createObjectFormFromModel(this.model),      });
       //  this.fillFormFromModel(this.model);

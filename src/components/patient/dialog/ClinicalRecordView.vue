@@ -1,145 +1,188 @@
 <template>
-  <v-dialog
-    v-model="show"
-    fullscreen
-    content-class="clinical-record-view__dialog"
-  >
-    <v-toolbar dark color="primary">
-      <v-toolbar-title>
-        {{ $t("Clinical record view") }}
-      </v-toolbar-title>
-      <v-toolbar-items>
-        <v-btn icon @click.stop="show = false">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
-      </v-toolbar-items>
-    </v-toolbar>
-    <v-card class="pa-4 rounded-0" :elevation="0">
-      <v-simple-table>
-        <template #default>
-          <tbody>
-            <tr>
-              <td>{{ $t("Therapist") }}</td>
-              <td>
-                {{ getDoctorName(record.doctor_id) }}
-              </td>
-            </tr>
-            <tr>
-              <td>
-                {{ $t("Therapist specialty") }}
-              </td>
-              <td>
-                {{ getDoctorSpecialty(record.doctor_id) }}
-              </td>
-            </tr>
-            <tr v-show="selectedVisitCreatedDate">
-              <td>
-                {{ $t("Created date") }}
-              </td>
-              <td>{{ selectedVisitCreatedDate }}</td>
-            </tr>
-            <tr>
-              <td>{{ $t("Diagnosis") }}</td>
-              <td>{{ selectedVisitDiagonsis }}</td>
-            </tr>
-            <tr
-              v-show="
-                selectedVisitDescription && selectedVisitDescription.length
-              "
-            >
-              <td>{{ $t("Description") }}</td>
-              <td>{{ selectedVisitDescription }}</td>
-            </tr>
-            <tr
-              v-show="
-                selectedVisitRecommnedations &&
-                selectedVisitRecommnedations.length
-              "
-            >
-              <td>
-                {{ $t("Recommendations") }}
-              </td>
-              <td>{{ selectedVisitRecommnedations }}</td>
-            </tr>
-            <tr
-              v-for="(file, index) in JSON.parse(record.data).files"
-              :key="index"
-            >
-              <td>
-                <a :href="download(file.file)" target="_blank">
-                  {{ $t("Download attached file") }}
-                </a>
-              </td>
-              <td>{{ file.name }}</td>
-            </tr>
-          </tbody>
-        </template>
-      </v-simple-table>
-    </v-card>
-  </v-dialog>
+  <div>
+    <v-dialog :value="value" @input="$emit('input')" fullscreen hide-overlay>
+      <v-card class="pa11-4 rounded11-0" :elevation="0">
+        <v-toolbar dark color="primary" dense>
+          <v-toolbar-title>
+            {{ $t("Clinical record view") }}
+          </v-toolbar-title>
+
+          <v-spacer></v-spacer>
+          <v-btn icon @click="edit">
+            <v-icon>mdi-pencil-outline</v-icon>
+          </v-btn>
+          <v-btn icon @click="$emit('input')">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+        <v-layout column class="fill-height" style="height: 90vh !important">
+          <v-flex class="flex overflow-auto">
+            <v-simple-table dense>
+              <template v-slot:default>
+                <tbody>
+                  <tr>
+                    <td style="width: 100px">{{ $t("Doctor") }}</td>
+                    <td>
+                      {{ getDoctorName(record.doctor_id) | shortname }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      {{ $t("Therapist specialty") }}
+                    </td>
+                    <td>
+                      {{ getDoctorSpecialty(record.doctor_id) }}
+                    </td>
+                  </tr>
+                  <tr v-show="selectedVisitCreatedDate">
+                    <td>
+                      {{ $t("Created date") }}
+                    </td>
+                    <td>{{ selectedVisitCreatedDate | date }}</td>
+                  </tr>
+                  <tr>
+                    <td>{{ $t("Diagnosis") }}</td>
+                    <td>
+                      <clinical-record-element
+                        :element="diagnosis"
+                        :titleArray="titleArray"
+                      />
+                    </td>
+                  </tr>
+                  <tr
+                    v-for="item in [
+                      'anamnesis',
+                      'surveys',
+                      'appointments',
+                      'recomendations',
+                    ]"
+                  >
+                    <td>{{ $t(item) }}</td>
+
+                    <td>
+                      <clinical-record-element
+                        :element="getData(item) && getData(item)"
+                        :files="files"
+                        :titleArray="titleArray"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-flex>
+        </v-layout>
+      </v-card>
+    </v-dialog>
+    <NewVisitRecord
+      v-model="EditVisitDialog"
+      v-if="EditVisitDialog"
+      :recordId="recordId"
+      :record="dataEdit"
+      @forceRerender="forceRerender"
+    />
+  </div>
 </template>
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-import dayjs from "dayjs";
-import { api } from "./../../../config/index";
+import { api } from "../../../config/index";
+import ClinicalRecordElement from "./ClinicalRecordElement.vue";
+import NewVisitRecord from "./NewVisitRecord.vue";
 const { mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
 
 export default {
+  components: {
+    ClinicalRecordElement,
+    NewVisitRecord,
+  },
   name: "ClinicalRecordView",
   props: {
     value: Boolean,
     record: {
       type: Object,
       default: () => {},
-    },titleArray: [],
+    },
+    titleArray: [],
   },
-  /*computed: {
-    ...mapState(["selectedPatient", "selectedPatientClinicalRecords"]),
-    ...Getters_doctors(["getDoctorName", "getDoctorSpecialty"]),
-    ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
-    ...State_lang(["common"]),
-    getActiveLink() {
-      const activeTab = this.patientLinks.find((link) => link.active);
-      return activeTab.id;
-    },  
-    */
+  data() {
+    return {
+      EditVisitDialog: false,
+    };
+  },
   methods: {
+    forceRerender() {
+      this.$emit("forceRerender");
+    },
     download(id) {
       return `http://api.neomedy.com${api.getFile}/${id}`;
+    },
+    getData(item) {
+      return this[item];
+    },
+    edit() {
+      this.EditVisitDialog = true;
     },
   },
   computed: {
     ...Getters_doctors(["getDoctorName", "getDoctorSpecialty"]),
+    data() {
+      return JSON.parse(this.record.data);
+    },
+    recordId() {
+      return this.record.id;
+    },
     diagnosis() {
-      let data = JSON.parse(this.record.data);
-      
+      let data = this.data;
       if (data && data.diagnosis) return data.diagnosis;
-      return data.diagnos;
+      return { diagnosis: data.diagnos };
     },
-    show: {
-      get() {
-        return this.value;
-      },
-      set(value) {
-        this.$emit("input", value);
-      },
+    surveys() {
+      let data = this.data;
+      let res = {};
+      if (data && data.surveys) res = data.surveys;
+      return res;
     },
-    selectedVisitDiagonsis() {
-      return this.diagnosis.diagnos;
+    recomendations() {
+      let data = this.data;
+      let res = {};
+      if (data && data.surveys) res = data.recomendations;
+      return res;
     },
-    selectedVisitDescription() {
-      return this.diagnosis && this.diagnosis.description;
+    appointments() {
+      let data = this.data;
+      let res = {};
+      if (data && data.appointments) res = data.appointments;
+      return res;
     },
-    selectedVisitRecommnedations() {
-      return this.diagnosis && this.diagnosis.recomendations;
+    attachedFiles() {
+      let data = this.data;
+      let res = {};
+      if (data && data.files) res = data.files;
+      return res;
+    },
+    anamnesis() {
+      let res;
+      res = JSON.parse(this.record.anamnesis);
+      return res;
+    },
+    files() {
+      let res = JSON.parse(this.record.files);
+      return res;
     },
     selectedVisitCreatedDate() {
-      return (
-        this.diagnosis &&
-        this.diagnosis.createdAt &&
-        dayjs(this.diagnosis.createdAt).format("YYYY-DD-MM")
-      );
+      return this.record && this.record.createdon;
+    },
+    dataEdit() {
+      return {
+        record: this.record,
+        anamnesis: JSON.stringify(this.anamnesis),
+        diagnosis: JSON.stringify(this.diagnosis),
+        surveys: JSON.stringify(this.surveys),
+        recomendations: JSON.stringify(this.recomendations),
+        appointments: JSON.stringify(this.appointments),
+        attachedFiles: JSON.stringify(this.files),
+      };
     },
   },
 };

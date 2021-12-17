@@ -1,5 +1,6 @@
 <template>
   <v-row>
+
     <v-col>
       <v-tabs vertical v-model="tab">
         <v-tab v-for="(el, i) in model" :key="i">

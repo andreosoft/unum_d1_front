@@ -19,7 +19,7 @@
           dense
           disabled
           hide-details
-          v-model="data['diagnosis']['diagnos']"
+          v-model="fullDiagnos"
           @input="onInput($event, 'diagnos')"
         ></v-text-field>
       </div>
@@ -148,6 +148,11 @@ export default {
     this.fillForm();
   },
   computed: {
+    fullDiagnos() {
+      return (
+        this.data["diagnosis"]["code"] + " " + this.data["diagnosis"]["diagnos"]
+      );
+    },
     data: {
       set(v) {
         this.$emit("input", v);
