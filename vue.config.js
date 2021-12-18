@@ -1,7 +1,8 @@
+/** @format */
+
 module.exports = {
-  transpileDependencies: [
-    'vuetify'
-  ],
+
+  transpileDependencies: ['vuetify'],
   pwa: {
     name: 'Neomedy',
     themeColor: '#4DBA87',
@@ -9,29 +10,29 @@ module.exports = {
     appleMobileWebAppCapable: 'yes',
     appleMobileWebAppStatusBarStyle: 'black',
     manifestOptions: {
-      "icons": [
+      icons: [
         {
-          "src": "./img/icons/196.png",
-          "sizes": "192x192",
-          "type": "image/png"
+          src: './img/icons/196.png',
+          sizes: '192x192',
+          type: 'image/png',
         },
         {
-          "src": "./img/icons/512.png",
-          "sizes": "512x512",
-          "type": "image/png"
+          src: './img/icons/512.png',
+          sizes: '512x512',
+          type: 'image/png',
         },
         {
-          "src": "./img/icons/192.png",
-          "sizes": "192x192",
-          "type": "image/png",
-          "purpose": "maskable"
+          src: './img/icons/192.png',
+          sizes: '192x192',
+          type: 'image/png',
+          purpose: 'maskable',
         },
         {
-          "src": "./img/icons/512.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "maskable"
-        }
+          src: './img/icons/512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
       ],
     },
     iconPaths: {
@@ -39,7 +40,7 @@ module.exports = {
       favicon16: './icons/16.png',
       appleTouchIcon: './icons/152.png',
       maskIcon: './icons/256.png',
-      msTileImage: './icons/44.png'
-    }
-  }
-}
+      msTileImage: './icons/44.png',
+    },
+  },
+};

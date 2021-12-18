@@ -76,6 +76,11 @@
           </v-list-item-action>
         </v-list-item>
       </v-list>
+      <template v-slot:append>
+        <div class="pa-2">
+          <div>{{ packageVersion }}</div>
+        </div>
+      </template>
     </v-navigation-drawer>
 
     <router-view></router-view>
@@ -85,6 +90,9 @@
 <script>
 import { createNamespacedHelpers } from "vuex";
 import dayjs from "dayjs";
+
+import { version } from "./../../../package";
+
 const { mapState, mapActions } = createNamespacedHelpers("auth");
 const { mapActions: Actions_patients } = createNamespacedHelpers("patients");
 const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
@@ -102,6 +110,9 @@ export default {
     ...mapState(["userProfile", "doctorProfile", "doctorProfileFetched"]),
     ...State_lang(["doctor", "common"]),
     ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
+    packageVersion() {
+      return version;
+    },
     navLinks() {
       const links = [
         {
