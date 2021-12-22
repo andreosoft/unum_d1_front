@@ -37,6 +37,7 @@
                   v-for="(el, i) of fillVar"
                   :key="i"
                   @click.stop="fillVariantInsert(el)"
+                  :color="el.color"
                 >
                   {{ el.name }}
                 </v-chip>

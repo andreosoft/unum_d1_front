@@ -26,6 +26,7 @@
               v-for="(el, i) of samples"
               :key="i"
               @click.stop="needSave ? true : (curSample = i)"
+              :color="el.color"
             >
               <v-icon left v-if="i === curSample"> mdi-pencil-outline </v-icon>
               {{ el.name }}

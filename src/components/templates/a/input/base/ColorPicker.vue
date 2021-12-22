@@ -8,7 +8,9 @@
   >
     <template v-slot:activator="{ on, attrs }">
       <slot>
-        <div v-bind="attrs" v-on="on"><a-view-base-color :value="color" /></div>
+        <div v-bind="attrs" v-on="on">
+          <a-view-base-color2 :value="color" />
+        </div>
       </slot>
     </template>
     <v-card>
@@ -19,8 +21,8 @@
       ></v-color-picker>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <a-btn-cancel @click="showPicker = false" />
-        <a-btn-ok @click="$refs.dialog.save(color)" />
+        <v-btn @click="showPicker = false">Cancel</v-btn>
+        <v-btn @click="$refs.dialog.save(color)">Ok</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

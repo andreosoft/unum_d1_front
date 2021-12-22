@@ -15,15 +15,15 @@
               ></v-text-field>
             </v-flex>
             <v-flex d-flex xs2 pa-1>
-              <v-text-field
+              <a-input-color2
                 dense
                 outlined
                 hide-details
-                :label="$t('color')"
+                :model="{ title: $t('color') }"
                 v-model="value.color"
                 @input="$emit('input', value)"
               >
-              </v-text-field>
+              </a-input-color2>
             </v-flex>
             <v-flex d-flex xs2 pa-1>
               <v-text-field

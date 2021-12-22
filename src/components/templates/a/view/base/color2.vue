@@ -1,8 +1,5 @@
 <template>
-  <div
-    style="height: 40px; width: 40px"
-    :style="{ backgroundColor: value }"
-  ></div>
+  <v-btn block :style="{ backgroundColor: value }"> </v-btn>
 </template>
 
 <script>
