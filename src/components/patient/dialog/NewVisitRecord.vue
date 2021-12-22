@@ -153,6 +153,9 @@
             </v-list-item>
           </v-list>
         </v-card-text>
+        <v-card-actions class="justify-end">
+          <v-btn text @click="closeDialog">{{ $t("Close") }}</v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
@@ -295,9 +298,9 @@ export default {
     },
     initialVisitDialog(v) {
       if (v) {
-        this.type_id = 0;
+        /* this.type_id = 0;
         this.initialVisitId = null;
-        this.initialVisitData = null;
+        this.initialVisitData = null; */
       }
     },
   },
@@ -334,6 +337,13 @@ export default {
 
   methods: {
     ...mapActions(["addClinicalRecord", "uploadFile"]),
+    closeDialog() {
+      if (!this.type_id) {
+        this.$emit("input");
+      } else {
+        this.initialVisitDialog = false;
+      }
+    },
     validateOnSubmit() {
       if (this.type_id !== 1 && this.type_id !== 2)
         return "Не выбран тип приема";
