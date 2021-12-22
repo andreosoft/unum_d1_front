@@ -8,6 +8,7 @@
         :model="el"
         :values="data"
         :value="data[el.name]"
+        @onfocus="$emit('onfocus', [$event, el.name, data[el.name]])"
         @input="onInput($event, el)"
         :error="el.type == 'ref' ? errors[el.name + '_id'] : errors[el.name]"
       ></component>

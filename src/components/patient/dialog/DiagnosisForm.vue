@@ -51,8 +51,12 @@
         </v-list-item>
       </div>
       <div v-show="choiseVariant == 2">
-        <v-chip v-for="el of fillVariants" @click.stop="fillVariantInsert(el)">
-          {{ el }}
+        <v-chip
+          v-for="(el, i) of fillVar"
+          :key="i"
+          @click.stop="fillVariantInsert(el)"
+        >
+          {{ el.name }}
         </v-chip>
       </div>
     </v-col>
@@ -76,12 +80,15 @@ export default {
   data() {
     return {
       fillVariants: [
-        "набор",
-        "слов",
-        "или фраз",
-        "для быстрого ввода",
-        "и даже целого текста",
-        "и форматированного ввода \nимя:\n фамилия:\n ",
+        { name: "набор", sample: "набор" },
+        { name: "слов", sample: "слов" },
+        { name: "ввода", sample: "для быстрого ввода" },
+        { name: "фраз", sample: "или фраз" },
+        { name: "текста", sample: "и даже целого текста" },
+        {
+          name: "форматированного",
+          sample: "и форматированного ввода \nимя:\n фамилия:\n",
+        },
       ],
       choiseVariant: 0,
       diagnosisItems: [],
@@ -110,9 +117,9 @@ export default {
       let value = (value = src.value);
       let out =
         (value ? value.substring(0, cursorPos) : "") +
-        txt +
+        txt.sample +
         (value ? value.substring(cursorPos) : "");
-      cursorPos += txt.length;
+      cursorPos += txt.sample.length;
       //      console.log(out, this.data["diagnosis"]["diagnosComments"]);
       this.data["diagnosis"]["diagnos_comments"] = out;
       //      this.$emit("change", out);
@@ -148,6 +155,12 @@ export default {
     this.fillForm();
   },
   computed: {
+    fillVar() {
+      let res = this.$store.getters["doctors/getSamples"](this.tabName);
+      if (res) return res;
+      return this.fillVariants;
+    },
+
     fullDiagnos() {
       return (
         this.data["diagnosis"]["code"] + " " + this.data["diagnosis"]["diagnos"]

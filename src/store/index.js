@@ -34,7 +34,7 @@ const updateDoctorProfileOn = [
 ];
 
 Vue.use(Vuex);
-/*
+
 const store = new Vuex.Store({
   modules: {
     auth,
@@ -56,9 +56,8 @@ store.subscribe((mutation) => {
 });
 
 export default store;
-*/
 
-export default new Vuex.Store({
+/* export default new Vuex.Store({
   modules: {
     auth,
     patients,
@@ -68,4 +67,4 @@ export default new Vuex.Store({
     chats,
     alerts,
   },
-});
+}); */

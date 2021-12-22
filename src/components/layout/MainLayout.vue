@@ -13,8 +13,13 @@
     >
       <div class="d-flex">
         <v-icon class="mr-2" @click="drawer = !drawer">mdi-menu</v-icon>
+
+        <v-icon class="mr-2" @click="goUp" v-if="$route.meta.goUp"
+          >mdi-arrow-left</v-icon
+        >
         <v-toolbar-title>{{ getTitle }}</v-toolbar-title>
       </div>
+
       <v-spacer></v-spacer>
       <portal-target name="toolbar-action"></portal-target>
     </v-app-bar>
@@ -147,11 +152,16 @@ export default {
           title: this.getDoctorTranslation("Schedule"),
           icon: "mdi-calendar",
         },
+        {
+          name: "Settings",
+          title: this.$t("Settings"),
+          icon: "mdi-cog-outline",
+        },
       ];
       return links;
     },
     getTitle() {
-      let title = "";
+      /* let title = "";
       switch (this.$route.name) {
         case "Dashboard":
           title = this.getCommonTranslation("Home");
@@ -189,9 +199,11 @@ export default {
         case "New patient":
           title = this.getDoctorTranslation("New patient");
           break;
+        default:
+          title = this.$t(this.$route.name);
       }
-
-      return title;
+ */
+      return this.$t(this.$route.meta?.title || this.$route.name);
     },
     getPhoto() {
       return (
@@ -207,6 +219,15 @@ export default {
     ...Actions_doctors(["fetchDoctors"]),
     ...Actions_events(["fetchEvents"]),
     ...Chats_events(["fetchChats"]),
+    goUp() {
+      var upperPath = this.$route.path.split("/");
+      if (upperPath.length > 2) {
+        upperPath.splice(upperPath.length - 1);
+        this.$router.push(upperPath.join("/"));
+      } else {
+        this.$router.push("/");
+      }
+    },
   },
   created() {
     this.fetchPatients();

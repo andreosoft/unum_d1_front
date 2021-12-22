@@ -258,7 +258,9 @@ export default {
     type_id: { required },
     initialVisitId: { required: requiredIf((prop) => prop.type_id == 2) },
   },*/
-  created() {},
+  created() {
+    this.$store.dispatch("doctors/fetchSamples");
+  },
   mounted() {
     if (!this.recordId) {
       this.initialVisitDialog = true;

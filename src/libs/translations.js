@@ -8,11 +8,11 @@ Object.assign(translations, ru);
 
 Vue.prototype.$t = function(s, lang) {
   if (!lang) lang = 'ru'; //this.$root.lang;
-  s = s.toLowerCase();
-  if (this.$root.config && this.$root.config.translations && this.$root.config.translations[s]) {
-    return this.$root.config.translations[s];
-  } else if (translations[lang] && translations[lang][s]) {
-    return translations[lang][s];
+  let str = s.toLowerCase();
+  if (this.$root.config && this.$root.config.translations && this.$root.config.translations[str]) {
+    return this.$root.config.translations[str];
+  } else if (translations[lang] && translations[lang][str]) {
+    return translations[lang][str];
   } else if (this.$root.getDoctorTranslation) {
     return this.$root.getDoctorTranslation(s);
   } else return s;

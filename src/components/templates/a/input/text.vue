@@ -5,6 +5,7 @@
     :label="model.title"
     :error-messages="error"
     :disabled="disabled"
+    @focus="$emit('onfocus', $event)"
     @input="$emit('input', $event)"
   ></v-textarea>
 </template>

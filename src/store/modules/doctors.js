@@ -1,10 +1,13 @@
-import { axios, api } from "./../../config";
+/** @format */
+
+import { axios, api } from './../../config';
 export default {
   namespaced: true,
 
   state: {
     doctors: [],
     selectedDoctor: null,
+    samples: null,
   },
   getters: {
     getDoctorName: (state) => (doctorId) => {
@@ -29,6 +32,11 @@ export default {
     getDoctorByUserId: (state) => (userId) => {
       return state.doctors && state.doctors.find((doc) => doc.user_id === userId);
     },
+    getSamples: (state) => (model) => {
+      if (!model) return state.samples && state.samples;
+      let ss = '';
+      return state.samples && state.samples[model.toLowerCase()];
+    },
   },
   mutations: {
     SET_DOCTORS(state, payload) {
@@ -40,8 +48,31 @@ export default {
     SET_SELECTED_DOCTOR(state, payload) {
       state.selectedDoctor = payload;
     },
+    SET_SAMPLES(state, payload) {
+      state.samples = payload;
+    },
   },
   actions: {
+    fetchSamples({ commit }) {
+      let samples = [];
+      if (localStorage.getItem('LocalUserSamples')) {
+        samples = JSON.parse(localStorage.getItem('LocalUserSamples'));
+      }
+      commit('SET_SAMPLES', samples);
+    },
+    updateSamples({ dispatch, state }, data) {
+      let model = data[1];
+      if (!model) return;
+      let k = '';
+      k = JSON.parse(JSON.stringify(model.toLowerCase()));
+      let samples = state.samples;
+      if (!samples.hasOwnProperty(k)) {
+        samples = Object.assign({}, samples, { [k]: [] });
+      }
+      samples[k] = data[0];
+      localStorage.setItem('LocalUserSamples', JSON.stringify(samples));
+      dispatch('fetchSamples');
+    },
     fetchDoctors({ commit }) {
       return axios.get(api.getDoctors).then((res) => {
         commit('SET_DOCTORS', res.data.data);
@@ -72,4 +103,3 @@ export default {
     },
   },
 };
-
