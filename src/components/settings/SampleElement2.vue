@@ -14,18 +14,19 @@
                 @input="$emit('input', value)"
               ></v-text-field>
             </v-flex>
-            <v-flex d-flex xs2 pa-1>
-              <a-input-color2
-                dense
-                outlined
-                hide-details
-                :model="{ title: $t('color') }"
-                v-model="value.color"
-                @input="$emit('input', value)"
-              >
-              </a-input-color2>
-            </v-flex>
-            <v-flex d-flex xs2 pa-1>
+
+            <v-flex d-flex xs4 pa-1>
+              <div pa-1>
+                <a-input-color2
+                  dense
+                  outlined
+                  hide-details
+                  :model="{ title: $t('color') }"
+                  v-model="value.color"
+                  @input="$emit('input', value)"
+                />
+              </div>
+
               <v-text-field
                 dense
                 outlined

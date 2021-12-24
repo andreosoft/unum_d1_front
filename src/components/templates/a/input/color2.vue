@@ -1,9 +1,5 @@
 <template>
-  <v-input outlined>
-    <div outlined>
-      <a-input-base-color-picker v-model="color" />
-    </div>
-  </v-input>
+  <a-input-base-color-picker v-model="color" />
 </template>
 
 <script>

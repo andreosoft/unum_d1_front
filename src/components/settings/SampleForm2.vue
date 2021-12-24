@@ -1,15 +1,23 @@
 <template>
   <div>
+    {{ origSample }}
     <v-container grid-list-md>
       <v-btn
         @click="save"
         :class="{ primary: !needSave, error: needSave }"
         :disabled="!needSave"
       >
-        save
+        <v-icon>mdi-check </v-icon>
       </v-btn>
-      <v-btn @click="addSample" :disabled="needSave">add</v-btn>
-      <v-btn @click="delSample" :disabled="!sample">delete</v-btn>
+      <v-btn @click="cancelEdit" :disabled="!needSave">
+        <v-icon>mdi-close-thick </v-icon>
+      </v-btn>
+      <v-btn @click="addSample" :disabled="needSave">
+        <v-icon>mdi-plus-thick </v-icon>
+      </v-btn>
+      <v-btn @click="delSample" :disabled="!sample">
+        <v-icon>mdi-delete-forever </v-icon>
+      </v-btn>
       <v-layout py-2 v-if="samples.length" row wrap>
         <v-flex sm6 xs12 grow pa-1>
           <sample-element
@@ -66,6 +74,7 @@ export default {
       sampleTemp: { name: "", apply: [], color: "", sample: "", order: 0 },
       samples: [],
       curSample: null,
+      origSample: "",
       needSave: false,
     };
   },
@@ -77,23 +86,35 @@ export default {
     value(v) {
       this.samples = v?.[this.model.name] || [];
     },
+    curSample(v) {
+      this.origSample = JSON.stringify(this.samples[v]);
+    },
   },
   computed: {
     sample: {
       get() {
-        if (this.curSample >= 0) return this.samples[this.curSample];
-        return null;
+        let res = null;
+        if (this.curSample >= 0) {
+          res = this.samples[this.curSample];
+        }
+        return res;
       },
       set(v) {
         this.needSave = true;
         this.samples[this.curSample] = v;
       },
     },
-    samples1() {
-      return this.value || [];
-    },
   },
   methods: {
+    cancelEdit() {
+      if (this.origSample) {
+        this.onInput2(JSON.parse(this.origSample));
+        let cs = JSON.stringify(this.curSample);
+        this.curSample = -1;
+        this.curSample = JSON.parse(cs);
+        this.needSave = false;
+      }
+    },
     addSample() {
       this.samples.push(JSON.parse(JSON.stringify(this.sampleTemp)));
       this.curSample = this.samples.length - 1;
@@ -120,7 +141,7 @@ export default {
         this.data[el.name] = e;
       }
     },
-    async onInput2(e, i) {
+    async onInput2(e) {
       //console.log("onInput", i, e, this.samples[i]);
 
       this.sample = e;

@@ -8,7 +8,7 @@
   >
     <template v-slot:activator="{ on, attrs }">
       <slot>
-        <div v-bind="attrs" v-on="on">
+        <div v-bind="attrs" v-on="on" >
           <a-view-base-color2 :value="color" />
         </div>
       </slot>

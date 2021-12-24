@@ -1,5 +1,12 @@
 <template>
-  <v-btn block :style="{ backgroundColor: value }"> </v-btn>
+  <v-btn
+    block
+    :style="{ backgroundColor: value }"
+    height="40px"
+    width="40px"
+    mx-1
+  >
+  </v-btn>
 </template>
 
 <script>
