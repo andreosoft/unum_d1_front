@@ -1,23 +1,63 @@
 <template>
   <div>
-    {{ origSample }}
     <v-container grid-list-md>
-      <v-btn
-        @click="save"
-        :class="{ primary: !needSave, error: needSave }"
-        :disabled="!needSave"
-      >
-        <v-icon>mdi-check </v-icon>
-      </v-btn>
-      <v-btn @click="cancelEdit" :disabled="!needSave">
-        <v-icon>mdi-close-thick </v-icon>
-      </v-btn>
-      <v-btn @click="addSample" :disabled="needSave">
-        <v-icon>mdi-plus-thick </v-icon>
-      </v-btn>
-      <v-btn @click="delSample" :disabled="!sample">
-        <v-icon>mdi-delete-forever </v-icon>
-      </v-btn>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            @click="save"
+            :class="{ primary: !needSave, error: needSave }"
+            :disabled="!needSave"
+            depressed
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-check </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t("Save") }}</span>
+      </v-tooltip>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            @click="cancelEdit"
+            :disabled="!needSave"
+            depressed
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-close-thick </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t("Cancel") }}</span>
+      </v-tooltip>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            @click="addSample"
+            :disabled="needSave"
+            depressed
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-plus-thick </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t("Add") }}</span>
+      </v-tooltip>
+      <v-tooltip top>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            @click="delSample"
+            :disabled="!sample"
+            depressed
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-delete-forever </v-icon>
+          </v-btn>
+        </template>
+        <span>{{ $t("Delete") }}</span>
+      </v-tooltip>
       <v-layout py-2 v-if="samples.length" row wrap>
         <v-flex sm6 xs12 grow pa-1>
           <sample-element
@@ -25,6 +65,7 @@
             :model="model"
             @input="onInput2($event)"
             v-if="sample"
+            :key="key"
           />
           <div v-else>Select sample for edit or add new</div>
         </v-flex>
@@ -76,6 +117,8 @@ export default {
       curSample: null,
       origSample: "",
       needSave: false,
+      isNew: false,
+      key: 0,
     };
   },
   created() {
@@ -108,17 +151,18 @@ export default {
   methods: {
     cancelEdit() {
       if (this.origSample) {
+        console.log(this.origSample);
         this.onInput2(JSON.parse(this.origSample));
-        let cs = JSON.stringify(this.curSample);
-        this.curSample = -1;
-        this.curSample = JSON.parse(cs);
-        this.needSave = false;
+
+        this.needSave = this.isNew;
+        this.key++;
       }
     },
     addSample() {
       this.samples.push(JSON.parse(JSON.stringify(this.sampleTemp)));
       this.curSample = this.samples.length - 1;
       this.needSave = true;
+      this.isNew = true;
     },
     delSample() {
       this.samples.splice(this.curSample, 1);
@@ -132,6 +176,7 @@ export default {
         this.model.name,
       ]);
       this.needSave = false;
+      this.isNew = false;
     },
     async onInput(e, el) {
       console.log("onInput", el, e);

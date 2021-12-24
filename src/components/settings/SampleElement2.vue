@@ -30,6 +30,7 @@
               <v-text-field
                 dense
                 outlined
+                type="number"
                 hide-details
                 :label="$t('order')"
                 v-model="value.order"
