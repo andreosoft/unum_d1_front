@@ -2,7 +2,8 @@
   <div>
     <v-icon>mdi-calendar</v-icon>
     <div class="d-inline-block">
-      <v-dialog ref="dialog" v-model="showPicker" persistent width="290px">
+      <v-dialog ref="dialog" v-model="showPicker" persistent width="290px"
+      :return-value.sync="date">
         <template v-slot:activator="{ on, attrs }">
           <slot>
             <div v-bind="attrs" v-on="on">
@@ -13,6 +14,9 @@
         <v-date-picker
           v-if="showPicker"
           v-model="date"
+          @input="save(date)"
+          :events="datesAll"
+          event-color="blue lighten-1"
           full-width
           locale="ru"
           first-day-of-week="1"
@@ -38,12 +42,13 @@ export default {
   props: {
     value: {
       type: String,
-      default: "",
+      default: "11",
     },
   },
   data() {
     return {
       showPicker: false,
+      datesAll: [],
     };
   },
   methods: {
@@ -53,6 +58,16 @@ export default {
 
       //  this.$emit("change", this.date);
     },
+    save: function (date) {
+      var index = this.datesAll.findIndex((x) => x === date);
+
+      if (index === -1) {
+        this.datesAll.push(date);
+      } else {
+        this.datesAll.splice(index, 1);
+      }
+    },
+
   },
   computed: {
     ...mapGetters(["getCommonTranslation"]),

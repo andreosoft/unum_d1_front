@@ -6,6 +6,7 @@ import router from './router';
 import store from './store/index';
 
 import vuetify from './plugins/vuetify';
+//import ru from 'vuetify/src/locale/ru';
 import './libs/registerComponents';
 import './libs/translations';
 import dateFilter from '@/filters/date.filter';

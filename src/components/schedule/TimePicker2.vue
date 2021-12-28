@@ -9,14 +9,13 @@ class="d-inline-block"
         <template v-slot:activator="{ on, attrs }">
           <slot>
             <div v-bind="attrs" v-on="on">
-              <span>{{ value.substr(0, 5) }}</span>
+              <span>{{ time.substr(0, 5) }}</span>
             </div>
           </slot>
         </template>
         <v-time-picker
           v-if="showPicker"
-          v-model="value"
-          @input="$emit(input)"
+          v-model="time"
           full-width
           format="24hr"
         >
@@ -53,18 +52,25 @@ export default {
   data() {
     return {
       showPicker: false,
-      time: new Date().toISOString().substr(11, 5),
     };
   },
   computed: {
     ...mapGetters(["getCommonTranslation"]),
+    time: {
+      get: function () {
+        return this.value;
+      },
+      set: function (v) {
+        this.$emit("input", v);
+      },
+    },
   },
   methods: {
     onChange() {
       this.$refs.dialog.save(this.time);
       this.showPicker = false;
 
-      this.$emit("change", this.time);
+      //  this.$emit("change", this.time);
     },
   },
 };

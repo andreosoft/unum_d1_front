@@ -23,7 +23,10 @@
             class="mr-3"
             :elevation="0"
             :ripple="false"
-            @click="visitTimeGap = true"
+            @click="
+              dataEdit = 0;
+              visitTimeGap = true;
+            "
           >
             <!-- {{ getDoctorTranslation("Set working time") }} -->
             <v-icon>mdi-calendar-plus</v-icon>
@@ -63,6 +66,7 @@
           :event-name="getEventName"
           :event-ripple="false"
           :type="type"
+          locale="ru"
           @click:event="showEvent"
           @click:more="viewDay"
           @click:date="viewDay"
@@ -88,12 +92,11 @@
             </v-toolbar>
             <v-card-text class="d-flex flex-column">
               <span
-                >{{ getCommonTranslation("Start") }}
+                >{{ $t("Start") }}
                 {{ selectedEvent.start | convertToTime }}</span
               >
               <span
-                >{{ getCommonTranslation("End") }}
-                {{ selectedEvent.end | convertToTime }}</span
+                >{{ $t("End") }} {{ selectedEvent.end | convertToTime }}</span
               >
             </v-card-text>
             <v-card-actions>
@@ -113,205 +116,27 @@
           bottom
           fixed
           color="pink"
-          @click="
-            createEventHandler({ date: currentDate });
-            showButtomCreate = false;
-          "
+          @click="createEventHandler({ date: currentDate })"
         >
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </v-fab-transition>
 
       <!-- создание события -->
-      <v-dialog v-model="showEventForm" :max-width="600">
-        <v-card>
-          <v-card-title>
-            {{ $t("New event") }}
-          </v-card-title>
-          <v-card-text>
-            <v-text-field
-              dense
-              :label="$t('Event name')"
-              v-model="eventName"
-            ></v-text-field>
-            <v-combobox
-              v-model="selectedPatient"
-              :items="patients"
-              item-text="name"
-              :label="$t('Patients')"
-              @change="onSelectedPatientChange"
-            ></v-combobox>
-            <v-input
-              class="
-                v-input--is-label-active v-input--is-dirty
-                v-text-field v-text-field--is-booted
-              "
-            >
-              <template v-slot:default>
-                <v-label :value="true" :absolute="true">
-                  {{ $t("Start") }}
-                </v-label>
-                <DatePicker
-                  @change="onStartDateChange"
-                  :dateProps="eventDefaultData.start.split(' ')[0]"
-                />
-                <TimePicker
-                  @change="onStartTimeChange"
-                  :timeProps="eventDefaultData.start.split(' ')[1]"
-                />
-              </template>
-            </v-input>
-            <v-input
-              class="
-                v-input--is-label-active v-input--is-dirty
-                v-text-field v-text-field--is-booted
-              "
-            >
-              <template v-slot:default>
-                <v-label :value="true" :absolute="true">
-                  {{ $t("End") }}
-                </v-label>
-                <DatePicker
-                  @change="onEndDateChange"
-                  :dateProps="eventDefaultData.end.split(' ')[0]"
-                />
-                <TimePicker
-                  @change="onEndTimeChange"
-                  :timeProps="eventDefaultData.end.split(' ')[1]"
-                />
-              </template>
-            </v-input>
-            <v-input
-              class="
-                v-input--is-label-active v-input--is-dirty
-                v-text-field v-text-field--is-booted
-              "
-            >
-              <template v-slot:default>
-                <v-label :value="true" :absolute="true">
-                  {{ $t("Color") }}
-                </v-label>
-                <v-icon>mdi-palette</v-icon>
-                <ColorPicker @change="onColorChange" />
-              </template>
-            </v-input>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn text color="blue darken-1" @click="showEventForm = false">
-              {{ $t("Close") }}
-            </v-btn>
-            <v-btn text color="blue darken-1" @click="saveEvent">{{
-              editingEvent ? $t("Edit") : $t("Create")
-            }}</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <DialogCreateEvent
+        v-model="showEventForm"
+        :editingEvent="editingEvent"
+        :eventDefaultData="eventDefaultData"
+        @refresh="refreshEvents"
+        @showPatientCard="pushToPatientCard"
+        @deleteEvent="deleteEventHandler"
+      />
       <!-- создание диапазона посещений -->
-      <v-dialog v-model="visitTimeGap" max-width="400">
-        <v-card v-if="visitTimeGap" class="pa-3">
-          <v-card-title class="pa-0">
-            {{ getDoctorTranslation("Set your working time") }}&nbsp;
-          </v-card-title>
-          <v-card-text class="pa-0">
-            <v-menu ref="visitTimeMenu" :close-on-content-click="false">
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  :value="visitingDate"
-                  :label="getDoctorTranslation('Visiting date')"
-                  v-bind="attrs"
-                  v-on="on"
-                  readonly
-                >
-                </v-text-field>
-              </template>
-              <v-date-picker
-                v-model="visitingDate"
-                :min="currentDate"
-                @click:date="visitingClick"
-                close-on-content-click
-                @change="$refs.visitTimeMenu.save(visitingDate)"
-                :allowed-dates="
-                  (val) => val >= new Date().toISOString().substr(0, 10)
-                "
-              ></v-date-picker>
-            </v-menu>
-          </v-card-text>
-          <v-card-text class="pa-0">
-            <v-input
-              class="
-                v-input--is-label-active v-input--is-dirty
-                v-text-field v-text-field--is-booted
-              "
-            >
-              <template v-slot:default>
-                <v-label :value="true" :absolute="true">
-                  {{ getCommonTranslation("Start") }}
-                </v-label>
-                <TimePicker
-                  :padding="false"
-                  @change="visitStartTimeChange"
-                  :timeProps="visitingStartTime"
-                />
-              </template>
-            </v-input>
-          </v-card-text>
-          <v-card-text class="pa-0">
-            <v-input
-              class="
-                v-input--is-label-active v-input--is-dirty
-                v-text-field v-text-field--is-booted
-              "
-            >
-              <template v-slot:default>
-                <v-label :value="true" :absolute="true">
-                  {{ getCommonTranslation("End") }}
-                </v-label>
-                <TimePicker
-                  :padding="false"
-                  @change="visitEndTimeChange"
-                  :timeProps="visitingEndTime"
-                />
-              </template>
-            </v-input>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn @click="visitTimeGap = false">{{
-              getCommonTranslation("Close")
-            }}</v-btn>
-            <v-btn @click="saveVisitTimeGap">{{
-              getCommonTranslation("Save")
-            }}</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-menu
-        v-model="eventMenu"
-        :position-x="x"
-        :position-y="y"
-        absolute
-        offset-x
-        top
-      >
-        <v-list>
-          <v-list-item-group active-class="">
-            <v-list-item @click="pushToPatientCard">
-              <v-list-item-title>
-                {{ $t("Patient card") }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="eventEdit">
-              <v-list-item-title>
-                {{ $t("Edit event") }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title @click="deleteEventHandler">
-                {{ $t("Delete event") }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-menu>
+      <DialogSetVisitTime
+        v-model="visitTimeGap"
+        :dataEdit="dataEdit"
+        @refresh="refreshEvents"
+      />
     </v-col>
     <portal portal to="toolbar-action">
       <v-menu
@@ -350,21 +175,26 @@ const { mapState: State_patients } = createNamespacedHelpers("patients");
 const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
 const { mapState: State_auth } = createNamespacedHelpers("auth");
-import DatePicker from "./../components/schedule/DatePicker";
-import TimePicker from "./../components/schedule/TimePicker";
-import ColorPicker from "./../components/schedule/ColorPicker";
+//import DatePicker from "@/components/schedule/DatePicker";
+//import TimePicker from "@/components/schedule/TimePicker";
+//import ColorPicker from "@/components/schedule/ColorPicker";
 import VideoDialog from "@/components/video/videoDialog.vue";
+import DialogCreateEvent from "@/components/schedule/DialogCreateEvent.vue";
+import DialogSetVisitTime from "@/components/schedule/DialogSetVisitTime.vue";
 export default {
   name: "Schedule",
   components: {
-    DatePicker,
-    TimePicker,
-    ColorPicker,
+    //   DatePicker,
+    TimePicker: () => import("@/components/schedule/TimePicker2"),
+    //  ColorPicker,
     VideoDialog,
+    DialogCreateEvent,
+    DialogSetVisitTime,
   },
   data() {
     return {
       idVideo: "",
+      dataEdit: null,
       videoList: [
         { title: "Длительность приема.", video: "NZQcTe493LU" },
         { title: "Рабочее расписание.", video: "5M9H-q8QuQg" },
@@ -373,16 +203,12 @@ export default {
       selectedEvent: {},
       selectedElement: null,
       selectedOpen: false,
-
-      eventName: "",
-      chooseAction: false,
       showEventForm: false,
       visitTimeGap: false,
       eventMenu: false,
       x: 0,
       y: 0,
       eventDefaultData: {},
-      showButtomCreate: true,
       focus: "",
       type: "month",
       typeToLabel: {
@@ -395,24 +221,8 @@ export default {
         start: null,
         end: null,
       },
-      startTime: new Date().toISOString().substr(11, 5),
-      endTime: new Date().toISOString().substr(11, 5),
       editingEvent: false,
-      selectedPatient: null,
       currentDate: dayjs().format("YYYY-MM-DD"),
-      visitingStartTime: "10:00",
-      visitingEndTime: "11:00",
-      visitingDate: "",
-      visitingDatePicker: false,
-      myEvents: [
-        {
-          name: "emri event",
-          start: new Date(),
-          end: new Date(),
-          color: "yellow",
-          timed: false,
-        },
-      ],
     };
   },
   filters: {
@@ -439,7 +249,7 @@ export default {
     ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
     getEvents() {
       const events = _.cloneDeep(this.events);
-      this.$log("events", this.events);
+      this.$log("events2", this.events);
       if (events && events.length) {
         events.map((event) => {
           if (event.type_id === 2) {
@@ -453,18 +263,7 @@ export default {
     selectedDate() {
       return this.date;
     },
-    getStartDate() {
-      return this.eventDefaultData.start.split(" ")[0];
-    },
-    getEndDate() {
-      return this.eventDefaultData.end.split(" ")[0];
-    },
-    getStartTime() {
-      return this.eventDefaultData.start.split(" ")[1];
-    },
-    getEndTime() {
-      return this.eventDefaultData.end.split(" ")[1];
-    },
+
     getPatientNames() {
       const names = [];
       this.patients &&
@@ -486,10 +285,9 @@ export default {
   watch: {
     showEventForm(val) {
       if (!val) {
-        this.showButtomCreate = true;
         this.editingEvent = false;
-        this.eventName = "";
-        this.selectedPatient = null;
+        //this.eventName = "";
+        //this.selectedPatient = null;
         this.eventDefaultData.patient_id = null;
       }
     },
@@ -516,20 +314,14 @@ export default {
     intervalFormat(interval) {
       return interval.time;
     },
-    visitingClick(e) {
-      if (dayjs().isAfter(dayjs(e).add(1, "day"))) {
-        return;
-      }
-      this.visitingDate = e;
-    },
     createEventHandler(event) {
       if (dayjs().isAfter(dayjs(event.date).add(1, "day"))) {
         return;
       }
       if (!event.time) {
         event.time = "10:00:00";
-        this.startTime = "10:00:00";
-        this.endTime = "11:00:00";
+        //this.startTime = "10:00:00";
+        //this.endTime = "11:00:00";
       }
       let start = event.date + " " + event.time;
       let d = new Date(Date.parse(start.replace(/-/g, "/")));
@@ -541,19 +333,8 @@ export default {
       this.eventDefaultData = {
         start: this.getDateTime(st),
         end: this.getDateTime(end),
-        color: "#CC0000",
+        color: event.color ? event.color : "#CC0000",
       };
-
-      // get start and end time
-      const getStartTime = this.eventDefaultData.start.split(" ")[1];
-      const getFormattedStartTime =
-        getStartTime.split(":")[0] + ":" + getStartTime.split(":")[1];
-      const getEndTime = this.eventDefaultData.end.split(" ")[1];
-      const getFormattedEndTime =
-        getEndTime.split(":")[0] + ":" + getEndTime.split(":")[1];
-      //
-      this.startTime = getFormattedStartTime;
-      this.endTime = getFormattedEndTime;
       this.showEventForm = true;
     },
     async deleteEventHandler() {
@@ -563,7 +344,7 @@ export default {
     },
     viewDay({ date }) {
       this.focus = date;
-      this.type = "day";
+      this.type = this.type == "day" ? "month" : "day";
     },
     getEventColor(event) {
       return event.color;
@@ -582,6 +363,11 @@ export default {
     },
     showEvent({ nativeEvent, event }) {
       if (event.type_id === 2) {
+        this.dataEdit = event;
+        this.visitTimeGap = true;
+        nativeEvent.stopPropagation();
+
+        return;
         const open = () => {
           this.selectedEvent = event;
           this.selectedElement = nativeEvent.target;
@@ -601,17 +387,11 @@ export default {
       }
       this.eventDefaultData = event;
       this.showEventMenu(nativeEvent);
-      console.log("ev: ", event);
       nativeEvent.stopPropagation();
     },
     showEventMenu(e) {
       e.preventDefault();
-      this.eventMenu = false;
-      this.x = e.clientX - 100;
-      this.y = e.clientY;
-      this.$nextTick(() => {
-        this.eventMenu = true;
-      });
+      this.eventEdit();
     },
     updateRange({ start, end }) {
       this.eventsDate = {
@@ -637,56 +417,7 @@ export default {
     eventEdit() {
       this.showEventForm = true;
       this.editingEvent = true;
-      this.eventName = this.eventDefaultData.name;
       this.eventMenu = false;
-      this.selectedPatient = this.eventDefaultData.patient_id;
-    },
-    async saveEvent() {
-      const payload = {
-        color: this.eventDefaultData.color,
-        name: this.eventName,
-        start: this.eventDefaultData.start,
-        end: this.eventDefaultData.end,
-        patient_id: this.eventDefaultData.patient_id,
-        patient: this.eventDefaultData.patient || null,
-        type_id: 1,
-      };
-      if (!this.selectedPatient) {
-        return;
-      }
-      if (this.editingEvent) {
-        payload.id = this.eventDefaultData.id;
-      }
-      await this.createEvent(payload);
-      this.fetchEvents(this.eventsDate);
-      this.eventName = "";
-      this.showEventForm = false;
-      this.chooseAction = false;
-      this.eventDefaultData.color = "";
-    },
-    // onChange
-    onStartDateChange(startDate) {
-      this.eventDefaultData.start = startDate + " " + this.getStartTime;
-    },
-    onEndDateChange(endDate) {
-      this.eventDefaultData.end = endDate + " " + this.getEndTime;
-    },
-    onStartTimeChange(startTime) {
-      this.eventDefaultData.start = this.getStartDate + " " + startTime;
-    },
-    onEndTimeChange(endTime) {
-      this.eventDefaultData.end = this.getEndDate + " " + endTime;
-    },
-    onColorChange(color) {
-      this.eventDefaultData.color = color;
-    },
-    onSelectedPatientChange(patient) {
-      if (patient.id) {
-        this.eventDefaultData.patient_id = patient.id;
-        return;
-      }
-      this.eventDefaultData.color = "#8100CC";
-      this.eventDefaultData.patient = patient;
     },
     pushToPatientCard() {
       if (this.eventDefaultData.patient_id) {
@@ -696,46 +427,8 @@ export default {
       }
       this.$router.push({ name: "New patient" });
     },
-    visitStartTimeChange(time) {
-      this.visitingStartTime = time;
-    },
-    visitEndTimeChange(time) {
-      this.visitingEndTime = time;
-    },
-    async saveVisitTimeGap() {
-      const payload = {
-        name: "Прием пациентов",
-        start: `${this.visitingDate} ${this.visitingStartTime}:00`,
-        end: `${this.visitingDate} ${this.visitingEndTime}:00`,
-        type_id: "2",
-      };
-      this.showEventForm = false;
-      this.visitTimeGap = false;
-      this.chooseAction = false;
-      this.visitingDate = "";
-      this.visitingStartTime = "10:00";
-      this.visitingEndTime = "11:00";
-      for (let i = 0; i < this.events.length; i++) {
-        if (
-          dayjs(this.events[i].start).format("YYYY-MM-DD") ===
-          dayjs(payload.start).format("YYYY-MM-DD")
-        ) {
-          if (this.events[i].type_id === 2) {
-            this.addAlert({
-              type: "error",
-              text: this.getDoctorTranslation(
-                "Working time has already been set"
-              ),
-            });
-            return;
-          }
-        }
-      }
-      await this.createEvent(payload);
-      this.addAlert({
-        type: "success",
-        text: this.getDoctorTranslation("Working time set"),
-      });
+
+    refreshEvents() {
       this.fetchEvents(this.eventsDate);
     },
   },

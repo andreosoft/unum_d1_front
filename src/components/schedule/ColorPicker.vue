@@ -6,7 +6,7 @@
           <div v-bind="attrs" v-on="on">
             <div
               style="height: 16px; width: 100px"
-              :style="{ backgroundColor: color }"
+              :style="{ backgroundColor: colorEdit }"
             ></div>
           </div>
         </slot>
@@ -14,15 +14,17 @@
       <v-card>
         <v-color-picker
           v-if="showPicker"
-          v-model="color"
+          v-model="colorEdit"
           full-width
         ></v-color-picker>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn text color="blue darken-1" @click="showPicker = false">
-            {{ getCommonTranslation("Cancel") }}1
+            {{ $t("Cancel") }}
           </v-btn>
-          <v-btn text color="blue darken-1" @click="onChange"> ок </v-btn>
+          <v-btn text color="blue darken-1" @click="$refs.dialog.save(color)">
+            ок
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -30,25 +32,36 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from "vuex";
-const { mapGetters } = createNamespacedHelpers("lang");
 export default {
   name: "ColorPicker",
+  props: { color: { type: String, default: "#CC0000" } },
   data() {
     return {
       showPicker: false,
-      color: "#CC0000",
+      colorEdit1: this.color,
     };
   },
   computed: {
-    ...mapGetters(["getCommonTranslation"]),
+    colorEdit: {
+      get: function () {
+        console.log("get colorEdit", this.color);
+        if (!this.color) return "##CC0000";
+        return this.color;
+      },
+      set: function (v) {
+        this.$emit("change", v);
+      },
+    },
+  },
+  created() {
+    console.log("color", this.color, this.colorEdit);
   },
   methods: {
     onChange() {
-      this.$refs.dialog.save(this.color);
+      //this.$refs.dialog.save(this.colorEdit);
       this.showPicker = false;
 
-      this.$emit("change", this.color);
+      this.$emit("change", this.colorEdit);
     },
   },
 };

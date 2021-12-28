@@ -40,7 +40,7 @@ const actions = {
     });
   },
   deleteEvent({}, id) {
-    console.log('deleting...');
+    console.log('deleting...', id);
     return axios
       .delete(api.deleteScheduleItem + `/${id}`)
       .then(() => {
