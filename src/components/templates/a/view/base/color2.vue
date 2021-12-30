@@ -2,8 +2,8 @@
   <v-btn
     block
     :style="{ backgroundColor: value }"
-    height="40px"
-    width="40px"
+    :height="size"
+    :width="size"
     mx-1
   >
   </v-btn>
@@ -13,6 +13,7 @@
 export default {
   props: {
     value: String,
+    size: { type: String, default: "40px" },
   },
 };
 </script>

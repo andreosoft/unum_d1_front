@@ -4,10 +4,7 @@
       <template v-slot:activator="{ on, attrs }">
         <slot>
           <div v-bind="attrs" v-on="on">
-            <div
-              style="height: 16px; width: 100px"
-              :style="{ backgroundColor: colorEdit }"
-            ></div>
+            <a-view-base-color2 :value="colorEdit" :size="'20px'" />
           </div>
         </slot>
       </template>

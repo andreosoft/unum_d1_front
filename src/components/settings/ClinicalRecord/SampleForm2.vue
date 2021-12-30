@@ -158,7 +158,6 @@ export default {
       if (this.origSample) {
         console.log(this.origSample);
         this.onInput2(JSON.parse(this.origSample));
-
         this.needSave = this.isNew;
         this.key++;
       }
@@ -196,7 +195,7 @@ export default {
     save() {
       console.log("save", this.samples, this.model.name);
 
-      this.$store.dispatch("doctors/updateSamples", [
+      this.$store.dispatch("settings/updateSamples", [
         this.samples,
         this.model.name,
       ]);

@@ -210,7 +210,7 @@ export default {
       y: 0,
       eventDefaultData: {},
       focus: "",
-      type: "month",
+      type: this.settingBasic?.defaultView || "month",
       typeToLabel: {
         month: "M",
         week: "W",
@@ -247,6 +247,12 @@ export default {
     ...State_patients(["patients"]),
     ...State_auth(["doctorProfile"]),
     ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
+    setingServices() {
+      return this.$store.state.settings.servicesList;
+    },
+    settingBasic() {
+      return this.$store.state.settings.scheduleBasic;
+    },
     getEvents() {
       const events = _.cloneDeep(this.events);
       this.$log("events2", this.events);
@@ -291,6 +297,11 @@ export default {
         this.eventDefaultData.patient_id = null;
       }
     },
+  },
+  created() {
+    this.$store.dispatch("settings/fetchServicesList");
+    this.$store.dispatch("settings/fetchScheduleBasic");
+    this.type = this.settingBasic?.defaultView || "month";
   },
   mounted() {
     this.$refs.calendar.checkChange();
@@ -344,7 +355,8 @@ export default {
     },
     viewDay({ date }) {
       this.focus = date;
-      this.type = this.type == "day" ? "month" : "day";
+      this.type =
+        this.type == "day" ? this.settingBasic?.defaultView || "month" : "day";
     },
     getEventColor(event) {
       return event.color;
@@ -362,32 +374,14 @@ export default {
       this.$refs.calendar.next();
     },
     showEvent({ nativeEvent, event }) {
+      nativeEvent.stopPropagation();
       if (event.type_id === 2) {
         this.dataEdit = event;
         this.visitTimeGap = true;
-        nativeEvent.stopPropagation();
-
-        return;
-        const open = () => {
-          this.selectedEvent = event;
-          this.selectedElement = nativeEvent.target;
-          requestAnimationFrame(() =>
-            requestAnimationFrame(() => (this.selectedOpen = true))
-          );
-        };
-
-        if (this.selectedOpen) {
-          this.selectedOpen = false;
-          requestAnimationFrame(() => requestAnimationFrame(() => open()));
-        } else {
-          open();
-        }
-        nativeEvent.stopPropagation();
         return;
       }
       this.eventDefaultData = event;
       this.showEventMenu(nativeEvent);
-      nativeEvent.stopPropagation();
     },
     showEventMenu(e) {
       e.preventDefault();

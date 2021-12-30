@@ -11,6 +11,7 @@ export default {
 
   components: {
     SetClinicalRecord: () => import("./SetClinicalRecord"),
+    SetSchedule: () => import("./SetSchedule"),
   },
   computed: {},
   methods: {},

@@ -5,6 +5,7 @@ import Vuex from 'vuex';
 import auth from './modules/auth';
 import patients from './modules/patients';
 import doctors from './modules/doctors';
+import settings from './modules/settings';
 import lang from './modules/lang';
 import events from './modules/events';
 import chats from './modules/chats';
@@ -40,6 +41,7 @@ const store = new Vuex.Store({
     auth,
     patients,
     doctors,
+    settings,
     lang,
     events,
     chats,

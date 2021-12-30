@@ -163,47 +163,24 @@ export default {
     getTitle() {
       /* let title = "";
       switch (this.$route.name) {
-        case "Dashboard":
-          title = this.getCommonTranslation("Home");
-          break;
-        case "Chats":
-          title = this.getCommonTranslation("Chats");
-          break;
-        case "Chat":
-          title = this.getCommonTranslation("Chat");
-          break;
-        case "Consillium":
-          title = this.getCommonTranslation("Consillium");
-          break;
-        case "Consilliums":
-          title = this.getCommonTranslation("Consilliums");
-          break;
-        case "Doctors":
-          title = this.getCommonTranslation("Doctors");
-          break;
-        case "Doctor":
-          title = this.getCommonTranslation("Doctor");
-          break;
-        case "Patients":
-          title = this.getDoctorTranslation("Patients");
-          break;
-        case "Patient":
-          title = this.getCommonTranslation("Outpatient Card");
-          break;
-        case "Schedule":
-          title = this.getDoctorTranslation("Schedule");
-          break;
-        case "Profile":
-          title = this.getCommonTranslation("My profile");
-          break;
-        case "New patient":
-          title = this.getDoctorTranslation("New patient");
-          break;
-        default:
-          title = this.$t(this.$route.name);
+        case "Dashboard":          title = this.getCommonTranslation("Home");
+        case "Chats":          title = this.getCommonTranslation("Chats");
+        case "Chat":          title = this.getCommonTranslation("Chat");
+        case "Consillium":          title = this.getCommonTranslation("Consillium");
+        case "Consilliums":          title = this.getCommonTranslation("Consilliums");
+        case "Doctors":          title = this.getCommonTranslation("Doctors");
+        case "Doctor":          title = this.getCommonTranslation("Doctor");
+        case "Patients":          title = this.getDoctorTranslation("Patients");
+        case "Patient":          title = this.getCommonTranslation("Outpatient Card");
+        case "Schedule":          title = this.getDoctorTranslation("Schedule");
+        case "Profile":          title = this.getCommonTranslation("My profile");
+        case "New patient":          title = this.getDoctorTranslation("New patient");
+        default:          title = this.$t(this.$route.name);
       }
  */
-      return this.$t(this.$route.meta?.title || this.$route.name);
+      return this.$t(
+        this.$route.params?.desc || this.$route.meta?.title || this.$route.name
+      );
     },
     getPhoto() {
       return (

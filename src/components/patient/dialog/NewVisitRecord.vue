@@ -171,7 +171,7 @@ import {
 import { createNamespacedHelpers } from "vuex";
 //import AnamnesisForm from "./AnamnesisForm.vue";
 import dayjs from "dayjs";
-import { getForm, submitForm, fillForm } from "./../../templates/mixings";
+import { getForm, submitForm, fillForm } from "./../../templates/mixings"; 
 import { buildObjects } from "./../mixings";
 import { api } from "@/config";
 const { mapState, mapActions } = createNamespacedHelpers("patients");

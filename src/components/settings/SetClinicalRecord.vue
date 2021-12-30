@@ -30,8 +30,8 @@ export default {
   mixins: [models],
   name: "SetClinicalRecord",
   components: {
-    SampleForm: () => import("./SampleForm"),
-    SampleForm2: () => import("./SampleForm2"),
+    SampleForm: () => import("./ClinicalRecord/SampleForm"),
+    SampleForm2: () => import("./ClinicalRecord/SampleForm2"),
   },
   props: {
     back: "",
@@ -76,11 +76,11 @@ export default {
     };
   },
   mounted() {
-    this.$store.dispatch("doctors/fetchSamples");
+    this.$store.dispatch("settings/fetchSamples");
   },
   computed: {
     samples() {
-      return this.$store.state.doctors.samples;
+      return this.$store.state.settings.samples;
       //return this.$store.state.doctors.samples;
 
       //this.$store.state?.auth?.doctorProfile

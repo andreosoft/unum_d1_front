@@ -21,14 +21,17 @@
       </v-card-title>
       <v-card-text>
         <v-layout row wrap>
-          <v-flex d-flex pa-1 md12>
-            <v-text-field
+          <v-flex d-flex pa-1 xs12>
+            <v-combobox
               dense
               :label="$t('Event name')"
+              :items="servicesList"
+              @change="changeEventName"
+              item-text="name"
               v-model="eventName"
-            ></v-text-field>
+            ></v-combobox>
           </v-flex>
-          <v-flex d-flex pa-1 md12>
+          <v-flex d-flex pa-1 xs12>
             <v-combobox
               v-model="selectedPatient"
               :items="patients"
@@ -37,7 +40,7 @@
               @change="onSelectedPatientChange"
             ></v-combobox>
           </v-flex>
-          <v-flex d-flex mb12 pa-1>
+          <v-flex d-flex md12 pa-1>
             <v-input
               class="
                 v-input--is-label-active v-input--is-dirty
@@ -53,7 +56,7 @@
               </template>
             </v-input>
           </v-flex>
-          <v-flex d-flex mb12 pa-1>
+          <v-flex d-flex md12 pa-1>
             <v-input
               class="
                 v-input--is-label-active v-input--is-dirty
@@ -70,24 +73,57 @@
               </template>
             </v-input>
           </v-flex>
+          <v-flex d-flex xs12 pa-1 wrap>
+            <v-flex d-flex sm12 md2 pa-1 shrink>
+              <v-input
+                class="
+                  v-input--is-label-active v-input--is-dirty
+                  v-text-field v-text-field--is-booted
+                "
+              >
+                <template v-slot:default>
+                  <v-label :value="true" :absolute="true">
+                    {{ $t("Color") }}
+                  </v-label>
+                  <v-icon>mdi-palette</v-icon>
+                  <ColorPicker
+                    @change="onColorChange"
+                    :color="eventDefaultData.color"
+                  />
+                </template>
+              </v-input>
+            </v-flex>
+            <v-flex d-flex sm12 md10 pa-1>
+              <v-autocomplete
+                v-model="notify"
+                :items="['1d', '2d', '1h', '2h']"
+                outlined
+                dense
+                hide-details1
+                hide-selected
+                chips
+                small-chips
+                label="Notify"
+                multiple
+                :menu-props="{ closeOnClick: true }"
+              >
+                <template v-slot:selection="data">
+                  <v-chip
+                    v-bind="data.attrs"
+                    :input-value="data.selected"
+                    close
+                    small
+                  >
+                    {{ $t(data.item) }}
+                  </v-chip>
+                </template>
+                <template v-slot:item="data">
+                  {{ $t(data.item) }}
+                </template>
+              </v-autocomplete>
+            </v-flex>
+          </v-flex>
         </v-layout>
-        <v-input
-          class="
-            v-input--is-label-active v-input--is-dirty
-            v-text-field v-text-field--is-booted
-          "
-        >
-          <template v-slot:default>
-            <v-label :value="true" :absolute="true">
-              {{ $t("Color") }}
-            </v-label>
-            <v-icon>mdi-palette</v-icon>
-            <ColorPicker
-              @change="onColorChange"
-              :color="eventDefaultData.color"
-            />
-          </template>
-        </v-input>
       </v-card-text>
       <v-card-actions>
         <v-btn text color="blue darken-1" @click="$emit('input')">
@@ -104,8 +140,10 @@
 <script>
 import DatePicker from "@/components/schedule/DatePicker";
 import ColorPicker from "@/components/schedule/ColorPicker";
+import dayjs from "dayjs";
 import { createNamespacedHelpers } from "vuex";
 const { mapState: State_patients } = createNamespacedHelpers("patients");
+const { mapState: state_settings } = createNamespacedHelpers("settings");
 const { mapState, mapGetters, mapActions } = createNamespacedHelpers("events");
 export default {
   name: "DialogCreateEvent",
@@ -121,16 +159,29 @@ export default {
   },
   data() {
     return {
+      notify: null,
       Patient: null,
       eventName: "",
-
+      durationVisit: 0,
+      readTime: 0,
       saving: false,
     };
   },
+  mounted() {
+    this.readTime++;
+  },
   computed: {
     ...State_patients(["patients"]),
-
     ...mapState(["events"]),
+    servicesList() {
+      return this.$store.state.settings.servicesList;
+      //return this.$store.state.doctors.samples;
+
+      //this.$store.state?.auth?.doctorProfile
+    },
+    basic() {
+      return this.$store.state.settings.scheduleBasic;
+    },
     title() {
       return this.editingEvent ? "Edit event" : "New event";
     },
@@ -154,6 +205,7 @@ export default {
       },
       set(v) {
         this.eventDefaultData.start = v + " " + this.startTime;
+        this.calcEnd();
       },
     },
     startTime: {
@@ -162,6 +214,7 @@ export default {
       },
       set(v) {
         this.eventDefaultData.start = this.startDate + " " + v;
+        this.calcEnd();
       },
     },
     endDate: {
@@ -182,6 +235,12 @@ export default {
     },
   },
   watch: {
+    readTime(v) {
+      this.durationVisit =
+        this.eventName?.time || this.basic?.defaultTime || 60;
+      this.calcEnd();
+    },
+
     value(val) {
       if (!val) {
         this.editingEvent = false;
@@ -190,17 +249,25 @@ export default {
         this.eventDefaultData.patient_id = null;
         //this.eventDefaultData.color = "";
       } else {
+        this.calcEnd();
+
         this.eventName = this.eventDefaultData.name;
         this.selectedPatient = this.eventDefaultData.patient;
       }
     },
   },
   methods: {
-    ...mapActions([
-      "createEvent",
-      "fetchEvents",
-      "deleteEvent",
-    ]),
+    ...mapActions(["createEvent", "fetchEvents", "deleteEvent"]),
+    calcEnd() {
+      if (this.durationVisit) {
+        this.eventDefaultData.end = dayjs(this.eventDefaultData.start)
+          .add(this.durationVisit, "minute")
+          .format("YYYY-MM-DD HH:mm:ss");
+      }
+    },
+    changeEventName() {
+      this.readTime++;
+    },
     onSelectedPatientChange(patient) {
       if (patient.id) {
         this.eventDefaultData.patient_id = patient.id;
@@ -215,8 +282,6 @@ export default {
       this.eventDefaultData.color = color;
     },
     async saveEvent() {
-      console.log("saveEvent", this.saving, this.selectedPatient);
-
       if (this.saving) return;
       this.saving = true;
       const payload = {
@@ -249,7 +314,6 @@ export default {
       //this.showEventForm = false
       this.saving = false;
       this.$emit("input");
-      console.log("saveEvent end", this.saving);
     },
   },
 };

@@ -133,11 +133,6 @@ export default {
         this.visitingDate = dayjs(v.start).format("YYYY-MM-DD");
         this.visitingStartTime = dayjs(v.start).format("HH:mm");
         this.visitingEndTime = dayjs(v.end).format("HH:mm");
-      } else {
-        this.visitingDate = "";
-        this.datesAll = [];
-        this.visitingStartTime = "10:00";
-        this.visitingEndTime = "11:00";
       }
     },
     value(v) {
