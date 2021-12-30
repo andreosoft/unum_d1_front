@@ -30,8 +30,8 @@
       </v-flex>
       <v-flex d-flex xs12 pa-0 py-1>
         <v-autocomplete
-          v-model="value.notification"
-          :items="model.notification"
+          v-model="value.reminder"
+          :items="model.reminder"
           outlined
           dense
           hide-details
@@ -39,7 +39,7 @@
           item-text="title"
           item-value="name"
           small-chips
-          label="notification"
+          label="reminder"
           multiple
           @input="$emit('input', value)"
         >

@@ -117,7 +117,7 @@ export default {
       loading: false,
       status: 0,
       color: null,
-      temp: { name: "", description: "", time: 0, notification: [] },
+      temp: { name: "", description: "", time: 0, reminder: [] },
       elements: [],
       curElement: null,
       origElement: "",

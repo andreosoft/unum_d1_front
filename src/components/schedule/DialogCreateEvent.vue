@@ -95,7 +95,7 @@
             </v-flex>
             <v-flex d-flex sm12 md10 pa-1>
               <v-autocomplete
-                v-model="notify"
+                v-model="reminder"
                 :items="['1d', '2d', '1h', '2h']"
                 outlined
                 dense
@@ -103,7 +103,7 @@
                 hide-selected
                 chips
                 small-chips
-                label="Notify"
+                label="Reminder"
                 multiple
                 :menu-props="{ closeOnClick: true }"
               >
@@ -159,7 +159,7 @@ export default {
   },
   data() {
     return {
-      notify: null,
+      reminder: null,
       Patient: null,
       eventName: "",
       durationVisit: 0,
