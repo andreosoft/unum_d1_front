@@ -40,7 +40,7 @@
               @change="onSelectedPatientChange"
             ></v-combobox>
           </v-flex>
-          <v-flex d-flex md12 pa-1>
+          <v-flex d-flex sm6 pa-1>
             <v-input
               class="
                 v-input--is-label-active v-input--is-dirty
@@ -56,7 +56,7 @@
               </template>
             </v-input>
           </v-flex>
-          <v-flex d-flex md12 pa-1>
+          <v-flex d-flex sm6 pa-1>
             <v-input
               class="
                 v-input--is-label-active v-input--is-dirty
@@ -96,7 +96,18 @@
             <v-flex d-flex sm12 md10 pa-1>
               <v-autocomplete
                 v-model="reminder"
-                :items="['1d', '2d', '1h', '2h']"
+                :items="[
+                  '1d',
+                  '2d',
+                  '3d',
+                  '5d',
+                  '7d',
+                  '1h',
+                  '2h',
+                  '3h',
+                  '5h',
+                  '7h',
+                ]"
                 outlined
                 dense
                 hide-details1
@@ -106,6 +117,7 @@
                 label="Reminder"
                 multiple
                 :menu-props="{ closeOnClick: true }"
+                @click:close="remove(data.item)"
               >
                 <template v-slot:selection="data">
                   <v-chip
@@ -277,35 +289,49 @@ export default {
       this.eventDefaultData.color = "#CC8400";
       //this.eventDefaultData.patient = patient;
     },
-
+    remove(item) {
+      const index = this.value.apply.indexOf(item.name);
+      if (index >= 0) this.value.apply.splice(index, 1);
+    },
     onColorChange(color) {
       this.eventDefaultData.color = color;
     },
     async saveEvent() {
       if (this.saving) return;
-      this.saving = true;
-      const payload = {
-        color: this.eventDefaultData.color,
-        name: this.eventName,
-        start: this.eventDefaultData.start,
-        end: this.eventDefaultData.end,
-        patient_id: this.eventDefaultData.patient_id,
-        type_id: 1,
-      };
-      if (!this.selectedPatient) {
+      try {
+        this.saving = true;
+        const payload = {
+          color: this.eventDefaultData.color,
+          name: this.eventName?.name || this.eventName,
+          start: this.eventDefaultData.start,
+          end: this.eventDefaultData.end,
+          patient_id: this.eventDefaultData.patient_id,
+          type_id: 1,
+        };
+        if (!this.selectedPatient) {
+          this.saving = false;
+          return;
+        }
+
+        if (typeof this.selectedPatient === "string") {
+          payload.data = JSON.stringify({ patientName: this.selectedPatient });
+        }
+
+        if (this.editingEvent) {
+          payload.id = this.eventDefaultData.id;
+        }
+
+        await this.createEvent(payload);
+        //this.fetchEvents(this.eventsDate);
+      } catch (error) {
+        console.log(error);
+        this.$root.addAlert({
+          type: "error",
+          text: this.$t("ERROR"),
+        });
         this.saving = false;
-        return;
+        return false;
       }
-
-      if (typeof this.selectedPatient === "string") {
-        payload.data = JSON.stringify({ patientName: this.selectedPatient });
-      }
-
-      if (this.editingEvent) {
-        payload.id = this.eventDefaultData.id;
-      }
-      await this.createEvent(payload);
-      //this.fetchEvents(this.eventsDate);
       this.$root.addAlert({
         type: "success",
         text: this.$t("Event saved"),

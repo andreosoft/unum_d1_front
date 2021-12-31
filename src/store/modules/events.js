@@ -34,6 +34,7 @@ const actions = {
     });
   },
   createEvent({ commit }, data) {
+    console.log(api.addDoctorSchedule, data);
     return axios.post(api.addDoctorSchedule, data).then((res) => {
       // response handling
       console.log(res);
