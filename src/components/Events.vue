@@ -20,13 +20,19 @@
                   <tbody>
                     <tr>
                       <td class="table-title">
-                        {{ getCommonTranslation("Event name") }}
+                        {{ $t("Event name") }}
                       </td>
-                      <td>{{ event.name === event.patient ? getDoctorTranslation('Patient reception'): event.name }}</td>
+                      <td>
+                        {{
+                          event.name === event.patient
+                            ? $t("Patient reception")
+                            : event.name
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <td class="table-title">
-                        {{ getCommonTranslation("Patient") }}
+                        {{ $t("Patient") }}
                       </td>
                       <td>
                         {{ event.patient }}
@@ -34,7 +40,7 @@
                     </tr>
                     <tr>
                       <td class="table-title">
-                        {{ getCommonTranslation("Date") }}
+                        {{ $t("Date") }}
                       </td>
                       <td>
                         {{ event.start | getDate }}
@@ -42,7 +48,7 @@
                     </tr>
                     <tr>
                       <td class="table-title">
-                        {{ getCommonTranslation("Start") }}
+                        {{ $t("Start") }}
                       </td>
                       <td>
                         {{ event.start | getTime }}
@@ -60,8 +66,6 @@
 </template> 
 
 <script>
-import { createNamespacedHelpers } from "vuex";
-const { mapGetters } = createNamespacedHelpers("lang");
 import dayjs from "dayjs";
 
 export default {
@@ -81,9 +85,7 @@ export default {
       return time.substr(0, 5);
     },
   },
-  computed: {
-    ...mapGetters(["getCommonTranslation", "getDoctorTranslation"]),
-  },
+  computed: {},
 };
 </script>
 
