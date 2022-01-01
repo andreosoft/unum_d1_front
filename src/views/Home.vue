@@ -8,13 +8,23 @@
       <h2 class="mx-3">{{ $t("No patients yet") }}</h2>
     </div>
     <v-divider></v-divider>
-    <div v-if="events.length">
-      <h2 class="mx-3">{{ $t("My events") }}</h2>
-      <Events :events="getValidEvents" />
-    </div>
-    <div v-else>
-      <h2 class="mx-3">{{ $t("No events yet") }}</h2>
-    </div>
+    <v-layout>
+      <v-flex>
+        <div v-if="events.length">
+          <h2 class="mx-3">{{ $t("My events") }}</h2>
+          <Events :events="getValidEvents" />
+        </div>
+        <div v-else>
+          <h2 class="mx-3">{{ $t("No events yet") }}</h2>
+        </div>
+      </v-flex>
+      <v-flex>
+        <div>
+          <h2 class="mx-3">{{ $t("Reminders") }}</h2>
+          <Reminders :reminders="getValidReminders" />
+        </div>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 
@@ -22,7 +32,6 @@
 import { createNamespacedHelpers } from "vuex";
 const { mapState } = createNamespacedHelpers("patients");
 import PatientsCardList from "@/components/patient/PatientCardList.vue";
-import Events from "@/components/Events.vue";
 import dayjs from "dayjs";
 
 const { mapState: State_events, mapGetters: Getters_events } =
@@ -34,6 +43,7 @@ export default {
   components: {
     PatientsCardList,
     Events: () => import("@/components/EventsCard"),
+    Reminders: () => import("@/components/RemindersCard"),
   },
   filters: {
     getDate(value) {
@@ -45,7 +55,7 @@ export default {
       return time.substr(0, 5);
     },
   },
-  created() {
+  mounted() {
     this.$store.dispatch("events/fetchEvents", {
       start: dayjs().format("YYYY-MM-DD"),
       end: dayjs().add(30, "day").format("YYYY-MM-DD"),

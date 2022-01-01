@@ -11,6 +11,7 @@ import events from './modules/events';
 import chats from './modules/chats';
 import alerts from './modules/alerts';
 import debounce from 'lodash/debounce';
+import reminders from './modules/reminders';
 
 const updateDoctorProfileOn = [
   'SET_DOCTOR_NAME',
@@ -46,6 +47,7 @@ const store = new Vuex.Store({
     events,
     chats,
     alerts,
+    reminders,
   },
 });
 

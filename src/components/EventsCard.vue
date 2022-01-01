@@ -7,7 +7,7 @@
         cols="8"
         md="4"
         lg="3"
-        class="pa-3 records__item"
+        class="pa-1 records__item"
         @click="
           $router.push({ name: 'Patient', params: { id: event.patient_id } })
         "
@@ -21,7 +21,7 @@
                     {{ event.start | getDate }}
                   </div>
                   <v-list-item-title class="text-h7 mb-1">
-                    {{ event.patient }}
+                    {{ event.patient | shortname }}
                   </v-list-item-title>
                   <v-list-item-subtitle>
                     {{

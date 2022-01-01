@@ -149,7 +149,7 @@
           <v-icon large v-bind="attrs" v-on="on">mdi-school-outline</v-icon>
         </template>
         <v-list>
-          <v-list-item v-for="el in videoList">
+          <v-list-item v-for="el in videoList" :key="el.video">
             <v-list-item-title @click="showVideo(el)">
               {{ el.title }}
             </v-list-item-title>
@@ -168,16 +168,8 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from "vuex";
+import { createNamespacedHelpers, mapState, mapActions } from "vuex";
 import dayjs from "dayjs";
-const { mapState, mapGetters, mapActions } = createNamespacedHelpers("events");
-const { mapState: State_patients } = createNamespacedHelpers("patients");
-const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
-const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
-const { mapState: State_auth } = createNamespacedHelpers("auth");
-//import DatePicker from "@/components/schedule/DatePicker";
-//import TimePicker from "@/components/schedule/TimePicker";
-//import ColorPicker from "@/components/schedule/ColorPicker";
 import VideoDialog from "@/components/video/videoDialog.vue";
 import DialogCreateEvent from "@/components/schedule/DialogCreateEvent.vue";
 import DialogSetVisitTime from "@/components/schedule/DialogSetVisitTime.vue";
@@ -205,7 +197,6 @@ export default {
       selectedOpen: false,
       showEventForm: false,
       visitTimeGap: false,
-      eventMenu: false,
       x: 0,
       y: 0,
       eventDefaultData: {},
@@ -243,11 +234,12 @@ export default {
     },
   },
   computed: {
-    ...mapState(["events"]),
-    ...State_patients(["patients"]),
-    ...State_auth(["doctorProfile"]),
-    ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
-    setingServices() {
+    ...mapState({
+      events: (state) => state.events.events,
+      patients: (state) => state.patients.patients,
+      doctorProfile: (state) => state.auth.doctorProfile,
+    }),
+    settingServices() {
       return this.$store.state.settings.servicesList;
     },
     settingBasic() {
@@ -301,27 +293,28 @@ export default {
   created() {
     this.$store.dispatch("settings/fetchServicesList");
     this.$store.dispatch("settings/fetchScheduleBasic");
+    this.$store.dispatch("reminders/fetchReminders");
     this.type = this.settingBasic?.defaultView || "month";
   },
   mounted() {
     this.$refs.calendar.checkChange();
   },
   methods: {
-    showVideo(el) {
-      this.idVideo = el.video;
-      this.showVideoDialog = true;
-    },
-    ...mapActions([
+    ...mapActions("events", [
       "createEvent",
       "fetchEvents",
       "deleteEvent",
       "updateVisitingTime",
     ]),
+    showVideo(el) {
+      this.idVideo = el.video;
+      this.showVideoDialog = true;
+    },
+
     myDayFormat(d) {
       //if you look at d.weekday, it's a number 0 to 6, and you could hard code
       //values for each, like if its 0, return "XXX", where XXX is Sunday for Spanish
     },
-    ...Actions_alerts(["addAlert"]),
     intervalFormat(interval) {
       return interval.time;
     },
@@ -351,7 +344,6 @@ export default {
     async deleteEventHandler() {
       await this.deleteEvent(this.eventDefaultData.id);
       this.fetchEvents(this.eventsDate);
-      this.eventMenu = false;
     },
     viewDay({ date }) {
       this.focus = date;
@@ -411,12 +403,10 @@ export default {
     eventEdit() {
       this.showEventForm = true;
       this.editingEvent = true;
-      this.eventMenu = false;
     },
     pushToPatientCard() {
       if (this.eventDefaultData.patient_id) {
         this.$router.push(`/patients/${this.eventDefaultData.patient_id}`);
-        this.eventMenu = false;
         return;
       }
       this.$router.push({ name: "New patient" });

@@ -39,6 +39,17 @@
               :label="$t('Patients')"
               @change="onSelectedPatientChange"
             ></v-combobox>
+            <div class="pa-0 pl-1 pt-1">
+              <s-input-color
+                dense
+                outlined
+                hide-details
+                :size="'40px'"
+                :model="{ title: $t('color') }"
+                v-model="eventDefaultData.color"
+                @input="onColorChange"
+              />
+            </div>
           </v-flex>
           <v-flex d-flex sm6 pa-1>
             <v-input
@@ -73,29 +84,26 @@
               </template>
             </v-input>
           </v-flex>
-          <v-flex d-flex xs12 pa-1 wrap>
-            <v-flex d-flex sm12 md2 pa-1 shrink>
-              <v-input
-                class="
-                  v-input--is-label-active v-input--is-dirty
-                  v-text-field v-text-field--is-booted
-                "
-              >
-                <template v-slot:default>
-                  <v-label :value="true" :absolute="true">
-                    {{ $t("Color") }}
-                  </v-label>
-                  <v-icon>mdi-palette</v-icon>
-                  <ColorPicker
-                    @change="onColorChange"
-                    :color="eventDefaultData.color"
-                  />
-                </template>
-              </v-input>
-            </v-flex>
-            <v-flex d-flex sm12 md10 pa-1>
+          <v-flex d-flex xs12 pa-1>
+            <v-switch
+              v-model="hasReminder"
+              dense
+              :label="$t('Reminders')"
+            ></v-switch>
+          </v-flex>
+          <v-flex d-flex flex-wrap v-if="hasReminder" pa-0>
+            <v-flex d-flex sm12 md6 lg6 pa-1>
+              <div class="pa-0 pr-1">
+                <a-input-color2
+                  dense
+                  outlined
+                  hide-details
+                  :model="{ title: $t('color') }"
+                  v-model="reminder.color"
+                />
+              </div>
               <v-autocomplete
-                v-model="reminder"
+                v-model="reminder.reminder"
                 :items="[
                   '1d',
                   '2d',
@@ -110,7 +118,7 @@
                 ]"
                 outlined
                 dense
-                hide-details1
+                hide-details
                 hide-selected
                 chips
                 small-chips
@@ -134,6 +142,17 @@
                 </template>
               </v-autocomplete>
             </v-flex>
+            <v-flex d-flex sm12 md6 lg6 pa-1 pt-1>
+              <v-textarea
+                auto-grow
+                rows="1"
+                dense
+                hide-details
+                outlined
+                v-model="reminder.message"
+                :label="$t('message')"
+              ></v-textarea>
+            </v-flex>
           </v-flex>
         </v-layout>
       </v-card-text>
@@ -153,10 +172,7 @@
 import DatePicker from "@/components/schedule/DatePicker";
 import ColorPicker from "@/components/schedule/ColorPicker";
 import dayjs from "dayjs";
-import { createNamespacedHelpers } from "vuex";
-const { mapState: State_patients } = createNamespacedHelpers("patients");
-const { mapState: state_settings } = createNamespacedHelpers("settings");
-const { mapState, mapGetters, mapActions } = createNamespacedHelpers("events");
+import { mapGetters, mapState, mapActions } from "vuex";
 export default {
   name: "DialogCreateEvent",
   components: {
@@ -171,7 +187,8 @@ export default {
   },
   data() {
     return {
-      reminder: null,
+      hasReminder: false,
+      reminder: {},
       Patient: null,
       eventName: "",
       durationVisit: 0,
@@ -183,8 +200,11 @@ export default {
     this.readTime++;
   },
   computed: {
-    ...State_patients(["patients"]),
-    ...mapState(["events"]),
+    ...mapState({
+      events: (state) => state.events.events,
+      patients: (state) => state.patients.patients,
+    }),
+    ...mapGetters("reminders", { reminderBySource: "reminderBySource" }),
     servicesList() {
       return this.$store.state.settings.servicesList;
       //return this.$store.state.doctors.samples;
@@ -197,6 +217,7 @@ export default {
     title() {
       return this.editingEvent ? "Edit event" : "New event";
     },
+
     selectedPatient: {
       get() {
         if (this.eventDefaultData.data && this.eventDefaultData.data.length) {
@@ -247,6 +268,19 @@ export default {
     },
   },
   watch: {
+    reminder(v) {
+      console.log("watch reminder", v);
+      if (v?.reminder?.length) {
+        this.hasReminder = true;
+      } else {
+        this.hasReminder = false;
+      }
+    },
+    hasReminder(v) {
+      if (!v) {
+        this.resetReminder();
+      }
+    },
     readTime(v) {
       this.durationVisit =
         this.eventName?.time || this.basic?.defaultTime || 60;
@@ -255,6 +289,7 @@ export default {
 
     value(val) {
       if (!val) {
+        this.hasReminder = false;
         this.editingEvent = false;
         this.eventName = "";
         this.selectedPatient = null;
@@ -262,14 +297,24 @@ export default {
         //this.eventDefaultData.color = "";
       } else {
         this.calcEnd();
-
         this.eventName = this.eventDefaultData.name;
         this.selectedPatient = this.eventDefaultData.patient;
+        if (this.eventDefaultData?.id) {
+          this.reminder = this.reminderBySource({
+            name: "event",
+            id: this.eventDefaultData.id,
+          });
+        } else {
+          this.reminder = {};
+        }
       }
     },
   },
   methods: {
-    ...mapActions(["createEvent", "fetchEvents", "deleteEvent"]),
+    ...mapActions("events", ["createEvent", "fetchEvents", "deleteEvent"]),
+    resetReminder() {
+      this.reminder = { color: "#ffffff", reminder: [], message: "" };
+    },
     calcEnd() {
       if (this.durationVisit) {
         this.eventDefaultData.end = dayjs(this.eventDefaultData.start)
@@ -279,6 +324,17 @@ export default {
     },
     changeEventName() {
       this.readTime++;
+      if (this.eventName?.reminder) {
+        this.hasReminder = true;
+      } else {
+        this.hasReminder = false;
+      }
+      this.reminder.color = this.eventName?.color || this.reminder.color;
+      this.reminder.message = this.eventName?.message || this.reminder.message;
+      this.reminder.reminder =
+        this.eventName?.reminder || this.reminder.reminder;
+
+      console.log("reminder", this.reminder, this.eventName);
     },
     onSelectedPatientChange(patient) {
       if (patient.id) {
@@ -322,6 +378,13 @@ export default {
         }
 
         await this.createEvent(payload);
+        if (this.hasReminder && this.reminder?.reminder) {
+          let reminder = JSON.parse(JSON.stringify(this.reminder));
+          reminder.sourceName = "event";
+          reminder.sourceId = payload.id;
+          reminder.date = payload.start;
+          await this.$store.dispatch("reminders/updateReminders", reminder);
+        }
         //this.fetchEvents(this.eventsDate);
       } catch (error) {
         console.log(error);

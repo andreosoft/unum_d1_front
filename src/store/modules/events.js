@@ -24,12 +24,14 @@ const mutations = {
 
 const actions = {
   fetchEvents({ commit, rootState, dispatch }, { start, end }) {
+    console.log(start, end);
     return axios.get(api.schedule, { params: { start, end } }).then((res) => {
       const events = res.data.data;
       events.map((event) => {
         event.color ? '' : (event.color = '#CC0000');
         event.name ? '' : (event.name = event.patient);
       });
+
       commit('SET_EVENTS', res.data.data);
     });
   },

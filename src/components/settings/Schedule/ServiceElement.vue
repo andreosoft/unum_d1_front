@@ -28,6 +28,18 @@
           </v-flex>
         </v-layout>
       </v-flex>
+      <v-flex d-flex xs12 pa-0 pt-1>
+        <v-textarea
+          auto-grow
+          rows="2"
+          dense
+          hide-details
+          outlined
+          v-model="value.description"
+          :label="$t('description')"
+          @input="$emit('input', value)"
+        ></v-textarea>
+      </v-flex>
       <v-flex d-flex xs12 pa-0 py-1>
         <v-autocomplete
           v-model="value.reminder"
@@ -59,16 +71,27 @@
             {{ $t(data.item.title) }}
           </template>
         </v-autocomplete>
+
+        <div class="pa-0 pr-1">
+          <a-input-color2
+            dense
+            outlined
+            hide-details
+            :model="{ title: $t('color') }"
+            v-model="value.color"
+            @input="$emit('input', value)"
+          />
+        </div>
       </v-flex>
       <v-flex d-flex xs12 pa-0>
         <v-textarea
           auto-grow
-          rows="4"
+          rows="2"
           dense
           hide-details
           outlined
-          v-model="value.description"
-          :label="$t('description')"
+          v-model="value.message"
+          :label="$t('message')"
           @input="$emit('input', value)"
         ></v-textarea>
       </v-flex>

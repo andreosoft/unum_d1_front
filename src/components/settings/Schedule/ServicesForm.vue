@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container grid-list-md>
+    <v-container grid-list-md pa-0>
       <v-layout py-2 row wrap>
         <v-flex sm6 xs12 grow pa-1 sm-pb-0>
           <v-flex sm12 xs12 grow pa-0 pb-1>
@@ -117,7 +117,14 @@ export default {
       loading: false,
       status: 0,
       color: null,
-      temp: { name: "", description: "", time: 0, reminder: [] },
+      temp: {
+        name: "",
+        description: "",
+        time: 0,
+        reminder: [],
+        color: "",
+        message: "",
+      },
       elements: [],
       curElement: null,
       origElement: "",

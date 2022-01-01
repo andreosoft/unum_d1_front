@@ -3,7 +3,7 @@
 import { axios, api } from './../../config';
 
 const state = {
-  patients: {},
+  patients: [],
   selectedPatient: null,
   selectedPatientClinicalRecords: null,
 };
@@ -13,7 +13,6 @@ const getters = {
   },
   patient: (state) => {
     let res = state.selectedPatient;
-    console.log('store patient getter', res);
     return state.selectedPatient;
   },
 };
