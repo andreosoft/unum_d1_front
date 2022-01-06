@@ -43,6 +43,7 @@
               <s-input-color
                 dense
                 outlined
+                palette
                 hide-details
                 :size="'40px'"
                 :model="{ title: $t('color') }"
@@ -94,9 +95,10 @@
           <v-flex d-flex flex-wrap v-if="hasReminder" pa-0>
             <v-flex d-flex sm12 md6 lg6 pa-1>
               <div class="pa-0 pr-1">
-                <a-input-color2
+                <s-input-color
                   dense
                   outlined
+                  palette
                   hide-details
                   :model="{ title: $t('color') }"
                   v-model="reminder.color"
@@ -269,6 +271,7 @@ export default {
   },
   watch: {
     reminder(v) {
+      return;
       console.log("watch reminder", v);
       if (v?.reminder?.length) {
         this.hasReminder = true;
@@ -278,6 +281,7 @@ export default {
     },
     hasReminder(v) {
       if (!v) {
+        console.log("resetReminder");
         this.resetReminder();
       }
     },

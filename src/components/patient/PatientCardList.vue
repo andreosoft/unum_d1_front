@@ -5,7 +5,8 @@
         v-for="patient in patients"
         :key="patient.id"
         cols="6"
-        sm="3"
+        sm="4"
+        md="3"
         lg="2"
         :class="{
           'pa-1': $vuetify.breakpoint.smAndDown,

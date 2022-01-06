@@ -1,5 +1,5 @@
 <template>
-  <div class="main-layout">
+  <div class="main-layout" ref="mainLayout">
     <v-app-bar
       v-if="
         $vuetify.breakpoint.smAndDown ? !$route.meta.hideMobileTopNavbar : true
@@ -10,6 +10,7 @@
       app
       flat
       height="60"
+      ref="mainBar"
     >
       <div class="d-flex">
         <v-icon class="mr-2" @click="drawer = !drawer">mdi-menu</v-icon>

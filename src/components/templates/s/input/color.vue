@@ -1,5 +1,10 @@
 <template>
-  <s-input-base-color-picker v-model="color" :size="size" />
+  <s-input-base-color-picker
+    v-model="color"
+    :palette="palette"
+    :size="size"
+    :classList="classList"
+  />
 </template>
 
 <script>
@@ -11,11 +16,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    palette: {
+      type: Boolean,
+      default: false,
+    },
     error: {
       type: String,
       default: "",
     },
     size: { type: String, default: "40px" },
+    classList: { type: String, default: "" },
   },
   computed: {
     color: {

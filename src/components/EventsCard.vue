@@ -4,9 +4,11 @@
       <v-col
         v-for="event in events"
         :key="event.id"
-        cols="8"
+        cols="12"
         md="4"
         lg="3"
+        sm="4"
+        sx="12"
         class="pa-1 records__item"
         @click="
           $router.push({ name: 'Patient', params: { id: event.patient_id } })
@@ -16,10 +18,13 @@
           <template v-slot="{ hover }">
             <v-card :elevation="hover ? 1 : 0" outlined>
               <v-list-item three-line>
-                <v-list-item-content>
-                  <div class="text-overline mb-4">
-                    {{ event.start | getDate }}
-                  </div>
+                <v-list-item-content class="pt-0">
+                  <v-list-item-action>
+                    <v-list-item-action-text>
+                      {{ event.start | getDate }}
+                      {{ event.start | getTime }}
+                    </v-list-item-action-text>
+                  </v-list-item-action>
                   <v-list-item-title class="text-h7 mb-1">
                     {{ event.patient | shortname }}
                   </v-list-item-title>

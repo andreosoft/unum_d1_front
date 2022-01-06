@@ -4,27 +4,19 @@
     v-model="showPicker"
     :return-value.sync="color"
     persistent
-    @keydown.esc="showPicker = false"
     width="290px"
   >
     <template v-slot:activator="{ on, attrs }">
       <slot>
         <div v-bind="attrs" v-on="on">
-          <s-view-base-color
-            :value="color"
-            :size="size"
-            :classList="classList"
-          />
+          <s-view-base-color :value="color" :size="size" />
         </div>
       </slot>
     </template>
     <v-card>
       <v-color-picker
-        :show-swatches="palette"
-        :swatches="getSwatches"
         v-if="showPicker"
         v-model="color"
-        hide-inputs
         full-width
       ></v-color-picker>
       <v-card-actions>
@@ -41,8 +33,6 @@ export default {
   props: {
     value: String,
     size: null,
-    classList: null,
-    palette: { type: Boolean, default: false },
   },
   data() {
     return {
@@ -50,17 +40,6 @@ export default {
     };
   },
   computed: {
-    getSwatches() {
-      if (!this.palette) return [];
-      let swatches = this.$store.getters["settings/getPalette"];
-      let res = [];
-      if (swatches) {
-        for (let el of swatches) {
-          res.push([el]);
-        }
-      }
-      return res;
-    },
     color: {
       get: function () {
         return this.value;

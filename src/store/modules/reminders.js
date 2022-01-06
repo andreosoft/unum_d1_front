@@ -1,6 +1,7 @@
 /** @format */
 
 import { axios, api } from '../../config';
+import dayjs from 'dayjs';
 export default {
   namespaced: true,
 
@@ -10,7 +11,6 @@ export default {
   },
   getters: {
     reminderBySource: (state) => (prop) => {
-      console.log('reminderBySource', prop);
       let reminder = state.reminders.find((el) => {
         if (el.sourceName == prop.name && el.sourceId == prop.id) {
           return true;
@@ -18,6 +18,7 @@ export default {
           return false;
         }
       });
+      console.log('reminderBySource', reminder, prop, state.reminders);
       return reminder || {};
     },
   },
@@ -50,6 +51,7 @@ export default {
         reminders = JSON.parse(localStorage.getItem('LocalUserReminders'));
         console.log('fetchReminders', reminders);
       }
+      //reminders = [];
       commit('SET_REMINDERS', reminders);
     },
     updateReminders({ dispatch, state }, data) {
@@ -57,9 +59,16 @@ export default {
         dispatch('fetchReminders');
       }
       let reminders = state.reminders || [];
-
-      console.log('updateReminders', data, reminders);
+      //reminders = [];
       let idx;
+      let duration = data.reminder.map((el) => {
+        return dayjs(el.includes('d') ? dayjs(data.date).startOf('day') : data.date)
+          .add(eval(el.replace('d', '*24').replace('h', '')) * -1, 'hour')
+          .format('YYYY-MM-DD HH:mm:ss');
+      });
+      data.duration = duration;
+      console.log('updateReminders', data, reminders);
+
       if (data?.id) {
         idx = reminders.findIndex((el) => {
           return el.id === data.id;
@@ -73,7 +82,6 @@ export default {
         reminders.push(data);
       }
       localStorage.setItem('LocalUserReminders', JSON.stringify(reminders));
-      console.log('LocalUserReminders', data, reminders);
       dispatch('fetchReminders');
     },
   },

@@ -73,10 +73,11 @@
         </v-autocomplete>
 
         <div class="pa-0 pr-1">
-          <a-input-color2
+          <s-input-color
             dense
             outlined
             hide-details
+            palette
             :model="{ title: $t('color') }"
             v-model="value.color"
             @input="$emit('input', value)"
@@ -124,7 +125,11 @@ export default {
     };
   },
   mounted() {},
-  computed: {},
+  computed: {
+    swatches() {
+      return this.$store.getters["settings/getPalette"];
+    },
+  },
   methods: {
     async onInput(e, el) {
       if (typeof e === "object" && e !== null) {

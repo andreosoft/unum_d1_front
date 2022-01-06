@@ -1,72 +1,137 @@
 <template>
-  <v-container class="pa-0 pb-3">
-    <v-list two-line>
-      <v-list-item-group v-model="selected" active-class="pink--text" multiple>
-        <template v-for="(item, index) in reminders">
-          <v-list-item :key="item.id">
-            <template v-slot:default="{ active }">
-              <v-list-item-content>
-                <v-list-item-title>{{ item.name }}</v-list-item-title>
+  <div class="pr-2" ref="patientsList">
+    <v-list
+      two-line
+      :height="heightReminder"
+      v-if="reminders && reminders.length"
+    >
+      <v-list-item
+        v-for="(item, index) in reminderSort"
+        :key="item.sourceId"
+        @click="clickReminder(item)"
+        v-show="reminderShow(item)"
+        :style="`background: ${item.color}`"
+      >
+        <template v-slot:default="{ active }">
+          <v-list-item-content>
+            <v-list-item-title>
+              {{ getEventName(item.sourceId) }}
+            </v-list-item-title>
 
-                <v-list-item-subtitle>какойто текст</v-list-item-subtitle>
-              </v-list-item-content>
+            <v-list-item-subtitle>{{ item.message }}</v-list-item-subtitle>
+          </v-list-item-content>
 
-              <v-list-item-action>
-                <v-list-item-action-text>
-                  {{ item.start | getDate }}
-                </v-list-item-action-text>
+          <v-list-item-action>
+            <v-list-item-action-text>
+              {{ item.date | getDate }} {{ item.date | getTime }}
+            </v-list-item-action-text>
 
-                <v-icon v-if="!active" color="grey lighten-1">
-                  mdi-star-outline
-                </v-icon>
+            <v-icon v-if="!active" color="grey lighten-1">
+              mdi-star-outline
+            </v-icon>
 
-                <v-icon v-else color="yellow darken-3"> mdi-star </v-icon>
-              </v-list-item-action>
-            </template>
-          </v-list-item>
-
-          <v-divider
-            v-if="index < reminders.length - 1"
-            :key="index"
-          ></v-divider>
+            <v-icon v-else color="yellow darken-3"> mdi-star </v-icon>
+          </v-list-item-action>
         </template>
-      </v-list-item-group>
+      </v-list-item>
     </v-list>
-  </v-container>
+    <div v-else>
+      <h4 class="mx-3">{{ $t("No reminders yet") }}</h4>
+    </div>
+  </div>
 </template> 
 
 <script>
 import dayjs from "dayjs";
-
+import _ from "lodash";
+import { mapGetters, mapState, mapActions } from "vuex";
 export default {
-  name: "EventsCard",
-  props: {
-    reminders: {
-      type: Array,
-      default: () => [],
-    },
-  },
+  name: "ReminderCard",
+  props: {},
   data() {
-    return { selected: [] };
+    return { selected: [], resize: 1 };
   },
   filters: {
     getDate(value) {
-      return dayjs(value.split(" ")[0]).format("DD.MM.YYYY");
+      return dayjs(value).format("DD.MM.YYYY");
     },
     getTime(value) {
-      const time = value.split(" ")[1];
-      return time.substr(0, 5);
+      return dayjs(value).format("HH:mm");
     },
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      reminders: (state) => state.reminders.reminders,
+      events: (state) => state.events.events,
+    }),
+    reminderSort() {
+      let res = this.reminders.sort((a, b) => {
+        let aa = _.min(a.duration.filter((el) => dayjs().isBefore(el)));
+        let bb = _.min(b.duration.filter((el) => dayjs().isBefore(el)));
+
+        if (aa < bb) {
+          return -1;
+        }
+        if (aa > bb) {
+          return 1;
+        }
+        return 0;
+      });
+      console.log(res);
+      return res;
+    },
+
+    heightReminder() {
+      if (!this.resize) {
+        return 200;
+      }
+      let heightList = this.$parent.$refs.patientsList.clientHeight;
+      let heightBar = this.$parent.$parent.$refs.mainBar.$el.clientHeight;
+      let heightMain = this.$parent.$parent.$refs.mainLayout.clientHeight;
+      let heightReminder = heightMain - heightBar - heightList; //this.$parent.$refs.reminder.clientHeight;
+      heightReminder =
+        heightReminder < 200
+          ? 200
+          : heightReminder > 400
+          ? 400
+          : heightReminder;
+      return heightReminder > window.innerHeight * 0.4
+        ? window.innerHeight * 0.4
+        : heightReminder;
+    },
+  },
+  watch: {},
+  created() {
+    window.addEventListener("resize", this.matchHeight);
+  },
+  mounted() {
+    this.$store.dispatch("reminders/fetchReminders");
+    //this.matchHeight();
+  },
+  methods: {
+    reminderShow(item) {
+      if (item.duration.filter((el) => dayjs().isBefore(el)).length)
+        return true;
+      return false;
+    },
+    clickReminder(e) {
+      e.duration.splice(0, 1);
+    },
+    getEventName(id) {
+      return this.events.find((el) => {
+        return el.id === id;
+      })?.name;
+    },
+    matchHeight() {
+      this.resize++;
+      //Vue.set(this.leftColStyles, 'height', heightString);
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-.records__item {
-  cursor: pointer;
-}
-.table-title {
-  width: 40%;
+.v-list {
+  overflow-y: auto;
 }
 </style>

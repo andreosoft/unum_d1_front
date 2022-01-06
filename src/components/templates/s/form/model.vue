@@ -4,7 +4,7 @@
       <component
         v-if="el.type"
         :config="el.config ? el.config : {}"
-        :is="'a-input-' + el.type"
+        :is="'s-input-' + el.type"
         :model="el"
         :values="data"
         :value="data[el.name]"
@@ -40,7 +40,6 @@ export default {
           tab: this.parentEl.tab,
         });
       }
-
       this.data[el.name] = e;
       this.$emit("validate", e);
     },

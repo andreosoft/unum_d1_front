@@ -31,19 +31,15 @@ const actions = {
         event.color ? '' : (event.color = '#CC0000');
         event.name ? '' : (event.name = event.patient);
       });
-
       commit('SET_EVENTS', res.data.data);
     });
   },
   createEvent({ commit }, data) {
-    console.log(api.addDoctorSchedule, data);
     return axios.post(api.addDoctorSchedule, data).then((res) => {
       // response handling
-      console.log(res);
     });
   },
   deleteEvent({}, id) {
-    console.log('deleting...', id);
     return axios
       .delete(api.deleteScheduleItem + `/${id}`)
       .then(() => {

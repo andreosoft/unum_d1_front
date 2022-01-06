@@ -8,12 +8,26 @@ export default {
     samples: null,
     servicesList: null,
     scheduleBasic: null,
+    defaults: {
+      servicesList: [],
+      scheduleBasic: { defaultTime: 60, defaultView: 'month' },
+    },
   },
   getters: {
     getSamples: (state) => (model) => {
       if (!model) return state.samples && state.samples;
       let ss = '';
       return state.samples && state.samples[model.toLowerCase()];
+    },
+    getCurrentBasis: (state) => {
+      let res = {};
+      for (let k of Object.keys(state.defaults.scheduleBasic)) {
+        res[k] = state.scheduleBasic[k] || state.defaults.scheduleBasic[k];
+      }
+      return res;
+    },
+    getPalette: (state) => {
+      return state.scheduleBasic?.userPalette || state.defaults.scheduleBasic?.userPalette || null;
     },
   },
   mutations: {
@@ -62,7 +76,8 @@ export default {
       dispatch('fetchServicesList');
     },
     fetchScheduleBasic({ commit }) {
-      let data = { defaultTime: 60, defaultView: 'month' };
+      //let data = { defaultTime: 60, defaultView: 'month', userPalette: [] };
+      let data = {};
       if (localStorage.getItem('LocalUserScheduleBasic')) {
         data = JSON.parse(localStorage.getItem('LocalUserScheduleBasic'));
       }

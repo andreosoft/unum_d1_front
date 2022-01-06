@@ -41,8 +41,6 @@
 </template>
 
 <script>
-import { getForm, submitForm, fillForm } from "./../templates/mixings";
-import { validate, validators } from "./../templates/mixings";
 export default {
   name: "SetSchedule",
   //mixins: [submitForm, fillForm, validate, validators],
@@ -64,6 +62,19 @@ export default {
           type: "select",
           options: ["month", "week"],
         },
+        {
+          name: "userPalette",
+          title: "palette of colors",
+          type: "palette",
+          default: [
+            "#FFEB3BFF",
+            "#8BC34AFF",
+            "#80DEEAFF",
+            "#B39DDBFF",
+            "#F48FB1FF",
+            "#FFAB91FF",
+          ],
+        },
       ],
       tabs: [
         {
@@ -82,11 +93,14 @@ export default {
       ],
       //  userSamples: [{ name: "test", apply: [], color: "", sample: "text" }],
       tabSelected: 0,
+      basicSetting: {},
     };
   },
   created() {
     this.$store.dispatch("settings/fetchServicesList");
     this.$store.dispatch("settings/fetchScheduleBasic");
+    this.basicSetting = this.$store.state.settings.scheduleBasic || {};
+
     this.fillForm();
   },
   computed: {
@@ -96,22 +110,46 @@ export default {
 
       //this.$store.state?.auth?.doctorProfile
     },
-    basic() {
-      return this.$store.state.settings.scheduleBasic;
+    defaults() {
+      return this.$store.state.settings.defaults.scheduleBasic;
+    },
+    basic1: {
+      get() {
+        return this.$store.state.settings.scheduleBasic;
+      },
+      set(v) {
+        this.$store.commit("settings/SET_SCHEDULE_BASIC", v);
+      },
     },
   },
   methods: {
+    getDefaults(el) {
+      console.log("getDefaults", el, this.defaults);
+      if (this.defaults && this.defaults[el.name] !== undefined)
+        return this.defaults[el.name];
+      if (el.default !== undefined) return el.default;
+      return null;
+    },
     fillForm() {
-      console.log("fillForm", this.basic);
-      this.data = Object.assign({}, this.data, { basic: this.basic });
+      //let basic = JSON.parse(JSON.stringify(this.basic));
+      let basic = this.basicSetting;
+      for (let el of this.model) {
+        if (!basic[el.name]) {
+          console.log("add setter", el.name);
+          basic = Object.assign({}, basic, {
+            [el.name]: this.getDefaults(el),
+          });
+        }
+      }
+      console.log("fillForm", basic);
+      this.data = Object.assign({}, this.data, { basic: basic });
     },
     changeBasic() {
       this.needSave = true;
       console.log("changeBasis");
     },
     saveBasic() {
-      console.log("saveBasic", this.basic);
-
+      console.log("saveBasic", this.data.basic);
       this.$store.dispatch("settings/updateScheduleBasic", this.data.basic);
       this.needSave = false;
     },
