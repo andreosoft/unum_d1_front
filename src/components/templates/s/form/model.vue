@@ -25,6 +25,7 @@ export default {
   computed: {
     data: {
       set(v) {
+        console.log("model set data");
         this.$emit("input", v);
       },
       get() {
@@ -34,6 +35,7 @@ export default {
   },
   methods: {
     async onInput(e, el) {
+      console.log("model onInput");
       if (this.parentEl) {
         el = Object.assign({}, el, {
           parent: this.parentEl.name,

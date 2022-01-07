@@ -41,36 +41,12 @@
         ></v-textarea>
       </v-flex>
       <v-flex d-flex xs12 pa-0 py-1>
-        <v-autocomplete
+        <s-input-autocomplete
           v-model="value.reminder"
-          :items="model.reminder"
-          outlined
-          dense
-          hide-details
-          chips
-          item-text="title"
-          item-value="name"
-          small-chips
-          label="reminder"
-          multiple
+          :items="getDuration"
+          :label="'Reminder'"
           @input="$emit('input', value)"
-        >
-          <template v-slot:selection="data">
-            <v-chip
-              v-bind="data.attrs"
-              :input-value="data.selected"
-              close
-              small
-              @click="data.select"
-              @click:close="remove(data.item)"
-            >
-              {{ $t(data.item.title) }}
-            </v-chip>
-          </template>
-          <template v-slot:item="data">
-            {{ $t(data.item.title) }}
-          </template>
-        </v-autocomplete>
+        />
 
         <div class="pa-0 pr-1">
           <s-input-color
@@ -128,6 +104,9 @@ export default {
   computed: {
     swatches() {
       return this.$store.getters["settings/getPalette"];
+    },
+    getDuration() {
+      return this.$store.getters["settings/getDuration"];
     },
   },
   methods: {

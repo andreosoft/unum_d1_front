@@ -79,7 +79,6 @@
                 <v-label :value="true" :absolute="true">
                   {{ $t("End") }}
                 </v-label>
-
                 <DatePicker v-model="endDate" />
                 <TimePicker v-model="endTime" />
               </template>
@@ -104,45 +103,11 @@
                   v-model="reminder.color"
                 />
               </div>
-              <v-autocomplete
+              <s-input-autocomplete
                 v-model="reminder.reminder"
-                :items="[
-                  '1d',
-                  '2d',
-                  '3d',
-                  '5d',
-                  '7d',
-                  '1h',
-                  '2h',
-                  '3h',
-                  '5h',
-                  '7h',
-                ]"
-                outlined
-                dense
-                hide-details
-                hide-selected
-                chips
-                small-chips
-                label="Reminder"
-                multiple
-                :menu-props="{ closeOnClick: true }"
-                @click:close="remove(data.item)"
-              >
-                <template v-slot:selection="data">
-                  <v-chip
-                    v-bind="data.attrs"
-                    :input-value="data.selected"
-                    close
-                    small
-                  >
-                    {{ $t(data.item) }}
-                  </v-chip>
-                </template>
-                <template v-slot:item="data">
-                  {{ $t(data.item) }}
-                </template>
-              </v-autocomplete>
+                :items="getDuration"
+                :label="'Reminder'"
+              />
             </v-flex>
             <v-flex d-flex sm12 md6 lg6 pa-1 pt-1>
               <v-textarea
@@ -207,6 +172,9 @@ export default {
       patients: (state) => state.patients.patients,
     }),
     ...mapGetters("reminders", { reminderBySource: "reminderBySource" }),
+    getDuration() {
+      return this.$store.getters["settings/getDuration"];
+    },
     servicesList() {
       return this.$store.state.settings.servicesList;
       //return this.$store.state.doctors.samples;
@@ -350,8 +318,8 @@ export default {
       //this.eventDefaultData.patient = patient;
     },
     remove(item) {
-      const index = this.value.apply.indexOf(item.name);
-      if (index >= 0) this.value.apply.splice(index, 1);
+      const index = this.reminder.reminder.indexOf(item);
+      if (index >= 0) this.reminder.reminder.splice(index, 1);
     },
     onColorChange(color) {
       this.eventDefaultData.color = color;

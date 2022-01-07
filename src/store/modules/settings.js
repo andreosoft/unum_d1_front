@@ -10,7 +10,7 @@ export default {
     scheduleBasic: null,
     defaults: {
       servicesList: [],
-      scheduleBasic: { defaultTime: 60, defaultView: 'month' },
+      scheduleBasic: { defaultTime: 60, defaultView: 'month', duration: ['1d', '2d', '3d', '5d', '7d', '1h', '2h', '3h', '5h', '7h'] },
     },
   },
   getters: {
@@ -28,6 +28,9 @@ export default {
     },
     getPalette: (state) => {
       return state.scheduleBasic?.userPalette || state.defaults.scheduleBasic?.userPalette || null;
+    },
+    getDuration: (state) => {
+      return state.scheduleBasic?.duration || state.defaults.scheduleBasic?.duration || null;
     },
   },
   mutations: {

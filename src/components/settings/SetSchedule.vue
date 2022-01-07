@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-tabs v-model="tabSelected" align-with-title>
-      <v-tab v-for="tab in tabs" :disabled="tab.disabled">
+      <v-tab v-for="tab in tabs" :key="tab.name" :disabled="tab.disabled">
         {{ $t(tab.title) }}
       </v-tab>
     </v-tabs>
@@ -20,7 +20,7 @@
               <s-form-model
                 v-model="data.basic"
                 :model="model"
-                @validate="changeBasic"
+                @validate="changeBasic($event)"
               />
             </v-col>
           </v-row>
@@ -47,7 +47,9 @@ export default {
   components: { ServcesForm: () => import("./Schedule/ServicesForm") },
   data() {
     return {
+      data: {},
       // basic: {},
+      ttt: null,
       needSave: false,
       model: [
         {
@@ -58,9 +60,13 @@ export default {
         {
           name: "defaultView",
           title: "default calendar view",
-          validator: [],
           type: "select",
           options: ["month", "week"],
+        },
+        {
+          name: "duration",
+          title: "durations for reminder",
+          type: "autocomplete",
         },
         {
           name: "userPalette",
@@ -94,16 +100,22 @@ export default {
       //  userSamples: [{ name: "test", apply: [], color: "", sample: "text" }],
       tabSelected: 0,
       basicSetting: {},
+      basic: {},
     };
   },
   created() {
     this.$store.dispatch("settings/fetchServicesList");
     this.$store.dispatch("settings/fetchScheduleBasic");
     this.basicSetting = this.$store.state.settings.scheduleBasic || {};
-
+    this.model.find((el) => {
+      return el.name == "duration";
+    }).options = JSON.parse(JSON.stringify(this.defaultDuration));
     this.fillForm();
   },
   computed: {
+    defaultDuration() {
+      return this.$store.state.settings.defaults?.scheduleBasic?.duration || [];
+    },
     services() {
       return this.$store.state.settings.servicesList;
       //return this.$store.state.doctors.samples;
@@ -131,8 +143,8 @@ export default {
       return null;
     },
     fillForm() {
-      //let basic = JSON.parse(JSON.stringify(this.basic));
-      let basic = this.basicSetting;
+      let basic = JSON.parse(JSON.stringify(this.basicSetting));
+      //let basic = this.basicSetting;
       for (let el of this.model) {
         if (!basic[el.name]) {
           console.log("add setter", el.name);
@@ -144,7 +156,19 @@ export default {
       console.log("fillForm", basic);
       this.data = Object.assign({}, this.data, { basic: basic });
     },
-    changeBasic() {
+    fillForm2() {
+      //let basic = JSON.parse(JSON.stringify(this.basicSetting));
+      let basic = this.basicSetting;
+      for (let el of this.model) {
+        if (!this.data[el.name]) {
+          console.log("add setter", el.name);
+          this.$set(this.data, el.name, this.getDefaults(el));
+        }
+      }
+      console.log("fillForm", basic);
+      //this.data = Object.assign({}, this.data, { basic: basic });
+    },
+    changeBasic(e) {
       this.needSave = true;
       console.log("changeBasis");
     },

@@ -27,7 +27,6 @@ export default {
   computed: {
     data: {
       set(v) {
-        console.log("model emit input", v);
         this.$emit("input", v);
       },
       get() {
