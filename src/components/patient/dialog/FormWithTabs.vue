@@ -8,7 +8,7 @@
         <v-tab-item v-for="(el, i) in model" :key="i">
           <v-row>
             <v-col :cols="8">
-              <a-form-model2
+              <s-form-model
                 v-model="data[el.name]"
                 :model="el.fields"
                 :parentEl="{ name: el.name, tab: tabName }"
@@ -23,24 +23,26 @@
                 <v-btn small>{{ $t("samples") }} </v-btn>
               </v-btn-toggle>
               <div v-if="toggleHistory === 0">
-                <li
-                  v-for="(els, i) in history[el.name]"
-                  v-if="els && els !== null"
-                >
-                  {{ $t(i) }}:
-                  <span v-for="el in els">{{ el.body }};<br /> </span>
+                <li v-for="(els, i) in history[el.name]">
+                  <div v-if="els && els !== null">
+                    {{ $t(i) }}:
+                    <span v-for="el in els">{{ el.body }};<br /> </span>
+                  </div>
                 </li>
               </div>
               <div v-else>
-                <v-chip
-                  class="ma-1"
-                  v-for="(el, i) of fillVar"
-                  :key="i"
-                  @click.stop="fillVariantInsert(el)"
-                  :color="el.color"
-                >
-                  {{ el.name }}
-                </v-chip>
+                <div v-if="fillVar && fillVar.length">
+                  <v-chip
+                    class="ma-1"
+                    v-for="(el, i) of fillVar"
+                    :key="i"
+                    @click.stop="fillVariantInsert(el)"
+                    :color="el.color"
+                  >
+                    {{ el.name }}
+                  </v-chip>
+                </div>
+                <div v-else>{{ $t("No any setted samples") }}</div>
               </div>
             </v-col>
           </v-row>
@@ -129,7 +131,7 @@ export default {
       },
     },
     fillVar() {
-      let res = this.$store.getters["doctors/getSamples"](this.tabName);
+      let res = this.$store.getters["settings/getSamples"](this.tabName);
       if (this.focusedName) {
         res =res.filter((el)=>{if (!el.apply.length) {return true;} return el.apply.includes(this.focusedName)})
         }

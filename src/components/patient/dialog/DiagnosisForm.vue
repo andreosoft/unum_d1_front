@@ -51,13 +51,16 @@
         </v-list-item>
       </div>
       <div v-show="choiseVariant == 2">
-        <v-chip
-          v-for="(el, i) of fillVar"
-          :key="i"
-          @click.stop="fillVariantInsert(el)"
-        >
-          {{ el.name }}
-        </v-chip>
+        <div v-if="fillVar && fillVar.length">
+          <v-chip
+            v-for="(el, i) of fillVar"
+            :key="i"
+            @click.stop="fillVariantInsert(el)"
+          >
+            {{ el.name }}
+          </v-chip>
+        </div>
+        <div v-else>{{ $t("No any setted samples") }}</div>
       </div>
     </v-col>
   </v-row>
@@ -79,17 +82,7 @@ export default {
   },
   data() {
     return {
-      fillVariants: [
-        { name: "набор", sample: "набор" },
-        { name: "слов", sample: "слов" },
-        { name: "ввода", sample: "для быстрого ввода" },
-        { name: "фраз", sample: "или фраз" },
-        { name: "текста", sample: "и даже целого текста" },
-        {
-          name: "форматированного",
-          sample: "и форматированного ввода \nимя:\n фамилия:\n",
-        },
-      ],
+      fillVariants: [],
       choiseVariant: 0,
       diagnosisItems: [],
       diagnosis: "",
@@ -156,8 +149,8 @@ export default {
   },
   computed: {
     fillVar() {
-      let res = this.$store.getters["doctors/getSamples"](this.tabName);
-      if (res) return res;
+      let res = this.$store.getters["settings/getSamples"](this.tabName);
+      return res;
       return this.fillVariants;
     },
 

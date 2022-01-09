@@ -91,7 +91,7 @@
                   <v-tab-item>
                     <v-col>
                       <PatientTabFiles
-                        :records="formattedClinicalRecords2"
+                        :records="records"
                         :titleArray="titleArray"
                       />
                     </v-col>

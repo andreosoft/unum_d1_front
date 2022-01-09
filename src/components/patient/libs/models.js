@@ -110,7 +110,7 @@ export default {
               name: 'Hardware_surveys_file',
               title: 'Прикрепленный файл',
               validator: [],
-              type: 'file',
+              type: 'filegroup',
               config: { multiple: true },
             },
           ],

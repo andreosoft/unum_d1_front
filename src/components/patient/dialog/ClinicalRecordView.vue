@@ -43,7 +43,7 @@
                   <tr>
                     <td>{{ $t("Diagnosis") }}</td>
                     <td>
-                      <clinical-record-element
+                      <ClinicalRecordElement
                         :element="diagnosis"
                         :titleArray="titleArray"
                       />
@@ -51,9 +51,8 @@
                   </tr>
                   <tr v-for="item in items">
                     <td>{{ $t(item) }}</td>
-
                     <td>
-                      <clinical-record-element
+                      <ClinicalRecordElement
                         :element="getData(item) && getData(item)"
                         :files="files"
                         :titleArray="titleArray"

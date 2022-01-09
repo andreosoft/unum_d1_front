@@ -75,7 +75,7 @@
           </v-tab-item>
           <v-tab-item>
             <v-col>
-              <diagnosisForm
+              <DiagnosisForm
                 v-model="data['diagnosis']"
                 :model="diagnosis"
                 :tabName="'diagnosis'"
@@ -171,7 +171,7 @@ import {
 import { createNamespacedHelpers } from "vuex";
 //import AnamnesisForm from "./AnamnesisForm.vue";
 import dayjs from "dayjs";
-import { getForm, submitForm, fillForm } from "./../../templates/mixings"; 
+import { getForm, submitForm, fillForm } from "./../../templates/mixings";
 import { buildObjects } from "./../mixings";
 import { api } from "@/config";
 const { mapState, mapActions } = createNamespacedHelpers("patients");
@@ -180,7 +180,6 @@ export default {
   mixins: [submitForm, fillForm, buildObjects],
   components: {
     AnamnesisForm: () => import("./AnamnesisForm.vue"),
-    SurveysForm: () => import("./SurveysForm.vue"),
     DiagnosisForm: () => import("./DiagnosisForm.vue"),
     FormWithTabs: () => import("./FormWithTabs.vue"),
     FormWithoutTabs: () => import("./FormWithoutTabs.vue"),
@@ -257,12 +256,9 @@ export default {
       ],
     };
   },
-  /*validateions: {
-    type_id: { required },
-    initialVisitId: { required: requiredIf((prop) => prop.type_id == 2) },
-  },*/
+
   created() {
-    this.$store.dispatch("doctors/fetchSamples");
+    this.$store.dispatch("settings/fetchSamples");
   },
   mounted() {
     if (!this.recordId) {

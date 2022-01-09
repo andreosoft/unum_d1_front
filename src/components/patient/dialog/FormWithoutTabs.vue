@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col :cols="8">
-      <a-form-model
+      <s-form-model
         v-model="data[model[0].name]"
         :model="model[0].fields"
         :parentEl="{ name: model[0].name, tab: tabName }"

@@ -7,7 +7,7 @@
             <b>{{ $t(getTitle(i)) }}</b>
           </td>
           <td class="text-xs-left">
-            <clinical-record-element
+            <ClinicalRecordElement
               v-if="typeof el === 'object'"
               :element="el"
               :titleArray="titleArray"

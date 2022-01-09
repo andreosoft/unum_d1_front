@@ -35,7 +35,7 @@ export default {
     },
   },
   methods: {
-    async onInput(e, el) {
+    async onInput(e, el) { 
       el = Object.assign({}, el, {
         parent: this.parentEl.name,
         tab: this.parentEl.tab,
