@@ -28,7 +28,7 @@
               <v-icon large v-bind="attrs" v-on="on">mdi-school-outline</v-icon>
             </template>
             <v-list>
-              <v-list-item v-for="el in videoList">
+              <v-list-item v-for="el in videoList" :key="el">
                 <v-list-item-title> {{ el }} </v-list-item-title>
               </v-list-item>
             </v-list>

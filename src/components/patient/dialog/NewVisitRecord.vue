@@ -23,7 +23,7 @@
           </v-toolbar-items>
         </v-toolbar>
         <v-tabs v-model="newRecordTab" align-with-title>
-          <v-tab v-for="tab in tabs" :disabled="tab.disabled">
+          <v-tab v-for="tab in tabs" :disabled="tab.disabled" :key="tab.name">
             {{ $t(tab.title) }}
           </v-tab>
         </v-tabs>
