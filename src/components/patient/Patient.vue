@@ -89,7 +89,12 @@
                     </v-col>
                   </v-tab-item>
                   <v-tab-item>
-                    <v-col> </v-col>
+                    <v-col>
+                      <PatientTabFiles
+                        :records="formattedClinicalRecords2"
+                        :titleArray="titleArray"
+                      />
+                    </v-col>
                   </v-tab-item>
                 </v-tabs-items>
               </v-flex>
@@ -134,6 +139,7 @@ import { createNamespacedHelpers } from "vuex";
 
 //import ClinicalRecordDialog from "./ClinicalRecordDialog.vue";
 import PatientTabAnamnesis from "./tab/PatientTabAnamnesis";
+import PatientTabFiles from "./tab/PatientTabFiles";
 import PatientTabClinicalRecords from "./tab/PatientTabClinicalRecords";
 import PatientAvatarAndName from "./PatientAvatarAndName";
 import NewVisitRecord from "./dialog/NewVisitRecord";
@@ -145,11 +151,12 @@ export default {
   mixins: [models, buildObjects],
   name: "Patient",
   components: {
-   // ClinicalRecordDialog,
+    // ClinicalRecordDialog,
     PatientInfo: () => import("./PatientInfo.vue"),
     NewVisitRecord,
     PatientTabAnamnesis,
     PatientTabClinicalRecords,
+    PatientTabFiles,
     PatientAvatarAndName,
     VideoDialog,
   },
@@ -193,7 +200,7 @@ export default {
           title: "Uploaded files",
           active: false,
           id: 4,
-          disabled: true,
+          disabled: false,
         },
       ],
       drawer: false,

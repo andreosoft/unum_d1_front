@@ -11,10 +11,10 @@
           <v-divider class="mt-1 mb-3"></v-divider>
           <v-row>
             <v-col>
-              <SampleForm2
+              <SampleForm
                 v-model="samples"
                 :model="{ name: t.name, apply: genApplyList(t.name) }"
-              ></SampleForm2>
+              ></SampleForm>
             </v-col>
           </v-row>
         </v-col>
@@ -31,7 +31,6 @@ export default {
   name: "SetClinicalRecord",
   components: {
     SampleForm: () => import("./ClinicalRecord/SampleForm"),
-    SampleForm2: () => import("./ClinicalRecord/SampleForm2"),
   },
   props: {
     back: "",

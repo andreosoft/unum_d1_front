@@ -48,7 +48,7 @@
           @input="$emit('input', value)"
         />
 
-        <div class="pa-0 pr-1">
+        <div class="pa-0 pl-1">
           <s-input-color
             dense
             outlined

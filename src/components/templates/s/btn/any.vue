@@ -7,6 +7,7 @@
         v-on="on"
         :disabled="disabled"
         @click="$emit('btnClick')"
+        :class="classBtn"
       >
         <v-icon v-if="icon.length">{{ icon }} </v-icon>
         <div v-else>{{ $t(title) }}</div>
@@ -25,6 +26,7 @@ export default {
     },
     title: { type: String, default: "button" },
     icon: { type: String, default: " mdi-gesture-tap-button" },
+    classBtn: [String, Object],
   },
 };
 </script>

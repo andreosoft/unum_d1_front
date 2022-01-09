@@ -1,37 +1,35 @@
 <template>
-  <div>
-    <v-autocomplete
-      :value="value"
-      @input="$emit('input', $event)"
-      :items="getItems"
-      item-text="name"
-      item-value="name"
-      outlined
-      dense
-      hide-details
-      hide-selected
-      chips
-      :label="$t(label || model.title)"
-      multiple
-      :menu-props="{ closeOnClick: true }"
-    >
-      <template v-slot:selection="data">
-        <v-chip
-          v-bind="data.attrs"
-          :input-value="data.selected"
-          close
-          small
-          @click="data.select"
-          @click:close="remove(data.item)"
-        >
-          {{ $t(data.item) }}
-        </v-chip>
-      </template>
-      <template v-slot:item="data">
+  <v-autocomplete
+    :value="value"
+    @input="$emit('input', $event)"
+    :items="getItems"
+    item-text="name"
+    item-value="name"
+    outlined
+    dense
+    hide-details
+    hide-selected
+    chips
+    :label="$t(label || model.title)"
+    multiple
+    :menu-props="{ closeOnClick: true }"
+  >
+    <template v-slot:selection="data">
+      <v-chip
+        v-bind="data.attrs"
+        :input-value="data.selected"
+        close
+        small
+        @click="data.select"
+        @click:close="remove(data.item)"
+      >
         {{ $t(data.item) }}
-      </template>
-    </v-autocomplete>
-  </div>
+      </v-chip>
+    </template>
+    <template v-slot:item="data">
+      {{ $t(data.item) }}
+    </template>
+  </v-autocomplete>
 </template>
 
 <script>

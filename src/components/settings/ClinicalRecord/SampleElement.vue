@@ -1,56 +1,90 @@
 <template>
-  <v-layout row wrap>
-    <v-flex d-flex xs6 pa-0>
-      <v-layout row wrap pa-1 align-content-start>
-        <v-flex d-flex xs12 pa-0>
-          <v-layout row>
-            <v-flex d-flex xs8 pa-1>
-              <v-text-field
+  <v-flex d-flex xs12 pa-0>
+    <v-layout row wrap pa-1 align-content-start>
+      <v-flex d-flex xs12 pa-0>
+        <v-layout row>
+          <v-flex d-flex xs8 pa-1>
+            <v-text-field
+              dense
+              outlined
+              hide-details
+              v-model="value.name"
+              :label="$t('name')"
+              @input="$emit('input', value)"
+            ></v-text-field>
+          </v-flex>
+
+          <v-flex d-flex xs4 pa-1 pl-0>
+            <div class="pa-0 pr-1">
+              <a-input-color2
                 dense
                 outlined
                 hide-details
-                v-model="value.name"
-                :label="$t('name')"
-                @input="$emit('input', value)"
-              ></v-text-field>
-            </v-flex>
-            <v-flex d-flex xs4 pa-1>
-              <v-text-field
-                dense
-                outlined
-                hide-details
-                :label="$t('color')"
+                :model="{ title: $t('color') }"
                 v-model="value.color"
-              >
-              </v-text-field>
-            </v-flex>
-          </v-layout>
-        </v-flex>
-        <v-flex d-flex xs12 pa-0 py-1>
-          <v-text-field
-            dense
-            hide-details
-            outlined
-            :value="value.apply"
-            :label="$t('apply')"
-            @input="$emit('input', $event.target.value)"
-          ></v-text-field>
-        </v-flex>
-      </v-layout>
-    </v-flex>
-    <v-flex d-flex xs6 pa-0 px-1>
-      <v-textarea
-        auto-grow
-        rows="4"
-        dense
-        hide-details
-        outlined
-        v-model="value.sample"
-        :label="$t('sample')"
-        @input="$emit('input', value)"
-      ></v-textarea>
-    </v-flex>
-  </v-layout>
+                @input="$emit('input', value)"
+              />
+            </div>
+
+            <v-text-field
+              dense
+              outlined
+              type="number"
+              hide-details
+              :label="$t('order')"
+              v-model="value.order"
+              @input="$emit('input', value)"
+            >
+            </v-text-field>
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex d-flex xs12 pa-0 py-1>
+        <v-autocomplete
+          v-model="value.apply"
+          :items="model.apply"
+          outlined
+          dense
+          hide-details
+          chips
+          item-text="title"
+          item-value="name"
+          small-chips
+          label="Apply"
+          multiple
+          @input="$emit('input', value)"
+        >
+          <template v-slot:selection="data">
+            <v-chip
+              v-bind="data.attrs"
+              :input-value="data.selected"
+              close
+              small
+              @click="data.select"
+              @click:close="remove(data.item)"
+            >
+              {{ $t(data.item.title) }}
+            </v-chip>
+          </template>
+          <template v-slot:item="data">
+            {{ $t(data.item.title) }}
+          </template>
+        </v-autocomplete>
+      </v-flex>
+      <v-flex d-flex xs12 pa-0>
+        <v-textarea
+          auto-grow
+          rows="4"
+          dense
+          hide-details
+          outlined
+          v-model="value.sample"
+          :label="$t('sample')"
+          @input="$emit('input', value)"
+        ></v-textarea>
+      </v-flex>
+    </v-layout>
+  </v-flex>
 </template>
 
 <script>
@@ -86,6 +120,10 @@ export default {
       } else {
         this.data[el.name] = e;
       }
+    },
+    remove(item) {
+      const index = this.value.apply.indexOf(item.name);
+      if (index >= 0) this.value.apply.splice(index, 1);
     },
   },
 };

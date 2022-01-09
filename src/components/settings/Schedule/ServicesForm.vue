@@ -4,69 +4,38 @@
       <v-layout py-2 row wrap>
         <v-flex sm6 xs12 grow pa-1 sm-pb-0>
           <v-flex sm12 xs12 grow pa-0 pb-1>
-            <v-tooltip top>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  @click="save"
-                  :class="{ primary: !needSave, error: needSave }"
-                  :disabled="!needSave"
-                  depressed
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-check </v-icon>
-                </v-btn>
-              </template>
-              <span>{{ $t("Save") }}</span>
-            </v-tooltip>
-            <v-tooltip top>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  @click="cancelEdit"
-                  :disabled="!needSave"
-                  depressed
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-close-thick </v-icon>
-                </v-btn>
-              </template>
-              <span>{{ $t("Cancel") }}</span>
-            </v-tooltip>
-            <v-tooltip top>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  @click="addElement"
-                  :disabled="needSave"
-                  depressed
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-plus-thick </v-icon>
-                </v-btn>
-              </template>
-              <span>{{ $t("Add") }}</span>
-            </v-tooltip>
-            <v-tooltip top>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  @click="delElement"
-                  :disabled="!element"
-                  depressed
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-delete-forever </v-icon>
-                </v-btn>
-              </template>
-              <span>{{ $t("Delete") }}</span>
-            </v-tooltip>
+            <SBtnAny
+              title="Save"
+              icon="mdi-check"
+              @btnClick="save"
+              :disabled="!needSave"
+              :classBtn="{ primary: !needSave, error: needSave }"
+            />
+            <SBtnAny
+              title="Cancel"
+              icon="mdi-close-thick"
+              @btnClick="cancelEdit"
+              :disabled="!needSave"
+            />
+
+            <SBtnAny
+              title="Add"
+              icon="mdi-plus-thick"
+              @btnClick="addElement"
+              :disabled="needSave"
+            />
+            <SBtnAny
+              title="Delete"
+              icon="mdi-delete-forever"
+              @btnClick="delElement"
+              :disabled="!element"
+            />
           </v-flex>
           <div v-if="elements.length">
             <Element
               :value="element"
               :model="model"
-              @input="onInput2($event)"
+              @input="onInput($event)"
               v-if="element"
               :key="key"
             />
@@ -81,6 +50,7 @@
               :key="i"
               @click.stop="needSave ? true : (curElement = i)"
               :color="el.color"
+              class="ml-1 mt-1"
             >
               <v-icon left v-if="i === curElement"> mdi-pencil-outline </v-icon>
               {{ el.name }}
@@ -163,11 +133,12 @@ export default {
   methods: {
     cancelEdit() {
       if (this.origElement) {
-        console.log(this.origElement);
-        this.onInput2(JSON.parse(this.origElement));
-
+        let original = JSON.parse(this.origElement);
+        Object.keys(original).forEach((k) => {
+          this.element[k] = original[k];
+        });
         this.needSave = this.isNew;
-        this.key++;
+
       }
     },
     addElement() {
@@ -188,16 +159,9 @@ export default {
       this.needSave = false;
       this.isNew = false;
     },
-    async onInput(e, el) {
-      console.log("onInput", el, e);
-      if (typeof e === "object" && e !== null) {
-        Object.assign(this.data, e);
-      } else {
-        this.data[el.name] = e;
-      }
-    },
-    async onInput2(e) {
-      //console.log("onInput", i, e, this.samples[i]);
+
+    async onInput(e) {
+      console.log("onInput", e);
 
       this.element = e;
     },

@@ -1,11 +1,12 @@
 <template>
-  <div class="pr-2" ref="patientsList">
+  <div class="pr-2" ref="">
     <v-list
       two-line
       :height="heightReminder"
       v-if="reminders && reminders.length"
     >
       <v-list-item
+        ref="listItem"
         v-for="(item, index) in reminderSort"
         :key="item.sourceId"
         @click="clickReminder(item)"
@@ -77,7 +78,6 @@ export default {
         }
         return 0;
       });
-      console.log(res);
       return res;
     },
 
@@ -85,9 +85,16 @@ export default {
       if (!this.resize) {
         return 200;
       }
+      if (this.$refs.listItem)
+        console.log(
+          "listItem",
+          this.$refs.listItem.clientHeight,
+          this.reminders?.length
+        );
       let heightList = this.$parent.$refs.patientsList.clientHeight;
       let heightBar = this.$parent.$parent.$refs.mainBar.$el.clientHeight;
       let heightMain = this.$parent.$parent.$refs.mainLayout.clientHeight;
+      let HeightListItem = this.$parent.$refs.patientsList.clientHeight;
       let heightReminder = heightMain - heightBar - heightList; //this.$parent.$refs.reminder.clientHeight;
       heightReminder =
         heightReminder < 200
@@ -95,6 +102,7 @@ export default {
           : heightReminder > 400
           ? 400
           : heightReminder;
+      if (!this.reminders || this.reminders?.length < 2) heightReminder = 90;
       return heightReminder > window.innerHeight * 0.4
         ? window.innerHeight * 0.4
         : heightReminder;

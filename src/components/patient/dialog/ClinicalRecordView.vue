@@ -49,14 +49,7 @@
                       />
                     </td>
                   </tr>
-                  <tr
-                    v-for="item in [
-                      'anamnesis',
-                      'surveys',
-                      'appointments',
-                      'recomendations',
-                    ]"
-                  >
+                  <tr v-for="item in items">
                     <td>{{ $t(item) }}</td>
 
                     <td>
@@ -107,6 +100,7 @@ export default {
   },
   data() {
     return {
+      items: ["anamnesis", "surveys", "appointments", "recomendations"],
       EditVisitDialog: false,
     };
   },
