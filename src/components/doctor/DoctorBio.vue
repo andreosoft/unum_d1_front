@@ -10,15 +10,15 @@
           :userId="userId"
         />
         <div>
-          <p class="mb-1 doctor-info__text">
-            {{ lastName || getCommonTranslation("Surname") }}
-            {{ firstName || getCommonTranslation("Name") }}
-            {{ middleName || getCommonTranslation("Middle name") }}
+          <p class="mb-1 doctor-info__text pt-5">
+            {{ lastName || $t("Surname") }}
+            {{ firstName || $t("Name") }}
+            {{ middleName || $t("Middle name") }}
           </p>
           <p class="mb-1 doctor-info__text doctor-info__text--spec">
             <span v-if="doctorSpecialty">{{ doctorSpecialty }}</span>
             <span v-else class="grey--text text--lighten-1">
-              {{ getCommonTranslation("No specialty") }}
+              {{ $t("No specialty") }}
             </span>
           </p>
         </div>
@@ -79,9 +79,8 @@ export default {
     ...Actions_chat(["createNewChat", "fetchChats"]),
     async createChat() {
       const chat_id = await this.createNewChat(this.userId);
-      this.fetchChats()
-      this.$router.push({name: "Chat", params: { chatId: chat_id }})
-
+      this.fetchChats();
+      this.$router.push({ name: "Chat", params: { chatId: chat_id } });
     },
   },
 };

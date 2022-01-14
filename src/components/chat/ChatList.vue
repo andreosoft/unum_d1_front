@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      activeItem: 1,
+      activeItem: null,
     };
   },
   computed: {
@@ -35,18 +35,20 @@ export default {
     ...Getters_doctors(["imageSrc"]),
     ...State_auth(["userProfile"]),
     sortedChats() {
-      const copy = JSON.parse(JSON.stringify(this.getChatsButConsilliums))
-      const withLastMessage = []
-      const noLastMessage = []
+      const copy = JSON.parse(JSON.stringify(this.getChatsButConsilliums));
+      const withLastMessage = [];
+      const noLastMessage = [];
       copy.map((item, index) => {
         if (item.last_message.length) {
-          withLastMessage.push(item)
+          withLastMessage.push(item);
         } else {
-          noLastMessage.push(item)
+          noLastMessage.push(item);
         }
-      })
-      withLastMessage.sort((a, b) => a.last_message[0].createdon < b.last_message[0].createdon ? 1 : -1)
-      return [...withLastMessage, ...noLastMessage]
+      });
+      withLastMessage.sort((a, b) =>
+        a.last_message[0].createdon < b.last_message[0].createdon ? 1 : -1
+      );
+      return [...withLastMessage, ...noLastMessage];
     },
   },
   watch: {

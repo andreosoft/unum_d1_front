@@ -1,6 +1,6 @@
 <template>
   <v-dialog :value="dialog" :max-width="600" @input="$emit('close')">
-    <v-card class="pa-3">
+    <v-card class="pa-5">
       <v-card-title class="pa-0 mb-3">
         {{ getDoctorTranslation("Enter patient email") }}
       </v-card-title>

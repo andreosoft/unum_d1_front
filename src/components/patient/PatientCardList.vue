@@ -10,7 +10,7 @@
         lg="2"
         :class="{
           'pa-1': $vuetify.breakpoint.smAndDown,
-          'pa-2': !$vuetify.breakpoint.smAndDown,
+          'pa-2': !$vuetify.breakpoint.smAndDown, 
         }"
       >
         <v-hover>

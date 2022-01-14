@@ -1,12 +1,12 @@
 <template>
   <v-dialog :value="dialog" :max-width="600" @click:outside="clickOutside">
     <v-card class="py-3 px-6">
-      <v-card-title class="pa-0 pt-3">
-        {{ getDoctorTranslation("New patient") }}
+      <v-card-title class="pa-0 pb-4 pt-3">
+        {{ $t("New patient") }}
       </v-card-title>
       <form @submit.prevent="createNewPatientHandler">
         <v-text-field
-          :label="getCommonTranslation('Surname')"
+          :label="$t('Surname')"
           outlined
           dense
           class="mb-2"
@@ -14,7 +14,7 @@
         >
         </v-text-field>
         <v-text-field
-          :label="getCommonTranslation('Name')"
+          :label="$t('Name')"
           outlined
           dense
           class="mb-2"
@@ -22,7 +22,7 @@
         >
         </v-text-field>
         <v-text-field
-          :label="getCommonTranslation('Middle name')"
+          :label="$t('Middle name')"
           outlined
           dense
           class="mb-2"
@@ -31,11 +31,14 @@
         </v-text-field>
         <v-input
           dense
-          class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
+          class="
+            v-input--is-label-active v-input--is-dirty
+            v-text-field v-text-field--is-booted
+          "
         >
           <template v-slot:default>
             <v-label :value="true" :absolute="true">{{
-              getCommonTranslation("Date of birth")
+              $t("Date of birth")
             }}</v-label>
             <div class="d-inline-block">
               <v-dialog
@@ -64,7 +67,7 @@
                     color="blue darken-1"
                     @click="showBirthdayPicker = false"
                   >
-                    {{ getCommonTranslation("Cancel") }}
+                    {{ $t("Cancel") }}
                   </v-btn>
                   <v-btn text color="blue darken-1" @click="onChange">
                     ок
@@ -80,14 +83,14 @@
           @update="numberInput"
           show-code-on-list
           :translations="{
-            countrySelectorLabel: getCommonTranslation('Country code'),
-            phoneNumberLabel: getCommonTranslation('Phone'),
+            countrySelectorLabel: $t('Country code'),
+            phoneNumberLabel: $t('Phone'),
           }"
           class="mb-7"
           no-example
         />
         <v-text-field
-          :label="getCommonTranslation('Email')"
+          :label="$t('Email')"
           hide-details
           dense
           outlined
@@ -99,10 +102,10 @@
 
         <v-spacer class="mb-6"></v-spacer>
         <v-btn class="mr-3" @click="resetForm">
-          {{ getCommonTranslation("Cancel") }}
+          {{ $t("Cancel") }}
         </v-btn>
         <v-btn type="submit" :disabled="isInvalid">
-          {{ getCommonTranslation("Create") }}
+          {{ $t("Create") }}
         </v-btn>
       </form>
     </v-card>
@@ -115,10 +118,7 @@ import dayjs from "dayjs";
 
 const { mapState, mapActions } = createNamespacedHelpers("patients");
 const { mapState: State_auth } = createNamespacedHelpers("auth");
-const {
-  mapState: State_lang,
-  mapGetters: Getters_lang,
-} = createNamespacedHelpers("lang");
+
 export default {
   name: "NewPatientDialog",
   props: {
@@ -146,10 +146,13 @@ export default {
   computed: {
     ...mapState(["patients"]),
     ...State_auth(["userProfile"]),
-    ...State_lang(["doctor", "common"]),
-    ...Getters_lang(["getDoctorTranslation", "getCommonTranslation"]),
+    //...State_lang(["doctor", "common"]),
     isInvalid() {
-      if (this.newPatient.name === "" || this.newPatient.surname === "" || this.newPatient.birthday === "") {
+      if (
+        this.newPatient.name === "" ||
+        this.newPatient.surname === "" ||
+        this.newPatient.birthday === ""
+      ) {
         return true;
       }
       return false;
@@ -178,8 +181,8 @@ export default {
       this.createNewPatient(data);
       this.resetForm();
     },
-    capitalizeString(str = '') {
-      if (!str.length) return ''
+    capitalizeString(str = "") {
+      if (!str.length) return "";
       return str[0].toUpperCase() + str.slice(1);
     },
     onChange() {

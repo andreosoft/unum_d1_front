@@ -76,6 +76,7 @@ export default {
   },
   mounted() {
     this.$store.dispatch("settings/fetchSamples");
+    this.$route.params.desc = "Samples for clinical record";
   },
   computed: {
     samples() {

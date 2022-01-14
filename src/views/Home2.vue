@@ -3,7 +3,7 @@
     <v-layout wrap row pa-2>
       <v-flex xs12 order-xs3 order-sm3 order-md1 ref="patientsList">
         <div v-if="patients.length">
-          <h2 class="mx-3">{{ $t("My patients") }}</h2>
+          <h2 class="mx-3 pb-3 pt-3">{{ $t("My patients") }}</h2>
           <PatientsCardList :patients="patientsList" />
         </div>
         <div v-else>

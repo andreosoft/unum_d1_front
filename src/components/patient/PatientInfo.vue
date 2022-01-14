@@ -40,6 +40,10 @@ export default {
       data: {},
       infoModel: [
         {
+          name: "birthday",
+          title: "дата рождения",
+        },
+        {
           name: "sex",
           title: "пол",
         },
@@ -126,15 +130,19 @@ export default {
         return el[0].body + " <br> ";
       });
       this.infoModel[this.indexInfo["allergy"]].data = elt;
-      this.infoModel[this.indexInfo["allergy"]].value =
-        elData && elData.length ? `есть (${elData.length})` : "???";
+      if (elData && elData.length)
+        this.infoModel[this.indexInfo["allergy"]].value =
+          elData && elData.length ? `есть (${elData.length})` : "???";
       elData = getKeyByValue(this.fAnamnesis, "chronic_diseases");
       elt = elData.map((el) => {
         return el[0].body + " <br> ";
       });
       this.infoModel[this.indexInfo["chronicDiseases"]].data = elt;
-      this.infoModel[this.indexInfo["chronicDiseases"]].value =
-        elData && elData.length ? `есть (${elData.length})` : "???";
+      if (elData && elData.length)
+        this.infoModel[this.indexInfo["chronicDiseases"]].value =
+          elData && elData.length ? `есть (${elData.length})` : "???";
+      this.infoModel[this.indexInfo["birthday"]].value =
+        this.patient?.birthday || "N/A";
     },
   },
   created() {

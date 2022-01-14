@@ -9,7 +9,7 @@
               outlined
               hide-details
               v-model="value.name"
-              :label="$t('name')"
+              :label="getTitle('name')"
               @input="$emit('input', value)"
             ></v-text-field>
           </v-flex>
@@ -31,7 +31,7 @@
               outlined
               type="number"
               hide-details
-              :label="$t('order')"
+              :label="getTitle('order')"
               v-model="value.order"
               @input="$emit('input', value)"
             >
@@ -50,7 +50,7 @@
           item-text="title"
           item-value="name"
           small-chips
-          label="Apply"
+          :label="getTitle('apply')"
           multiple
           @input="$emit('input', value)"
         >
@@ -79,7 +79,7 @@
           hide-details
           outlined
           v-model="value.sample"
-          :label="$t('sample')"
+          :label="getTitle('sample')"
           @input="$emit('input', value)"
         ></v-textarea>
       </v-flex>
@@ -94,6 +94,7 @@ export default {
   props: {
     value: Object,
     model: Object,
+    title: Object,
     disabled: {
       type: Boolean,
       default: false,
@@ -114,6 +115,9 @@ export default {
   mounted() {},
   computed: {},
   methods: {
+    getTitle(v) {
+      return this.$t(this.title?.[v] || v);
+    },
     async onInput(e, el) {
       if (typeof e === "object" && e !== null) {
         Object.assign(this.data, e);

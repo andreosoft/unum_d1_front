@@ -65,6 +65,7 @@
           :to="{ name: link.name }"
           :exact="link.name === 'Dashboard'"
           class="nav-links__item"
+          v-if="!link.hide"
         >
           <v-list-item-icon class="ml-0">
             <v-icon>{{ link.icon }}</v-icon>
@@ -77,7 +78,7 @@
         <v-list-item>
           <v-list-item-action>
             <v-btn color="primary" @click="logout('en')">
-              {{ getCommonTranslation("Sign out") }}
+              {{ $t("Sign out") }}
             </v-btn>
           </v-list-item-action>
         </v-list-item>
@@ -137,6 +138,7 @@ export default {
           title: this.getCommonTranslation("Consilliums"),
           icon: "mdi-forum",
           notification: this.$root.consiliumNotification,
+          hide: true,
         },
         {
           name: "Doctors",

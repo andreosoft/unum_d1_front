@@ -9,7 +9,7 @@
               outlined
               hide-details
               v-model="value.name"
-              :label="$t('name')"
+              :label="getTitle('name')"
               @input="$emit('input', value)"
             ></v-text-field>
           </v-flex>
@@ -20,7 +20,7 @@
               outlined
               type="number"
               hide-details
-              :label="$t('time')"
+              :label="getTitle('time')"
               v-model="value.time"
               @input="$emit('input', value)"
             >
@@ -36,7 +36,7 @@
           hide-details
           outlined
           v-model="value.description"
-          :label="$t('description')"
+          :label="getTitle('description')"
           @input="$emit('input', value)"
         ></v-textarea>
       </v-flex>
@@ -44,7 +44,7 @@
         <s-input-autocomplete
           v-model="value.reminder"
           :items="getDuration"
-          :label="'Reminder'"
+          :label="getTitle('reminder')"
           @input="$emit('input', value)"
         />
 
@@ -68,7 +68,7 @@
           hide-details
           outlined
           v-model="value.message"
-          :label="$t('message')"
+          :label="getTitle('message')"
           @input="$emit('input', value)"
         ></v-textarea>
       </v-flex>
@@ -83,6 +83,8 @@ export default {
   props: {
     value: Object,
     model: Object,
+    title: Object,
+
     disabled: {
       type: Boolean,
       default: false,
@@ -110,6 +112,9 @@ export default {
     },
   },
   methods: {
+        getTitle(v) {
+      return this.$t(this.title?.[v] || v);
+    },
     async onInput(e, el) {
       if (typeof e === "object" && e !== null) {
         Object.assign(this.data, e);

@@ -35,6 +35,7 @@
             <sample-element
               :value="sample"
               :model="model"
+              :title="title"
               @input="onInput($event)"
               v-if="sample"
               :key="key"
@@ -44,7 +45,7 @@
         </v-flex>
         <v-flex sm6 xs12 pa-0 px-1 pb-1 v-if="samples.length">
           <v-card outlined min-height="100" height="100%">
-            <v-card-subtitle>Your's samples</v-card-subtitle>
+            <v-card-subtitle>{{ $t("Your patterns") }} </v-card-subtitle>
             <v-chip
               class="ml-1 mt-1"
               v-for="(el, i) of samples"
@@ -58,7 +59,7 @@
           </v-card>
         </v-flex>
       </v-layout>
-      <div v-if="!samples.length">No matching any samples</div>
+      <div v-if="!samples.length">{{ $t("No matching any samples") }}</div>
     </v-container>
   </div>
 </template>
@@ -88,6 +89,11 @@ export default {
       status: 0,
       color: null,
       sampleTemp: { name: "", apply: [], color: "", sample: "", order: 0 },
+      title: {
+        name: "Pattern name",
+        apply: "Pattern apply",
+        sample: "Pattern text",
+      },
       samples: [],
       curSample: null,
       origSample: "",

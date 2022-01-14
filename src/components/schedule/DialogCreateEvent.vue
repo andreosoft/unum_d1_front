@@ -13,14 +13,15 @@
           :disabled="!editingEvent"
         />
         <s-btn-any
+          :classBtn="'ml-1'"
           :title="'Patient card'"
           :icon="'mdi-account-details'"
           @btnClick="$emit('showPatientCard')"
           :disabled="!selectedPatient"
         />
       </v-card-title>
-      <v-card-text>
-        <v-layout row wrap>
+      <v-card-text class="pt-4">
+        <v-layout wrap>
           <v-flex d-flex pa-1 xs12>
             <v-combobox
               dense
@@ -63,8 +64,10 @@
                 <v-label :value="true" :absolute="true">
                   {{ $t("Start") }}
                 </v-label>
-                <DatePicker v-model="startDate" />
-                <TimePicker v-model="startTime" />
+                <v-flex d-flex pt-2>
+                  <DatePicker v-model="startDate" />
+                  <TimePicker v-model="startTime" />
+                </v-flex>
               </template>
             </v-input>
           </v-flex>
@@ -79,8 +82,10 @@
                 <v-label :value="true" :absolute="true">
                   {{ $t("End") }}
                 </v-label>
-                <DatePicker v-model="endDate" />
-                <TimePicker v-model="endTime" />
+                <v-flex d-flex pt-2>
+                  <DatePicker v-model="endDate" />
+                  <TimePicker v-model="endTime"
+                /></v-flex>
               </template>
             </v-input>
           </v-flex>
@@ -93,7 +98,7 @@
           </v-flex>
           <v-flex d-flex flex-wrap v-if="hasReminder" pa-0>
             <v-flex d-flex sm12 md6 lg6 pa-1>
-              <div class="pa-0 pr-1">
+              <div class="pa-0 pr-2">
                 <s-input-color
                   dense
                   outlined

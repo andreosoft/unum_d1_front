@@ -28,7 +28,7 @@
         <v-card
           v-if="selectedChat && selectedChat.type !== 1"
           tile
-          style="box-shadow: 0px 4px 8px rgba(186, 186, 186, 0.25);"
+          style="box-shadow: 0px 4px 8px rgba(186, 186, 186, 0.25)"
           class="mb-3 pa-4"
         >
           <v-card-title class="pa-0">Участники</v-card-title>
@@ -47,7 +47,7 @@
             small
             class="pa-0"
             @click="selectedChatParticipantsShort = false"
-            >{{ $_lang_getDoctorTranslation("Show all") }}</v-btn
+            >{{ $t("Show all") }}</v-btn
           >
         </v-card>
 
@@ -81,7 +81,8 @@ const { mapState, mapActions } = createNamespacedHelpers("chats");
 const { mapState: State_auth } = createNamespacedHelpers("auth");
 const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
 const { mapState: State_patients } = createNamespacedHelpers("patients");
-const { mapState: State_doctors, mapGetters: Getters_doctors } = createNamespacedHelpers("doctors");
+const { mapState: State_doctors, mapGetters: Getters_doctors } =
+  createNamespacedHelpers("doctors");
 import ChatWindowToolbar from "./ChatWindowToolbar";
 import MessagesList from "./MessagesList";
 import CompanionInfo from "./CompanionInfo";
@@ -114,17 +115,17 @@ export default {
     ...State_auth(["userProfile"]),
     ...State_patients(["patients"]),
     ...State_doctors(["doctors"]),
-    ...Getters_doctors(['getDoctorByUserId']),
+    ...Getters_doctors(["getDoctorByUserId"]),
     formattedMessages() {
       const messages = [...this.messages];
       const result = messages.reduce((prev, item, index, arr) => {
-        item.showDate = true
+        item.showDate = true;
         if (arr[index - 1]) {
           if (
             dayjs(arr[index - 1].createdon).format("YYYY-MM-DD") ===
             dayjs(arr[index].createdon).format("YYYY-MM-DD")
           ) {
-            item.showDate = false
+            item.showDate = false;
           }
         }
         if (item.user_id !== this.getUserId) {
@@ -204,15 +205,19 @@ export default {
     },
     isCompanionPatient() {
       if (this.selectedChat && this.selectedChat.type === 1) {
-        const user_id = this.selectedChat.participants.find(item => item.user_id !== this.userProfile.id).user_id
+        const user_id = this.selectedChat.participants.find(
+          (item) => item.user_id !== this.userProfile.id
+        ).user_id;
         const users = [...this.patients, ...this.doctors];
         const user = users.find((user) => user.user_id === user_id);
-        return user.doctor_id === null
+        return user.doctor_id === null;
       }
     },
     getCompanionID() {
-      const notMe = this.selectedChat?.participants.find(i => i.user_id !== this.userProfile.user_id)
-      return notMe.user_id
+      const notMe = this.selectedChat?.participants.find(
+        (i) => i.user_id !== this.userProfile.user_id
+      );
+      return notMe.user_id;
     },
   },
   methods: {

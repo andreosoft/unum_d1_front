@@ -24,7 +24,13 @@
                   })
                 "
               >
-                <v-card-text style="height: 65px; overflow: hidden">
+                <v-card-title class="justify-center"
+                  ><v-icon large>{{ el.icon }}</v-icon>
+                </v-card-title>
+                <v-card-text
+                  style="height: 65px; overflow: hidden"
+                  class="justify-center text-center"
+                >
                   {{ $t(el.description) }}
                 </v-card-text>
               </v-card>
@@ -48,10 +54,12 @@ export default {
         {
           component: "SetClinicalRecord",
           description: "Samples for clinical record",
+          icon: "mdi-folder-cog-outline",
         },
         {
           component: "SetSchedule",
           description: "Schedules settings",
+          icon: "mdi-calendar-edit",
         },
       ],
     };

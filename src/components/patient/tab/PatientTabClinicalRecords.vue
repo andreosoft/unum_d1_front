@@ -1,5 +1,5 @@
 <template>
-  <div class="records__list mb-3">
+  <div>
     <v-treeview hoverable :items="records" :open="openRecord">
       <template v-slot:label="{ item }">
         <div @click.stop="clickOnNode(item)" class="text-wrap">
@@ -9,10 +9,17 @@
           {{ getDoctorSpecialty(item.doctor_id).toLowerCase() }}
           {{ getDoctorName(item.doctor_id) | shortname }})&nbsp;
         </div>
+        <v-divider class="mt-1 mb-2"></v-divider>
       </template>
       <template v-slot:append="{ item }">
         <div>
-          <v-btn right @click.prevent="showVisitDialog(item)">
+          <v-btn
+            right
+            @click.prevent="showVisitDialog(item)"
+            outlined
+            rounded
+            small
+          >
             {{ $t("View") }}
           </v-btn>
         </div>

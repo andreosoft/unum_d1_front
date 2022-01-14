@@ -112,6 +112,9 @@ export default {
     }).options = JSON.parse(JSON.stringify(this.defaultDuration));
     this.fillForm();
   },
+  mounted() {
+    this.$route.params.desc = "Schedules settings";
+  },
   computed: {
     defaultDuration() {
       return this.$store.state.settings.defaults?.scheduleBasic?.duration || [];

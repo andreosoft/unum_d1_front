@@ -35,6 +35,7 @@
             <Element
               :value="element"
               :model="model"
+              :title="title"
               @input="onInput($event)"
               v-if="element"
               :key="key"
@@ -44,7 +45,7 @@
         </v-flex>
         <v-flex sm6 xs12 pa-0 px-1 pb-1 v-if="elements.length">
           <v-card outlined min-height="100" height="100%">
-            <v-card-subtitle>{{ $t("Your's services") }}</v-card-subtitle>
+            <v-card-subtitle>{{ $t("Your services") }}</v-card-subtitle>
             <v-chip
               v-for="(el, i) of elements"
               :key="i"
@@ -95,6 +96,13 @@ export default {
         color: "",
         message: "",
       },
+      title: {
+        name: "Service name",
+        time: "Remind duration",
+        description: "Service description",
+        message: "Reminder message",
+        reminder: "Remind time",
+      },
       elements: [],
       curElement: null,
       origElement: "",
@@ -138,7 +146,6 @@ export default {
           this.element[k] = original[k];
         });
         this.needSave = this.isNew;
-
       }
     },
     addElement() {
