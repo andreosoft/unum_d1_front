@@ -122,7 +122,7 @@ export default {
             //if (jsonData) console.log('fill', el.name, jsonData?.[el.name.toLowerCase()]);
             if (el.name.toLowerCase().substring(el.name.toLowerCase().length - 5) === '_file' && typeof v === 'boolean') {
               if (this?.record?.attachedFiles) {
-                console.log('files',this?.record?.attachedFiles);
+                console.log('files', this?.record?.attachedFiles);
                 v = JSON.parse(this.record.attachedFiles)[el.name.toLowerCase()];
               } else {
                 v = null;
@@ -136,6 +136,7 @@ export default {
     },
     buildAnamnesisForm() {
       //    let anamnesis = this.fillModelFields('anamnesis');
+      if (this.loading) return false;
       if (!this.records && !this.patient) {
         console.log('buildAnamnesisForm empty1');
         return false;
@@ -228,7 +229,7 @@ export default {
           }
         });
       //  console.log(objA);
-      this.loading = false;
+      // this.loading = false;
       return objA;
     },
     fillFormData(src, dst) {

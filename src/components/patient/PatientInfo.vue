@@ -26,7 +26,7 @@ export default {
     },
     model: Array,
     fAnamnesis: {},
-    patient: {
+    patient1: {
       type: Object,
       default: () => {},
     },
@@ -38,7 +38,8 @@ export default {
   data() {
     return {
       data: {},
-      infoModel: [
+      infoModel: [],
+      info: [
         {
           name: "birthday",
           title: "дата рождения",
@@ -90,6 +91,9 @@ export default {
 
       return res;
     },
+    patient() {
+      return this.$store.state.patients.selectedPatient;
+    },
   },
   methods: {
     testClick() {
@@ -97,6 +101,7 @@ export default {
     },
 
     fillInfoPanel() {
+      this.infoModel = JSON.parse(JSON.stringify(this.info));
       //      this.$log("selectedPatient", this.$store.getters.selectedPatient);
       let info = JSON.parse(this.patient.info);
       this.infoModel.forEach((el) => {
@@ -124,7 +129,7 @@ export default {
       //this.$log("use AnamnesisForm in patient info");
       let elData;
 
-      this.infoModel[this.indexInfo["sex"]].value = "male";
+      // this.infoModel[this.indexInfo["sex"]].value = "male";
       elData = getKeyByValue(this.fAnamnesis.anamnesis.allergic_anamnesis);
       let elt = elData.map((el) => {
         return el[0].body + " <br> ";
@@ -141,13 +146,13 @@ export default {
       if (elData && elData.length)
         this.infoModel[this.indexInfo["chronicDiseases"]].value =
           elData && elData.length ? `есть (${elData.length})` : "???";
-      this.infoModel[this.indexInfo["birthday"]].value =
-        this.patient?.birthday || "N/A";
+      this.infoModel[this.indexInfo["birthday"]].value = this.patient?.birthday;
     },
   },
   created() {
     this.fillInfoPanel();
   },
+  mounted() {},
 };
 </script>
 

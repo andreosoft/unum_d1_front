@@ -26,12 +26,13 @@
             <v-list-item-action-text>
               {{ item.date | getDate }} {{ item.date | getTime }}
             </v-list-item-action-text>
-
-            <v-icon v-if="!active" color="grey lighten-1">
+            <!--
+            <v-icon v-if="active" color="grey lighten-1">
               mdi-star-outline
             </v-icon>
 
             <v-icon v-else color="yellow darken-3"> mdi-star </v-icon>
+            -->
           </v-list-item-action>
         </template>
       </v-list-item>
@@ -67,16 +68,16 @@ export default {
     }),
     reminderSort() {
       let res = this.reminders.sort((a, b) => {
-        let aa = _.min(a.duration.filter((el) => dayjs().isBefore(el)));
-        let bb = _.min(b.duration.filter((el) => dayjs().isBefore(el)));
-
+        let aa = _.min(a.duration.filter((el) => dayjs().isAfter(el)));
+        let bb = _.min(b.duration.filter((el) => dayjs().isAfter(el)));
+        let r = 0;
         if (aa < bb) {
-          return -1;
+          r = -1;
         }
         if (aa > bb) {
-          return 1;
+          r = 1;
         }
-        return 0;
+        return r;
       });
       return res;
     },
@@ -118,12 +119,20 @@ export default {
   },
   methods: {
     reminderShow(item) {
-      if (item.duration.filter((el) => dayjs().isBefore(el)).length)
+      if (
+        item.duration.filter((el) => {
+          if (dayjs().isAfter(el)) {
+            return true;
+          }
+          return false;
+        }).length
+      )
         return true;
       return false;
     },
     clickReminder(e) {
       e.duration.splice(0, 1);
+      this.$store.dispatch("reminders/updateReminder", e);
     },
     getEventName(id) {
       return this.events.find((el) => {

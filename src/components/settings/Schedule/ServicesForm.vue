@@ -40,7 +40,7 @@
               v-if="element"
               :key="key"
             />
-            <div v-else>Select sample for edit or add new</div>
+            <div v-else>{{ $t("Select service for edit or add new") }}</div>
           </div>
         </v-flex>
         <v-flex sm6 xs12 pa-0 px-1 pb-1 v-if="elements.length">
@@ -49,7 +49,13 @@
             <v-chip
               v-for="(el, i) of elements"
               :key="i"
-              @click.stop="needSave ? true : (curElement = i)"
+              @click.stop="
+                needSave
+                  ? true
+                  : curElement == i
+                  ? (curElement = null)
+                  : (curElement = i)
+              "
               :color="el.color"
               class="ml-1 mt-1"
             >
@@ -161,8 +167,7 @@ export default {
 
     save() {
       console.log("save", this.elements, this.model.name);
-
-      this.$store.dispatch("settings/updateServicesList", this.elements);
+      this.$store.dispatch("settings/updateServicesList", this.element);
       this.needSave = false;
       this.isNew = false;
     },

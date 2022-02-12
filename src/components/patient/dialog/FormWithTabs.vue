@@ -23,7 +23,7 @@
                 <v-btn small>{{ $t("samples") }} </v-btn>
               </v-btn-toggle>
               <div v-if="toggleHistory === 0">
-                <li v-for="(els, i) in history[el.name]">
+                <li v-for="(els, i) in history[el.name]" :key="i">
                   <div v-if="els && els !== null">
                     {{ $t(i) }}:
                     <span v-for="el in els">{{ el.body }};<br /> </span>
@@ -103,7 +103,7 @@ export default {
         txt.sample +
         (value ? value.substring(cursorPos) : "");
       cursorPos += txt.sample.length;
-      this.data.[this.model[this.tab].name].[this.focusedName]=out
+      this.data.[this.model[this.tab].name].[this.focusedName]=out;
       //this.focusedName = out;
       //      console.log(out, this.data["diagnosis"]["diagnosComments"]);
       // this.data[this.focusedName] = out;
@@ -131,6 +131,7 @@ export default {
       },
     },
     fillVar() {
+
       let res = this.$store.getters["settings/getSamples"](this.tabName);
       if (this.focusedName) {
         res =res.filter((el)=>{if (!el.apply.length) {return true;} return el.apply.includes(this.focusedName)})

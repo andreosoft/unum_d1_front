@@ -127,6 +127,7 @@
         v-model="showEventForm"
         :editingEvent="editingEvent"
         :eventDefaultData="eventDefaultData"
+        :doctorProfile="doctorProfile"
         @refresh="refreshEvents"
         @showPatientCard="pushToPatientCard"
         @deleteEvent="deleteEventHandler"

@@ -8,7 +8,15 @@
       <v-icon> mdi-account-box </v-icon>
       {{ $t("Show patient info") }}
     </div>
-    <v-row>
+
+    <div v-if="loading" class="loader">
+      <v-progress-circular
+        indeterminate
+        width="3"
+        size="20"
+      ></v-progress-circular>
+    </div>
+    <v-row v-else>
       <v-col v-show="$vuetify.breakpoint.mdAndUp" cols="3">
         <PatientAvatarAndName />
         <PatientInfo
@@ -44,17 +52,21 @@
         <PatientAvatarAndName />
         <PatientInfo
           v-if="!loading"
-          :patient="patient"
+          :patient="selectedPatient"
           :records="records"
           :fAnamnesis="formAnamnesis"
         />
-        <v-btn @click="testClick">video</v-btn>
       </v-navigation-drawer>
       <v-col cols="12" md="9">
         <v-card :elevation="0" rounded="0">
           <v-container>
             <v-tabs v-model="tab" center-active>
-              <v-tab v-for="tab in tabs" :key="tab.id" :disabled="tab.disabled">
+              <v-tab
+                v-for="tab in tabs"
+                :key="tab.id"
+                :disabled="tab.disabled"
+                class="ml-0"
+              >
                 {{ $t(tab.title) }}
               </v-tab>
             </v-tabs>
@@ -263,12 +275,6 @@ export default {
       });
       return result_array;
     },
-    /*
-    formAnamnesis() {
-      console.log(this.selectedPatient);
-      return true;
-    },
-*/
   },
 
   watch: {
@@ -283,22 +289,13 @@ export default {
   },
   methods: {
     ...mapActions(["fetchSelectedPatient", "fetchPatientClinicalRecordsById"]),
-    testClick(e) {
-      //this.$log("showVideoDialog = true", this.showVideoDialog);
-      //      this.showVideoDialog = true;
-    },
-
-    /*    download(id) {
-      return `http://api.neomedy.com/api${api.getFile}/${id}`;
-    },
-    */
   },
-  created() {
+  async created() {
     console.log("created patient");
     this.loading = true;
-
-    this.fetchPatientClinicalRecordsById(this.$route.params.id);
-    this.fetchSelectedPatient(this.$route.params.id);
+    await this.fetchSelectedPatient(this.$route.params.id);
+    await this.fetchPatientClinicalRecordsById(this.$route.params.id);
+    this.loading = false;
   },
   mounted() {},
 };

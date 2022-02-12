@@ -156,6 +156,7 @@ export default {
     value: false,
     editingEvent: false,
     eventDefaultData: Object,
+    doctorProfile: Object,
   },
   data() {
     return {
@@ -243,8 +244,11 @@ export default {
     },
   },
   watch: {
+    /*  reminderBySource(v) {
+      this.reminder = v;
+    },*/
     reminder(v) {
-      return;
+      //  return;
       console.log("watch reminder", v);
       if (v?.reminder?.length) {
         this.hasReminder = true;
@@ -358,9 +362,20 @@ export default {
         if (this.hasReminder && this.reminder?.reminder) {
           let reminder = JSON.parse(JSON.stringify(this.reminder));
           reminder.sourceName = "event";
-          reminder.sourceId = payload.id;
+          reminder.sourceId = this.eventDefaultData.id;
           reminder.date = payload.start;
-          await this.$store.dispatch("reminders/updateReminders", reminder);
+          let duration = reminder.reminder.map((el) => {
+            return dayjs(
+              el.includes("d")
+                ? dayjs(reminder.date).startOf("day")
+                : reminder.date
+            )
+              .add(eval(el.replace("d", "*24").replace("h", "")) * -1, "hour")
+              .format("YYYY-MM-DD HH:mm:ss");
+          });
+          reminder.duration = duration;
+          reminder.userId = this.doctorProfile.id;
+          await this.$store.dispatch("reminders/updateReminder", reminder);
         }
         //this.fetchEvents(this.eventsDate);
       } catch (error) {

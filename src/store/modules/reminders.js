@@ -24,11 +24,20 @@ export default {
   },
   mutations: {
     SET_REMINDERS(state, payload) {
-      state.reminders = payload;
+      //    state.reminders = payload;
+      state.reminders = [];
+      payload.forEach((el) => {
+        try {
+          let reminder = JSON.parse(el.data);
+          reminder.id = el.id;
+          state.reminders.push(reminder);
+        } catch (e) {}
+      });
+      console.log('SET_REMINDERS', payload, state.reminders);
     },
   },
   actions: {
-    fetchReminderBySource({ commit }, prop) {
+    /*   fetchReminderBySource({ commit }, prop) {
       let reminders = [];
       let reminder = {};
       if (localStorage.getItem('LocalUserReminders')) {
@@ -44,17 +53,38 @@ export default {
         }
       }
       commit('SET_REMINDER', reminder);
-    },
+    },*/
     fetchReminders({ commit }) {
-      let reminders = [];
+      /*    let reminders = [];
       if (localStorage.getItem('LocalUserReminders')) {
         reminders = JSON.parse(localStorage.getItem('LocalUserReminders'));
         console.log('fetchReminders', reminders);
-      }
+      }*/
       //reminders = [];
-      commit('SET_REMINDERS', reminders);
+      // commit('SET_REMINDERS', reminders);
+      return axios.get(api.userReminder, { params: { filters: { user_id: 125 } } }).then((res) => {
+        if (res?.data?.data) {
+          commit('SET_REMINDERS', res.data.data);
+        }
+      });
     },
-    updateReminders({ dispatch, state }, data) {
+    updateReminder({ dispatch, state }, data) {
+      let id = data?.id;
+      let user_id = data?.userId;
+      delete data.id;
+      delete data.userId;
+      return axios.post(api.userReminder, { id, name: 'samples', user_id, date_event: data.date, data: JSON.stringify(data) }).then((res) => {
+        // response handling
+        dispatch('fetchReminders');
+      });
+
+      return axios.post(api.userReminder, data).then((res) => {
+        // response handling
+        dispatch('fetchReminders');
+      });
+    },
+
+    /*    updateReminders({ dispatch, state }, data) {
       if (!state.reminder) {
         dispatch('fetchReminders');
       }
@@ -83,6 +113,6 @@ export default {
       }
       localStorage.setItem('LocalUserReminders', JSON.stringify(reminders));
       dispatch('fetchReminders');
-    },
+    },*/
   },
 };

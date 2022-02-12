@@ -33,14 +33,14 @@
           </v-flex>
           <div v-if="samples.length">
             <sample-element
-              :value="sample"
+              :value="sample" 
               :model="model"
               :title="title"
               @input="onInput($event)"
               v-if="sample"
               :key="key"
             />
-            <div v-else>Select sample for edit or add new</div>
+            <div v-else>{{ $t("Select sample for edit or add new") }}</div>
           </div>
         </v-flex>
         <v-flex sm6 xs12 pa-0 px-1 pb-1 v-if="samples.length">
@@ -50,7 +50,13 @@
               class="ml-1 mt-1"
               v-for="(el, i) of samples"
               :key="i"
-              @click.stop="needSave ? true : (curSample = i)"
+              @click.stop="
+                needSave
+                  ? true
+                  : curSample === i
+                  ? (curSample = null)
+                  : (curSample = i)
+              "
               :color="el.color"
             >
               <v-icon left v-if="i === curSample"> mdi-pencil-outline </v-icon>
@@ -88,7 +94,14 @@ export default {
       loading: false,
       status: 0,
       color: null,
-      sampleTemp: { name: "", apply: [], color: "", sample: "", order: 0 },
+      sampleTemp: {
+        name: "",
+        apply: [],
+        color: "",
+        sample: "",
+        order: 0,
+        target: "",
+      },
       title: {
         name: "Pattern name",
         apply: "Pattern apply",
@@ -103,12 +116,18 @@ export default {
     };
   },
   created() {
-    this.samples = this.value?.[this.model.name] || [];
+    //this.samples = this.value?.[this.model.name] || [];
+
+    this.samples =
+      this.value?.filter((sample) => sample?.target === this.model.name) || [];
+    this.sampleTemp.target = this.model.name;
   },
   mounted() {},
   watch: {
     value(v) {
-      this.samples = v?.[this.model.name] || [];
+      // this.samples = v?.[this.model.name] || [];
+      this.samples =
+        v.filter((sample) => sample?.target === this.model.name) || [];
     },
     curSample(v) {
       this.origSample = JSON.stringify(this.samples[v]);
@@ -148,14 +167,15 @@ export default {
       this.isNew = true;
     },
     delElement() {
-      this.samples.splice(this.curSample, 1);
-      this.save();
+      //this.samples.splice(this.curSample, 1);
+
+      //this.save();
+      this.$store.dispatch("settings/deleteSample", this.sample.id);
+      this.needSave = false;
+      this.isNew = false;
     },
     save() {
-      this.$store.dispatch("settings/updateSamples", [
-        this.samples,
-        this.model.name,
-      ]);
+      this.$store.dispatch("settings/updateSample", this.sample);
       this.needSave = false;
       this.isNew = false;
     },

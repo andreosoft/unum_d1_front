@@ -1,23 +1,21 @@
 <template>
   <v-container fluid>
     <v-tabs v-model="tabSelected" align-with-title>
-      <v-tab v-for="tab in tabs" :disabled="tab.disabled">
+      <v-tab v-for="tab in tabs" :disabled="tab.disabled" class="ml-0">
         {{ $t(tab.title) }}
       </v-tab>
     </v-tabs>
     <v-tabs-items v-model="tabSelected">
       <v-tab-item v-for="(t, i) in tabs" :key="i">
-        <v-col>
-          <v-divider class="mt-1 mb-3"></v-divider>
-          <v-row>
-            <v-col>
-              <SampleForm
-                v-model="samples"
-                :model="{ name: t.name, apply: genApplyList(t.name) }"
-              ></SampleForm>
-            </v-col>
-          </v-row>
-        </v-col>
+        <v-divider class="mt-1 mb-3"></v-divider>
+        <v-row>
+          <v-col>
+            <SampleForm
+              v-model="samples"
+              :model="{ name: t.name, apply: genApplyList(t.name) }"
+            ></SampleForm>
+          </v-col>
+        </v-row>
       </v-tab-item>
     </v-tabs-items>
   </v-container>
@@ -88,10 +86,10 @@ export default {
   },
   methods: {
     genApplyList(n) {
+      //берем структуру модели из model.js
       let model = this["model" + upperFirst(n)];
       let res = [];
       if (!model) return [];
-      //console.log("genApplyList", n);
       for (let [i, el] of model.entries()) {
         res.push({ name: el.name, title: el.title });
       }

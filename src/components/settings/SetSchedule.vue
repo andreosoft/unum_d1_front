@@ -1,7 +1,12 @@
 <template>
   <v-container fluid>
     <v-tabs v-model="tabSelected" align-with-title>
-      <v-tab v-for="tab in tabs" :key="tab.name" :disabled="tab.disabled">
+      <v-tab
+        v-for="tab in tabs"
+        :key="tab.name"
+        :disabled="tab.disabled"
+        class="ml-0"
+      >
         {{ $t(tab.title) }}
       </v-tab>
     </v-tabs>
@@ -128,14 +133,14 @@ export default {
     defaults() {
       return this.$store.state.settings.defaults.scheduleBasic;
     },
-    basic1: {
+    /*   basic1: {
       get() {
         return this.$store.state.settings.scheduleBasic;
       },
       set(v) {
         this.$store.commit("settings/SET_SCHEDULE_BASIC", v);
       },
-    },
+    },*/
   },
   methods: {
     getDefaults(el) {
@@ -159,7 +164,7 @@ export default {
       console.log("fillForm", basic);
       this.data = Object.assign({}, this.data, { basic: basic });
     },
-    fillForm2() {
+    /*   fillForm2() {
       //let basic = JSON.parse(JSON.stringify(this.basicSetting));
       let basic = this.basicSetting;
       for (let el of this.model) {
@@ -171,6 +176,7 @@ export default {
       console.log("fillForm", basic);
       //this.data = Object.assign({}, this.data, { basic: basic });
     },
+    */
     changeBasic(e) {
       this.needSave = true;
       console.log("changeBasis");

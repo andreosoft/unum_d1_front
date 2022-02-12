@@ -21,6 +21,7 @@ const mutations = {
     state.patients = payload;
   },
   SET_SELECTED_PATIENT(state, payload) {
+    console.log('SET_SELECTED_PATIENT');
     state.selectedPatient = payload;
   },
   SET_CLINICAL_RECORDS(state, payload) {
