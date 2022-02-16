@@ -1,5 +1,6 @@
 <template>
   <v-flex d-flex xs12 pa-0>
+    {{ model.apply }}
     <v-layout row wrap pa-1 align-content-start>
       <v-flex d-flex xs12 pa-0>
         <v-layout row>
@@ -40,6 +41,12 @@
         </v-layout>
       </v-flex>
       <v-flex d-flex xs12 pa-0 py-1>
+        <s-input-autocomplete
+          v-model="value.apply"
+          :items="model.apply"
+          :label="getTitle('apply')"
+          @input="$emit('input', value)"
+        />
         <v-autocomplete
           v-model="value.apply"
           :items="model.apply"
@@ -62,6 +69,7 @@
               small
               @click="data.select"
               @click:close="remove(data.item)"
+              class="mt-1"
             >
               {{ $t(data.item.title) }}
             </v-chip>

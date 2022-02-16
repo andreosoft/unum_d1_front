@@ -22,6 +22,7 @@
         small
         @click="data.select"
         @click:close="remove(data.item)"
+        class="mt-1"
       >
         {{ $t(data.item) }}
       </v-chip>

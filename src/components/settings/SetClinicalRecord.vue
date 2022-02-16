@@ -1,21 +1,28 @@
 <template>
-  <v-container fluid>
-    <v-tabs v-model="tabSelected" align-with-title>
-      <v-tab v-for="tab in tabs" :disabled="tab.disabled" class="ml-0">
+  <v-container fluid pt-0 pa-2>
+    <v-tabs v-model="tabSelected" show-arrows>
+      <v-tab
+        v-for="tab in tabs"
+        :key="tab.name"
+        :disabled="tab.disabled"
+        class="ml-0 px-3"
+      >
         {{ $t(tab.title) }}
       </v-tab>
     </v-tabs>
     <v-tabs-items v-model="tabSelected">
       <v-tab-item v-for="(t, i) in tabs" :key="i">
-        <v-divider class="mt-1 mb-3"></v-divider>
-        <v-row>
-          <v-col>
-            <SampleForm
-              v-model="samples"
-              :model="{ name: t.name, apply: genApplyList(t.name) }"
-            ></SampleForm>
-          </v-col>
-        </v-row>
+        <v-col class="pt-1 pa-2">
+          <v-divider class="mt-1 mb-2"></v-divider>
+          <v-row>
+            <v-col>
+              <SampleForm
+                v-model="samples"
+                :model="{ name: t.name, apply: genApplyList(t.name) }"
+              ></SampleForm>
+            </v-col>
+          </v-row>
+        </v-col>
       </v-tab-item>
     </v-tabs-items>
   </v-container>

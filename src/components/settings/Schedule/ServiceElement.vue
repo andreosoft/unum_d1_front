@@ -112,7 +112,7 @@ export default {
     },
   },
   methods: {
-        getTitle(v) {
+    getTitle(v) {
       return this.$t(this.title?.[v] || v);
     },
     async onInput(e, el) {

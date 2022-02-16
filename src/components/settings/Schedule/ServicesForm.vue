@@ -31,7 +31,7 @@
               :disabled="!element"
             />
           </v-flex>
-          <div v-if="elements.length">
+          <div v-if="elements.length" class="pt-1">
             <Element
               :value="element"
               :model="model"

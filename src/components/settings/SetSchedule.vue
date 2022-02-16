@@ -1,19 +1,19 @@
 <template>
-  <v-container fluid>
+  <v-container fluid pt-0 pa-2>
     <v-tabs v-model="tabSelected" align-with-title>
       <v-tab
         v-for="tab in tabs"
         :key="tab.name"
         :disabled="tab.disabled"
-        class="ml-0"
+        class="ml-0 px-3"
       >
         {{ $t(tab.title) }}
       </v-tab>
     </v-tabs>
     <v-tabs-items v-model="tabSelected">
       <v-tab-item>
-        <v-col>
-          <v-divider class="mt-1 mb-3"></v-divider>
+        <v-col class="pt-1 pa-2">
+          <v-divider class="mt-1 mb-2"></v-divider>
           <v-row>
             <s-btn-any
               :title="'Save'"
@@ -33,7 +33,7 @@
       </v-tab-item>
       <v-tab-item>
         <v-col>
-          <v-divider class="mt-1 mb-3"></v-divider>
+          <v-divider class="mt-1 mb-2"></v-divider>
           <v-row>
             <v-col>
               <ServcesForm v-model="services" :model="{}"></ServcesForm>

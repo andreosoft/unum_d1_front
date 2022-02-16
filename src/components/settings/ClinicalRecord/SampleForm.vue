@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container grid-list-md>
+    <v-container grid-list-md pa-0>
       <v-layout py-2 row wrap>
         <v-flex sm6 xs12 grow pa-1 sm-pb-0>
           <v-flex sm12 xs12 grow pa-0 pb-1>
@@ -31,9 +31,9 @@
               :disabled="!sample"
             />
           </v-flex>
-          <div v-if="samples.length">
+          <div v-if="samples.length" class="pt-1" >
             <sample-element
-              :value="sample" 
+              :value="sample"
               :model="model"
               :title="title"
               @input="onInput($event)"
