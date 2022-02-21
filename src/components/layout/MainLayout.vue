@@ -236,4 +236,12 @@ export default {
 .v-list-item__subtitle {
   font-weight: 300;
 }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

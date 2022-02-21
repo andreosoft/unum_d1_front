@@ -18,22 +18,22 @@
         <form @submit.prevent="signUpHandler">
           <div v-show="step === 0">
             <p class="form__title">
-              {{ $t("Contact information") }}
+              {{ getCommonTranslation("Contact information") }}
             </p>
             <v-text-field
               v-model="$v.email.$model"
               :error="$v.email.$error"
               :error-messages="
                 userError && !$v.email.required
-                  ? $t('Field is required')
+                  ? getCommonTranslation('Field is required')
                   : userError && !$v.email.emailValidation
-                  ? $t('Enter correct email')
+                  ? getCommonTranslation('Enter correct email')
                   : ''
               "
               dense
               outlined
               @input="$v.email.$reset"
-              :label="$t('Email')"
+              :label="getCommonTranslation('Email')"
             >
             </v-text-field>
             <vue-phone-number-input
@@ -41,8 +41,8 @@
               :default-country-code="countryCode"
               show-code-on-list
               :translations="{
-                countrySelectorLabel: $t('Country code'),
-                phoneNumberLabel: $t('Phone'),
+                countrySelectorLabel: getCommonTranslation('Country code'),
+                phoneNumberLabel: getCommonTranslation('Phone'),
               }"
               no-example
               class="mb-7"
@@ -52,15 +52,15 @@
               :error="$v.password.$error"
               :error-messages="
                 userError && !$v.password.required
-                  ? $t('Field is required')
+                  ? getCommonTranslation('Field is required')
                   : userError && !$v.password.minLength
-                  ? $t('Password length error')
+                  ? getCommonTranslation('Password length error')
                   : ''
               "
               dense
               outlined
               @input="$v.password.$reset"
-              :label="$t('Password')"
+              :label="getCommonTranslation('Password')"
               :type="showPassword ? 'text' : 'password'"
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               @click:append="showPassword = !showPassword"
@@ -71,13 +71,13 @@
               :error="$v.passwordConfirmation.$error"
               :error-messages="
                 userError && !$v.passwordConfirmation.sameAsPassword
-                  ? $t('Password match error')
+                  ? getCommonTranslation('Password match error')
                   : ''
               "
               dense
               outlined
               @input="$v.passwordConfirmation.$reset"
-              :label="$t('Password again')"
+              :label="getCommonTranslation('Password again')"
               :type="showPasswordConfirmation ? 'text' : 'password'"
               :append-icon="
                 showPasswordConfirmation ? 'mdi-eye' : 'mdi-eye-off'
@@ -90,18 +90,18 @@
           </div>
           <div v-show="step === 1">
             <p class="form__title">
-              {{ $t("Personal Information") }}
+              {{ getCommonTranslation("Personal Information") }}
             </p>
             <v-text-field
               v-model="$v.surname.$model"
               :error="$v.surname.$error"
               :error-messages="
                 personalInfoError && !$v.surname.required
-                  ? $t('Field is required')
+                  ? getCommonTranslation('Field is required')
                   : ''
               "
               @input="$v.surname.$reset"
-              :label="$t('Surname')"
+              :label="getCommonTranslation('Surname')"
               dense
               outlined
             >
@@ -111,18 +111,18 @@
               :error="$v.name.$error"
               :error-messages="
                 personalInfoError && !$v.name.required
-                  ? $t('Field is required')
+                  ? getCommonTranslation('Field is required')
                   : ''
               "
               @input="$v.name.$reset"
-              :label="$t('Name')"
+              :label="getCommonTranslation('Name')"
               dense
               outlined
             >
             </v-text-field>
             <v-text-field
               v-model="secondname"
-              :label="$t('Middle name')"
+              :label="getCommonTranslation('Middle name')"
               dense
               outlined
             >
@@ -151,7 +151,7 @@
               dense
               solo
               accept="image/*"
-              :label="$t('Your photo')"
+              :label="getCommonTranslation('Your photo')"
               @change="onPhotoChange"
             ></v-file-input>
             <v-input
@@ -162,13 +162,13 @@
               "
               :error-messages="
                 personalInfoError && !$v.dateOfBirth.required
-                  ? $t('Field is required')
+                  ? getCommonTranslation('Field is required')
                   : ''
               "
             >
               <template v-slot:default>
                 <v-label :value="true" :absolute="true">{{
-                  $t("Date of birth")
+                  getCommonTranslation("Date of birth")
                 }}</v-label>
                 <div class="d-inline-block">
                   <v-dialog
@@ -197,7 +197,7 @@
                         color="blue darken-1"
                         @click="showBirthdayPicker = false"
                       >
-                        {{ $t("Cancel") }}
+                        {{ getCommonTranslation("Cancel") }}
                       </v-btn>
                       <v-btn
                         text
@@ -215,28 +215,27 @@
               ref="country"
               v-model="country"
               :items="countries"
-              :label="$t('Country')"
+              :label="getCommonTranslation('Country')"
               placeholder="Select..."
               dense
               outlined
               :error-messages="
                 personalInfoError && !$v.country.required
-                  ? $t('Field is required')
+                  ? getCommonTranslation('Field is required')
                   : ''
               "
-            >
-            </v-autocomplete>
+            ></v-autocomplete>
             <v-autocomplete
               ref="language"
               v-model="language"
               :items="languages"
-              :label="$t('Language notification')"
+              :label="getCommonTranslation('Language notification')"
               placeholder="Select..."
               dense
               outlined
               :error-messages="
                 personalInfoError && !$v.language.required
-                  ? $t('Field is required')
+                  ? getCommonTranslation('Field is required')
                   : ''
               "
             >
@@ -244,37 +243,25 @@
           </div>
           <div v-show="step === 2">
             <p class="form__title">
-              {{ $t("Medical Education") }}
+              {{ getCommonTranslation("Medical Education") }}
             </p>
             <v-autocomplete
               v-model="medUniversity"
               :items="univerItems"
               item-text="name"
               hide-details
-              :label="$t('Medical University')"
+              :label="getCommonTranslation('Medical University')"
               dense
               outlined
               class="mb-2"
               autocomplete="off"
               @input.native="onMedUniversityInput"
               @blur="univerItems = []"
-              :error-messages="
-                personalInfoError && !$v.medUniversity.required
-                  ? $t('Field is required')
-                  : ''
-              "
             >
-              <template v-slot:no-data>
-                <v-list-item>
-                  <v-list-item-title>
-                    {{ $t("Start typing...") }}
-                  </v-list-item-title>
-                </v-list-item>
-              </template>
             </v-autocomplete>
             <v-text-field
               v-model="yearsOfEducation"
-              :label="$t('Years of education')"
+              :label="getCommonTranslation('Years of education')"
               dense
               outlined
               hide-details
@@ -283,7 +270,7 @@
             </v-text-field>
             <v-text-field
               v-model="medSpecialty"
-              :label="$t('Medical specialty')"
+              :label="getCommonTranslation('Medical specialty')"
               dense
               outlined
               hide-details
@@ -295,30 +282,18 @@
               :items="specialtyItems"
               item-text="name"
               hide-details
-              :label="$t('Doctor specialty')"
+              :label="getDoctorTranslation('Doctor specialty')"
               dense
               outlined
               class="mb-2"
               autocomplete="off"
               @input.native="docSpecialtyOnInput"
               @blur="specialtyItems = []"
-              :error-messages="
-                personalInfoError && !$v.docSpecialty.required
-                  ? $t('Field is required')
-                  : ''
-              "
             >
-              <template v-slot:no-data>
-                <v-list-item>
-                  <v-list-item-title>
-                    {{ $t("Start typing...") }}
-                  </v-list-item-title>
-                </v-list-item>
-              </template>
             </v-autocomplete>
             <v-text-field
               v-model="internship"
-              :label="$t('Internship')"
+              :label="getCommonTranslation('Internship')"
               dense
               outlined
               hide-details
@@ -326,38 +301,98 @@
             ></v-text-field>
             <v-text-field
               v-model="residency"
-              :label="$t('Residency')"
+              :label="getCommonTranslation('Residency')"
               dense
               outlined
               hide-details
               class="mb-3"
             ></v-text-field>
+            <p class="ma-0">
+              {{ getDoctorTranslation("Fellow student") }}
+            </p>
+            <div>
+              <v-text-field
+                v-model="fellowStudent1.name"
+                hide-details
+                class="mb-1"
+                :label="getCommonTranslation('Name')"
+                dense
+                outlined
+              >
+              </v-text-field>
+              <v-text-field
+                v-model="fellowStudent1.surname"
+                hide-details
+                class="mb-1"
+                :label="getCommonTranslation('Surname')"
+                dense
+                outlined
+              >
+              </v-text-field>
+              <v-text-field
+                v-model="fellowStudent1.socialLink"
+                hide-details
+                :label="getCommonTranslation('Social Link')"
+                dense
+                outlined
+              >
+              </v-text-field>
+            </div>
+            <v-divider class="my-2"></v-divider>
+            <div class="mb-3">
+              <v-text-field
+                v-model="fellowStudent2.name"
+                hide-details
+                class="mb-1"
+                :label="getCommonTranslation('Name')"
+                dense
+                outlined
+              >
+              </v-text-field>
+              <v-text-field
+                v-model="fellowStudent2.surname"
+                hide-details
+                class="mb-1"
+                :label="getCommonTranslation('Surname')"
+                dense
+                outlined
+              >
+              </v-text-field>
+              <v-text-field
+                v-model="fellowStudent2.socialLink"
+                hide-details
+                :label="getCommonTranslation('Social Link')"
+                dense
+                outlined
+              >
+              </v-text-field>
+            </div>
           </div>
           <v-btn
             v-show="step === 0"
             class="mr-3"
             @click="$router.push('/login')"
           >
-            {{ $t("Cancel") }}
+            {{ getCommonTranslation("Cancel") }}
           </v-btn>
           <v-btn v-show="step !== 0" class="mr-3" @click="step--">{{
-            $t("Back")
+            getCommonTranslation("Back")
           }}</v-btn>
           <v-btn v-show="step !== 2" @click="validateStep">{{
-            $t("Next")
+            getCommonTranslation("Next")
           }}</v-btn>
           <v-btn v-show="step === 2" type="submit">{{
-            $t("Registration")
+            getCommonTranslation("Registration")
           }}</v-btn>
         </form>
       </v-card>
       <v-card style="width: 100%">
         <!-- уже зарегистрированы? -->
         <v-card-text>
-          {{ $t("Registered already") }}
+          {{ getCommonTranslation("Registered already") }}
           <router-link
             :to="{ name: 'Login', params: { lang: $route.params.lang } }"
-            >{{ $t("Sign in") }}</router-link
+            >{{ getCommonTranslation("Sign in") }}</router-link
           >
         </v-card-text>
       </v-card>
@@ -520,8 +555,6 @@ export default {
     };
   },
   validations: {
-    medUniversity: { required },
-    docSpecialty: { required },
     email: {
       required,
       emailValidation: (email) => /.+@.+\..+/.test(email),
@@ -623,15 +656,6 @@ export default {
     async signUpHandler() {
       if (this.step !== 2) {
         return;
-      } else {
-        const requiredFields = ["medUniversity", "docSpecialty"];
-        requiredFields.map((field) => {
-          this.$v[field].$touch();
-        });
-        if (this.$v.medUniversity.$invalid || this.$v.docSpecialty.$invalid) {
-          this.personalInfoError = true;
-          return;
-        }
       }
       let langValue = "";
       switch (this.language) {

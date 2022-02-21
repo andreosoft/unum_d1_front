@@ -2,7 +2,7 @@
   <v-text-field
     outlined
     :value="value"
-    :label="model.title"
+    :label="$t(model.title)"
     :error-messages="error"
     :disabled="disabled"
     type="number"

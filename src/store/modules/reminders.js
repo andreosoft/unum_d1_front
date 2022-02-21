@@ -26,43 +26,23 @@ export default {
     SET_REMINDERS(state, payload) {
       //    state.reminders = payload;
       state.reminders = [];
-      payload.forEach((el) => {
-        try {
-          let reminder = JSON.parse(el.data);
-          reminder.id = el.id;
-          state.reminders.push(reminder);
-        } catch (e) {}
-      });
-      console.log('SET_REMINDERS', payload, state.reminders);
+      if (payload)
+        payload.forEach((el) => {
+          try {
+            let reminder = JSON.parse(el.data);
+            reminder.id = el.id;
+            if (dayjs().isBefore(el.date_event)) {
+              state.reminders.push(reminder);
+            }
+          } catch (e) {}
+        });
+      //   console.log('SET_REMINDERS', payload, state.reminders);
     },
   },
   actions: {
-    /*   fetchReminderBySource({ commit }, prop) {
-      let reminders = [];
-      let reminder = {};
-      if (localStorage.getItem('LocalUserReminders')) {
-        reminders = JSON.parse(localStorage.getItem('LocalUserReminders'));
-        if (prop) {
-          reminder = reminders.find((el) => {
-            if (el.source && JSON.parse(el.source).name == prop.name && JSON.parse(el.source).id == prop.id) {
-              return true;
-            } else {
-              return false;
-            }
-          });
-        }
-      }
-      commit('SET_REMINDER', reminder);
-    },*/
-    fetchReminders({ commit }) {
-      /*    let reminders = [];
-      if (localStorage.getItem('LocalUserReminders')) {
-        reminders = JSON.parse(localStorage.getItem('LocalUserReminders'));
-        console.log('fetchReminders', reminders);
-      }*/
-      //reminders = [];
-      // commit('SET_REMINDERS', reminders);
-      return axios.get(api.userReminder, { params: { filters: { user_id: 125 } } }).then((res) => {
+    fetchReminders({ commit, rootState }) {
+      let user_id = rootState.auth.userProfile?.id; //? rootState.auth.doctorProfile.id : 0;
+      return axios.get(api.userReminder, { params: { filters: { user_id } } }).then((res) => {
         if (res?.data?.data) {
           commit('SET_REMINDERS', res.data.data);
         }

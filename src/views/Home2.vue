@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-layout wrap row pa-2>
+    <v-layout wrap row pa-1 mx-md-1>
       <v-flex xs12 order-xs3 order-sm3 order-md1 ref="patientsList">
         <div v-if="patients.length">
           <h2 class="mx-3 pb-3 pt-3">{{ $t("My patients") }}</h2>
@@ -10,7 +10,7 @@
           <h2 class="mx-3">{{ $t("No patients yet") }}</h2>
         </div>
       </v-flex>
-      <v-flex lg9 md8 sm8 order-xs2 order-sm2 order-md2>
+      <v-flex lg9 md8 sm8 order-xs2 order-sm2 order-md2 mt-3>
         <div v-if="events.length">
           <h2 class="mx-3">{{ $t("My events") }}</h2>
           <Events :events="getValidEvents" ref="events" />
@@ -19,7 +19,7 @@
           <h2 class="mx-3">{{ $t("No events yet") }}</h2>
         </div>
       </v-flex>
-      <v-flex lg3 md4 sm4 order-xs1 order-sm1 order-md3 ref="reminder">
+      <v-flex lg3 md4 sm4 order-xs1 order-sm1 order-md3 mt-3 ref="reminder">
         <div>
           <h2 class="mx-3">{{ $t("Reminders") }}</h2>
           <Reminders />
@@ -56,7 +56,6 @@ export default {
     },
   },
   mounted() {
-    console.log("query home events");
     this.$store.dispatch("events/fetchEvents", {
       start: dayjs().format("YYYY-MM-DD"),
       end: dayjs().add(30, "day").format("YYYY-MM-DD"),
@@ -81,8 +80,9 @@ export default {
     patientsList() {
       let n = 4;
       if (this.$vuetify.breakpoint.sm) n = 3;
+      if (this.$vuetify.breakpoint.md) n = 4;
       if (this.$vuetify.breakpoint.lg) n = 6;
-
+      if (this.$vuetify.breakpoint.xl) n = 6;
       return this.patients.slice(0, n);
     },
   },

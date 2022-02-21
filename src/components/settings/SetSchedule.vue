@@ -15,17 +15,19 @@
         <v-col class="pt-1 pa-2">
           <v-divider class="mt-1 mb-2"></v-divider>
           <v-row>
-            <s-btn-any
-              :title="'Save'"
-              :icon="'mdi-check'"
-              @btnClick="saveBasic"
-              :disabled="!needSave"
-            />
             <v-col>
               <s-form-model
                 v-model="data.basic"
                 :model="model"
                 @validate="changeBasic($event)"
+              />
+              <v-divider class="my-2 mb-2"></v-divider>
+              <s-btn-any
+                :title="'Save'"
+                :icon="'mdi-check'"
+                @btnClick="saveBasic"
+                :disabled="!needSave"
+                :classBtn="{ primary: !needSave, error: needSave }"
               />
             </v-col>
           </v-row>
@@ -33,7 +35,7 @@
       </v-tab-item>
       <v-tab-item>
         <v-col>
-          <v-divider class="mt-1 mb-2"></v-divider>
+          <v-divider class="my-2 mb-2"></v-divider>
           <v-row>
             <v-col>
               <ServcesForm v-model="services" :model="{}"></ServcesForm>

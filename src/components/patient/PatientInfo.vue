@@ -5,6 +5,7 @@
         v-for="el of infoModel"
         v-ctk-tooltip="el.data ? el.data : ''"
         v-if="el['value']"
+        :key="el.title"
       >
         {{ el.title }}: {{ $t(el.value) }}
       </li>
@@ -42,7 +43,7 @@ export default {
       info: [
         {
           name: "birthday",
-          title: "дата рождения",
+          title: "Дата рождения",
         },
         {
           name: "sex",
@@ -54,7 +55,7 @@ export default {
         },
         {
           name: "weight",
-          title: "вес",
+          title: "Вес",
         },
         {
           name: "blood",
@@ -62,12 +63,12 @@ export default {
         },
         {
           name: "allergy",
-          title: "аллергия",
+          title: "Аллергия",
         },
 
         {
           name: "chronicDiseases",
-          title: "ХЗ",
+          title: "Хронические заболевания",
         },
         {
           //          name: "pressure",

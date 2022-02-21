@@ -374,7 +374,7 @@ export default {
               .format("YYYY-MM-DD HH:mm:ss");
           });
           reminder.duration = duration;
-          reminder.userId = this.doctorProfile.id;
+          reminder.userId = this.doctorProfile.user_id;
           await this.$store.dispatch("reminders/updateReminder", reminder);
         }
         //this.fetchEvents(this.eventsDate);

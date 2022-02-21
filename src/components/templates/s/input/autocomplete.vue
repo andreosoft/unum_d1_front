@@ -13,6 +13,7 @@
     :label="$t(label || model.title)"
     multiple
     :menu-props="{ closeOnClick: true }"
+
   >
     <template v-slot:selection="data">
       <v-chip

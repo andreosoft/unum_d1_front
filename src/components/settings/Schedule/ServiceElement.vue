@@ -2,7 +2,7 @@
   <v-flex d-flex xs12 pa-0>
     <v-layout row wrap pa-1 align-content-start>
       <v-flex d-flex xs12 pa-0>
-        <v-layout row>
+        <v-layout row my-1>
           <v-flex d-flex xs8 pa-1>
             <v-text-field
               dense
@@ -28,7 +28,7 @@
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex d-flex xs12 pa-0 pt-1>
+      <v-flex d-flex xs12 pa-0 pt-1 mb-1>
         <v-textarea
           auto-grow
           rows="2"
@@ -40,7 +40,7 @@
           @input="$emit('input', value)"
         ></v-textarea>
       </v-flex>
-      <v-flex d-flex xs12 pa-0 py-1>
+      <v-flex d-flex xs12 pa-0 py-1 mb-1>
         <s-input-autocomplete
           v-model="value.reminder"
           :items="getDuration"

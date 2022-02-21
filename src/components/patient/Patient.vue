@@ -119,7 +119,7 @@
         <v-btn
           v-if="!$vuetify.breakpoint.smAndDown"
           fab
-          small
+          small1
           dark
           color="green"
           bottom

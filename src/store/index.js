@@ -38,6 +38,9 @@ const updateDoctorProfileOn = [
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
+  state: {
+    user: {},
+  },
   modules: {
     auth,
     patients,

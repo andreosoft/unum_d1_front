@@ -27,7 +27,7 @@ const api = {
   deleteScheduleItem: '/doctor/schedule', // delete doctor/schedule/:id
 
   postImage: '/image/upload',
-  getImage: 'http://api.neomedy.com/api/image/download', // '/image/download/:id', width & height queries
+  getImage: 'https://api.neomedy.com/api/image/download', // '/image/download/:id', width & height queries
 
   postFile: 'file/upload',
   getFile: '/api/file/download', // '/file/download/:file',
