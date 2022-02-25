@@ -1,6 +1,6 @@
 <template>
   <div class="pa-3">
-    <h1>{{ getCommonTranslation("My profile") }}</h1>
+    <h1>{{ $t("My profile") }}</h1>
     <v-container class="pa-0">
       <v-row>
         <v-col cols="12" sm="8" md="6">
@@ -11,17 +11,20 @@
               outlined
               dense
               class="mb-6"
-              :label="getCommonTranslation('Name')"
+              :label="$t('Name')"
               readonly
             ></v-text-field>
 
             <v-input
               dense
-              class="v-input--is-label-active v-input--is-dirty v-text-field v-text-field--is-booted"
+              class="
+                v-input--is-label-active v-input--is-dirty
+                v-text-field v-text-field--is-booted
+              "
             >
               <template v-slot:default>
                 <v-label :value="true" :absolute="true">
-                  {{ getCommonTranslation("Date of birth") }}
+                  {{ $t("Date of birth") }}
                 </v-label>
                 <div class="d-inline-block">
                   <v-dialog
@@ -50,7 +53,7 @@
                         color="blue darken-1"
                         @click="showBirthdayPicker = false"
                       >
-                        {{ getCommonTranslation("Cancel") }}
+                        {{ $t("Cancel") }}
                       </v-btn>
                       <v-btn
                         text
@@ -69,7 +72,7 @@
               ref="country"
               v-model="getSetCountry"
               :items="countries"
-              :label="getCommonTranslation('Country')"
+              :label="$t('Country')"
               placeholder="Select..."
               dense
               outlined
@@ -82,7 +85,7 @@
               outlined
               dense
               class="mb-2"
-              :label="getCommonTranslation('Email')"
+              :label="$t('Email')"
             ></v-text-field>
             <v-text-field
               v-model="getSetInternship"
@@ -90,7 +93,7 @@
               outlined
               dense
               class="mb-2"
-              :label="getDoctorTranslation('Internship')"
+              :label="$t('Internship')"
             ></v-text-field>
             <v-text-field
               v-model="getSetMedicalSpecialty"
@@ -98,14 +101,14 @@
               outlined
               dense
               class="mb-2"
-              :label="getDoctorTranslation('Medical specialty')"
+              :label="$t('Medical specialty')"
             ></v-text-field>
             <v-autocomplete
               v-model="getSetDoctorSpecialty"
               :items="specialtyItems"
               item-text="name"
               hide-details
-              :label="getDoctorTranslation('Doctor specialty')"
+              :label="$t('Doctor specialty')"
               dense
               outlined
               class="mb-2"
@@ -119,7 +122,7 @@
               :items="univerItems"
               item-text="name"
               hide-details
-              :label="getCommonTranslation('Medical University')"
+              :label="$t('Medical University')"
               dense
               outlined
               class="mb-2"
@@ -134,11 +137,11 @@
               outlined
               dense
               class="mb-2"
-              :label="getCommonTranslation('Phone')"
+              :label="$t('Phone')"
             ></v-text-field>
             <v-img
               v-if="img.length"
-              style="width: 50%;"
+              style="width: 50%"
               class="mb-3 rounded-lg"
               :src="img"
             ></v-img>
@@ -148,7 +151,7 @@
               dense
               class="mb-2"
               accept="image/*"
-              :label="getCommonTranslation('Your photo')"
+              :label="$t('Your photo')"
               @change="onPhotoChange"
             ></v-file-input>
             <v-text-field
@@ -157,7 +160,7 @@
               outlined
               dense
               class="mb-2"
-              :label="getDoctorTranslation('Residency')"
+              :label="$t('Residency')"
             ></v-text-field>
             <v-text-field
               v-model="getSetYearsOfEducation"
@@ -165,36 +168,28 @@
               outlined
               dense
               class="mb-2"
-              :label="getCommonTranslation('Years of education')"
+              :label="$t('Years of education')"
             ></v-text-field>
           </div>
-          <v-text-field
-            v-model="getSetVisitDuration"
-            hide-details
-            outlined
-            dense
-            class="mb-2"
-            type="number"
-            :label="getDoctorTranslation('Visit duration')"
-          ></v-text-field>
+
           <v-select
             v-model="getSetLanguages"
             persistent-hint
-            :hint="getCommonTranslation('Service languages')"
+            :hint="$t('Service languages')"
             :items="languagesList"
             multiple
             dense
             outlined
           ></v-select>
           <div>
-            <p class="mb-2">{{ getDoctorTranslation("Fellow student") }}</p>
+            <p class="mb-2">{{ $t("Fellow student") }}</p>
             <div>
               <v-text-field
                 v-model="getSetFellowStudentName_1"
                 outlined
                 dense
                 hide-details
-                :label="getCommonTranslation('Name')"
+                :label="$t('Name')"
                 class="mb-2"
               ></v-text-field>
               <v-text-field
@@ -202,7 +197,7 @@
                 outlined
                 dense
                 hide-details
-                :label="getCommonTranslation('Surname')"
+                :label="$t('Surname')"
                 class="mb-2"
               ></v-text-field>
               <v-text-field
@@ -210,7 +205,7 @@
                 outlined
                 dense
                 hide-details
-                :label="getCommonTranslation('Social link')"
+                :label="$t('Social link')"
               ></v-text-field>
             </div>
             <v-divider class="my-2"></v-divider>
@@ -220,7 +215,7 @@
                 outlined
                 dense
                 hide-details
-                :label="getCommonTranslation('Name')"
+                :label="$t('Name')"
                 class="mb-2"
               ></v-text-field>
               <v-text-field
@@ -228,7 +223,7 @@
                 outlined
                 dense
                 hide-details
-                :label="getCommonTranslation('Surname')"
+                :label="$t('Surname')"
                 class="mb-2"
               ></v-text-field>
               <v-text-field
@@ -236,7 +231,7 @@
                 outlined
                 dense
                 hide-details
-                :label="getCommonTranslation('Social link')"
+                :label="$t('Social link')"
               ></v-text-field>
             </div>
           </div>
@@ -248,10 +243,17 @@
             dense
             no-resize
             outlined
-            :label="getCommonTranslation('Qualification')"
+            :label="$t('Qualification')"
           ></v-textarea>
         </v-col>
       </v-row>
+      <v-divider class="my-2"></v-divider>
+      <s-btn-any
+        :title="'Create clinic'"
+        :icon1="'mdi-check'"
+        @btnClick=""
+        :disabled="true"
+      />
     </v-container>
     <div v-if="isProfileUpdating" class="loader">
       <v-progress-circular
@@ -265,13 +267,12 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-import { axios } from "./../config";
 import dayjs from "dayjs";
 const { mapState, mapMutations, mapActions } = createNamespacedHelpers("auth");
-const { mapGetters: Getters_lang } = createNamespacedHelpers("lang");
 const { mapActions: Actions_alert } = createNamespacedHelpers("alerts");
 const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
 export default {
+  name: "Profile",
   data() {
     return {
       file: "",
@@ -279,80 +280,23 @@ export default {
       showBirthdayPicker: false,
       currentDate: dayjs().format("YYYY-MM-DD"),
       img: "",
-      countries: [
-        "Австралия",
-        "Азербайджан",
-        "Албания",
-        "Армения",
-        "Афганистан",
-        "Белоруссия",
-        "Болгария",
-        "Бразилия",
-        "Великобритания",
-        "Венгрия",
-        "Германия",
-        "Греция",
-        "Грузия",
-        "Дания",
-        "Египет",
-        "Индия",
-        "Ирак",
-        "Ирландия",
-        "Исландия",
-        "Испания",
-        "Италия",
-        "Казахстан",
-        "Китай",
-        "Кыргызстан",
-        "Латвия",
-        "Литва",
-        "Малайзия",
-        "Мексика",
-        "Молдавия",
-        "Непал",
-        "Нидерланды",
-        "Норвегия",
-        "ОАЭ",
-        "Пакистан",
-        "Польша",
-        "Португалия",
-        "Россия",
-        "Румыния",
-        "Сербия",
-        "Сингапур",
-        "Сирия",
-        "Словакия",
-        "Словения",
-        "США",
-        "Таджикистан",
-        "Турция",
-        "Узбекистан",
-        "Украина",
-        "Филиппины",
-        "Финляндия",
-        "Франция",
-        "Хорватия",
-        "Черногория",
-        "Чехия",
-        "Швейцария",
-        "Швеция",
-        "Эстония",
-        "Япония",
-      ],
+
       country: "",
       specialtyItems: [],
       univerItems: [],
     };
   },
   computed: {
+    countries() {
+      return this.$store.state.countries;
+    },
     ...mapState(["doctorProfile", "userProfile", "isProfileUpdating"]),
-    ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
     languagesList() {
-      let english = this.getCommonTranslation("English"),
-        french = this.getCommonTranslation("French"),
-        german = this.getCommonTranslation("German"),
-        spanish = this.getCommonTranslation("Spanish"),
-        russian = this.getCommonTranslation("Russian");
+      let english = this.$t("English"),
+        french = this.$t("French"),
+        german = this.$t("German"),
+        spanish = this.$t("Spanish"),
+        russian = this.$t("Russian");
 
       return [english, french, german, spanish, russian];
     },
@@ -406,7 +350,12 @@ export default {
     },
     getSetDoctorSpecialty: {
       get() {
-        return this.doctorProfile && this.doctorProfile.info.doctor_specialty;
+        let res =
+          this.doctorProfile && this.doctorProfile.info.doctor_specialty;
+        this.fetchDocSpecialtiesOnInput(res).then((r) => {
+          this.specialtyItems = r;
+        });
+        return res;
       },
       set(val) {
         return this.SET_DOCTOR_DOCTOR_SPECIALTY(val);
@@ -414,7 +363,11 @@ export default {
     },
     getSetMedicalUniversity: {
       get() {
-        return this.doctorProfile && this.doctorProfile.medical_university;
+        let res = this.doctorProfile && this.doctorProfile.medical_university;
+        this.fetchUniversity(res).then((r) => {
+          this.univerItems = r;
+        });
+        return res;
       },
       set(value) {
         this.SET_DOCTOR_MEDICAL_UNIVERSITY(value);
@@ -563,7 +516,7 @@ export default {
         this.addAlert({ type: "success", text: "Profile updated" });
       }
     },
-    getSetDoctorSpecialty: {
+    /* getSetDoctorSpecialty: {
       immediate: true,
       handler(val) {
         this.specialtyItems.push(val);
@@ -574,7 +527,7 @@ export default {
       handler(val) {
         this.univerItems.push(val);
       },
-    },
+    }, */
   },
   methods: {
     ...mapActions(["updateDoctorProfile", "uploadDoctorImage"]),

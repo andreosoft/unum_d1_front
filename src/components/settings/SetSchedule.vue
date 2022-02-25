@@ -15,7 +15,7 @@
         <v-col class="pt-1 pa-2">
           <v-divider class="mt-1 mb-2"></v-divider>
           <v-row>
-            <v-col>
+            <v-col cols="12" sm="8" md="6">
               <s-form-model
                 v-model="data.basic"
                 :model="model"
@@ -146,7 +146,7 @@ export default {
   },
   methods: {
     getDefaults(el) {
-      console.log("getDefaults", el, this.defaults);
+      //console.log("getDefaults", el, this.defaults);
       if (this.defaults && this.defaults[el.name] !== undefined)
         return this.defaults[el.name];
       if (el.default !== undefined) return el.default;

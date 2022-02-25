@@ -1,20 +1,20 @@
 <template>
   <div>
     <v-btn
-      style="width: 100%;"
+      style="width: 100%"
       class="my-3"
       color="#f9f8ff"
       @click="createGroupChatDialog = true"
     >
-      {{ getDoctorTranslation("Create new group chat") }}
+      {{ $t("Create new group chat") }}
     </v-btn>
     <v-dialog v-model="createGroupChatDialog" max-width="500">
       <v-card class="pa-5">
         <form>
-          {{ getDoctorTranslation("Create new group chat") }}
+          {{ $t("Create new group chat") }}
           <v-text-field
             v-model="groupName"
-            :label="getDoctorTranslation('Your group title')"
+            :label="$t('Your group title')"
           ></v-text-field>
           <v-autocomplete
             prepend-inner-icon="mdi-magnify"
@@ -23,7 +23,7 @@
             item-text="name"
             item-value="user_id"
             hide-details
-            :label="$_lang_getCommonTranslation('By name')"
+            :label="$t('By name')"
             multiple
             dense
             class="mt-0"
@@ -70,8 +70,9 @@
           <v-btn
             :disabled="!selectedGroupMembers.length || !groupName.length"
             @click="createGroup"
+            class="mt-5"
           >
-            {{ getDoctorTranslation("Create group") }}
+            {{ $t("Create group") }}
           </v-btn>
         </form>
       </v-card>
@@ -90,14 +91,11 @@
 
 <script>
 import { createNamespacedHelpers } from "vuex";
-const { mapGetters } = createNamespacedHelpers("lang");
 const { mapState: State_auth } = createNamespacedHelpers("auth");
 const { mapActions: Actions_alerts } = createNamespacedHelpers("alerts");
 const { mapActions: Actions_chats } = createNamespacedHelpers("chats");
-const {
-  mapState: State_doctors,
-  mapGetters: Getters_doctors,
-} = createNamespacedHelpers("doctors");
+const { mapState: State_doctors, mapGetters: Getters_doctors } =
+  createNamespacedHelpers("doctors");
 import ChatList from "./ChatList.vue";
 import { lang } from "./../../mixins/lang";
 export default {
@@ -110,29 +108,11 @@ export default {
     return {
       createGroupChatDialog: false,
       selectedGroupMembers: [],
-      items: [
-        {
-          name: "Vuetify",
-          id: 1,
-        },
-        {
-          name: "Programming",
-          id: 2,
-        },
-        {
-          name: "Vue",
-          id: 3,
-        },
-        {
-          name: "Vuex",
-          id: 4,
-        },
-      ],
+
       groupName: "",
     };
   },
   computed: {
-    ...mapGetters(["getDoctorTranslation"]),
     ...State_doctors(["doctors"]),
     ...Getters_doctors(["imageSrc"]),
     ...State_auth(["userProfile"]),

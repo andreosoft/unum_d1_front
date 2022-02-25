@@ -148,7 +148,7 @@ export default {
       return _.min(d);
     },
     reminderShow(item) {
-      return true;
+      // return true;
       if (
         item.duration.filter((el) => {
           if (dayjs().isBefore(el)) {
@@ -156,8 +156,9 @@ export default {
           }
           return false;
         }).length
-      )
+      ) {
         return true;
+      }
       return false;
     },
     async clickReminder(e) {

@@ -65,7 +65,6 @@
           :to="{ name: link.name }"
           :exact="link.name === 'Dashboard'"
           class="nav-links__item"
-          v-if="!link.hide"
         >
           <v-list-item-icon class="ml-0">
             <v-icon>{{ link.icon }}</v-icon>
@@ -105,8 +104,7 @@ const { mapActions: Actions_patients } = createNamespacedHelpers("patients");
 const { mapActions: Actions_doctors } = createNamespacedHelpers("doctors");
 const { mapActions: Actions_events } = createNamespacedHelpers("events");
 const { mapActions: Chats_events } = createNamespacedHelpers("chats");
-const { mapState: State_lang, mapGetters: Getters_lang } =
-  createNamespacedHelpers("lang");
+
 export default {
   data() {
     return {
@@ -115,8 +113,6 @@ export default {
   },
   computed: {
     ...mapState(["userProfile", "doctorProfile", "doctorProfileFetched"]),
-    ...State_lang(["doctor", "common"]),
-    ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
     packageVersion() {
       return version;
     },
@@ -124,35 +120,35 @@ export default {
       const links = [
         {
           name: "Dashboard",
-          title: this.getCommonTranslation("Home"),
+          title: this.$t("Home"),
           icon: "mdi-view-dashboard",
         },
         {
           name: "Chats",
-          title: this.getCommonTranslation("Chats"),
+          title: this.$t("Chats"),
           icon: "mdi-message-text",
           notification: this.$root.chatsNotification,
         },
         {
           name: "Consilliums",
-          title: this.getCommonTranslation("Consilliums"),
+          title: this.$t("Consilliums"),
           icon: "mdi-forum",
           notification: this.$root.consiliumNotification,
           hide: true,
         },
         {
           name: "Doctors",
-          title: this.getCommonTranslation("Doctors"),
+          title: this.$t("Doctors"),
           icon: "mdi-doctor",
         },
         {
           name: "Patients",
-          title: this.getDoctorTranslation("Patients"),
+          title: this.$t("Patients"),
           icon: "mdi-account-group",
         },
         {
           name: "Schedule",
-          title: this.getDoctorTranslation("Schedule"),
+          title: this.$t("Schedule"),
           icon: "mdi-calendar",
         },
         {
@@ -161,7 +157,7 @@ export default {
           icon: "mdi-cog-outline",
         },
       ];
-      return links;
+      return links.filter((link) => !link.hide);
     },
     getTitle() {
       /* let title = "";
@@ -189,7 +185,7 @@ export default {
       return (
         this.doctorProfile &&
         this.doctorProfile.photo &&
-        `http://api.neomedy.com/api/image/download/${this.doctorProfile.photo}`
+        `https://api.neomedy.com/api/image/download/${this.doctorProfile.photo}`
       );
     },
   },

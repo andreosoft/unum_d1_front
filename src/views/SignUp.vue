@@ -424,7 +424,7 @@ export default {
         socialLink: "",
       },
 
-      countries: [
+      countries1: [
         "Австралия",
         "Азербайджан",
         "Албания",
@@ -553,6 +553,9 @@ export default {
     },
   },
   computed: {
+    countries() {
+      return this.$store.state.countries;
+    },
     ...State_lang(["common", "doctor"]),
     ...Getters_lang(["getCommonTranslation", "getDoctorTranslation"]),
   },

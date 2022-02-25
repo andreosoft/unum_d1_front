@@ -2,7 +2,7 @@
   <v-dialog :value="dialog" :max-width="600" @input="$emit('close')">
     <v-card class="pa-5">
       <v-card-title class="pa-0 mb-3">
-        {{ getDoctorTranslation("Enter patient email") }}
+        {{ $t("Enter patient email") }}
       </v-card-title>
       <form @submit.prevent="sendEmail">
         <v-text-field
@@ -10,14 +10,14 @@
           outlined
           type="email"
           dense
-          :label="getDoctorTranslation('Patient email')"
+          :label="$t('Patient email')"
         >
         </v-text-field>
         <v-btn class="mr-3" @click="$emit('close')">
-          {{ getCommonTranslation("Cancel") }}
+          {{ $t("Cancel") }}
         </v-btn>
         <v-btn type="submit">
-          {{ getCommonTranslation("Send") }}
+          {{ $t("Send") }}
         </v-btn>
       </form>
     </v-card>
@@ -27,7 +27,6 @@
 <script>
 import { createNamespacedHelpers } from "vuex";
 
-const { mapGetters } = createNamespacedHelpers("lang");
 const { mapActions: Action_alerts } = createNamespacedHelpers("alerts");
 const { mapActions: Actions_patients } = createNamespacedHelpers("patients");
 export default {
@@ -41,9 +40,7 @@ export default {
   data: () => ({
     patientEmail: "",
   }),
-  computed: {
-    ...mapGetters(["getDoctorTranslation", "getCommonTranslation"]),
-  },
+  computed: {},
   methods: {
     ...Action_alerts(["addAlert"]),
     ...Actions_patients(["requestPatientCardAccess"]),

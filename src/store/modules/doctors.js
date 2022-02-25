@@ -26,11 +26,15 @@ export default {
         if (!doctor[0] || !doctor[0].info.doctor_specialty) throw Error;
         return doctor[0].info.doctor_specialty;
       } catch (err) {
+        console.log(err);
         return '';
       }
     },
     getDoctorByUserId: (state) => (userId) => {
       return state.doctors && state.doctors.find((doc) => doc.user_id === userId);
+    },
+    getDoctorsByCounry: (state) => (country) => {
+      return state.doctors && state.doctors.find((doc) => doc.country === country);
     },
   },
   mutations: {
